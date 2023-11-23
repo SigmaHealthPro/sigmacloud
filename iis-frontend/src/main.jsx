@@ -2,6 +2,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom/client";
 import {
   createBrowserRouter,
+  Navigate,
   RouterProvider,
 } from "react-router-dom";
 import "./index.css";
@@ -21,70 +22,79 @@ import Organization from "./Pages/Organization/Organization";
 import Faculty from "./Pages/Faculty/Faculty";
 import VaccineProgram from "./Pages/Vaccine Program/VaccineProgram";
 import DataTable from "./components/Data Table/DataTable";
+import LoginPage from "./Pages/LoginPage/LoginPage";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Root />,
+    element: <Navigate replace to="/login" />, // Redirect to /login
+  },
+  {
+    path: "/login",
+    element: <LoginPage/>
+  },
+  {
+    path: "/",
+    element: <Root/>,
     children: [
       {
-        path: '/dashboard',
+        path: '/page/dashboard',
         element: <Dashboard />
       },
       {
-        path: '/enrollment-request',
+        path: '/page/enrollment-request',
         element: <EnrollmentRequest />
       },
       {
-        path: '/patient-management',
+        path: '/page/patient-management',
         element: <PatientManagement />
       },
       {
-        path: '/vaccine-management',
+        path: '/page/vaccine-management',
         element: <VaccineManagement />
       },
       {
-        path: '/site-management',
+        path: '/page/site-management',
         element: <SiteManagement />
       },
       {
-        path: '/access-management',
+        path: '/page/access-management',
         element: <AccessManagement />
       },
       {
-        path: '/user-management',
+        path: '/page/user-management',
         element: <UserManagement />
       },
       {
-        path: '/reference-data',
+        path: '/page/reference-data',
         element: <ReferenceData />
       },
       {
-        path: '/vaccine-forecasting',
+        path: '/page/vaccine-forecasting',
         element: <VaccineForecasting />
       },
       {
-        path: '/reports',
+        path: '/page/reports',
         element: <Reports />
       },
       {
-        path: '/users',
+        path: '/page/users',
         element: <User/>
       },
       {
-        path: '/organization',
+        path: '/page/organization',
         element: <Organization />
       },
       {
-        path: '/faculty',
+        path: '/page/faculty',
         element: <Faculty />
       },
       {
-        path: '/vaccine-program',
+        path: '/page/vaccine-program',
         element: <VaccineProgram/>
       },
       {
-        path: '/data-table',
+        path: '/page/data-table',
         element: <DataTable/>
       }
 

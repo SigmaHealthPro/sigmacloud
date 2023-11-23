@@ -10,9 +10,9 @@
     position: absolute;
     top: 10.7px;
     left: 54px;
-    border-radius: var(--br-8xs);
-    background-color: var(--color-gray-200);
-    border: 1px solid var(--color-white);
+    border-radius: 5px;
+    background-color:#00274c;
+    border: 1px solid #fff;
     box-sizing: border-box;
     width: 138.9px;
     height: 31.4px;
@@ -32,7 +32,7 @@
     left: 0;
     height: 32.1px;
     cursor: pointer;
-    font-family: var(--font-arial);
+    font-family: Arial;
   }
   .group-child2,
   .group-div,
@@ -45,14 +45,14 @@
     left: 160px;
     height: 32.1px;
     cursor: pointer;
-    font-family: var(--font-arial);
+    font-family: Arial;
   }
   .group-child2 {
     top: 16.7px;
     left: 66.1px;
-    border-radius: var(--br-8xs);
-    background-color: var(--color-gray-200);
-    border: 1px solid var(--color-white);
+    border-radius: 5px;
+    background-color: #00274c;
+    border: 1px solid #fff;
     box-sizing: border-box;
     height: 31.4px;
 }
@@ -81,7 +81,7 @@
     height: 38.1px;
     cursor: pointer;
     text-align: center;
-    font-family: var(--font-arial);
+    font-family: Arial;
   }
   .sign-up-details {
     position: absolute;
@@ -92,6 +92,6 @@
     text-align: left;
     font-size: var(--font-size-3xs);
     color: var(--color-gray-100);
-    font-family: var(--font-poppins);
+    font-family: Poppins;
   }
   

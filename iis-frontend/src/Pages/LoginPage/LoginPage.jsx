@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
-import './LoginPage.css';
+import './LoginPage.css'
 import SignupForm from '../../Pages/SignupForms/SignupForm';
-import logoName from '../../assets/sigmahealthpro-converted-3@2x.png';
-import logo from '../../assets/sigmahealthpro-converted-4@2x.png';
-import backGroungImg from '../../assets/whitepapertexture-1@2x.png'
-import vector from '../../assets/vector-12.svg';
+import logoName from '../../assets/Logo/sigmahealthpro-converted-3@2x.png';
+import logo from '../../assets/Logo/sigmahealthpro-converted-4@2x.png';
+import backGroungImg from '../../assets/images/whitepapertexture-1@2x.png'
+import vector from '../../assets/utilities/vector-12.svg';
+import rect from '../../assets/utilities/rectangle-17.svg';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -20,7 +21,7 @@ const LoginPage = () => {
         setEnteredPassword(e.target.value);
       };
     const handleLogin = () => {
-      navigate('/sideBar');
+      navigate('/page/dashboard');
         // try {
         //   const response = await fetch('http://localhost:5000/users', {
         //     method: 'POST',
@@ -103,7 +104,7 @@ const LoginPage = () => {
             <i className="recover-password">Recover Password</i>
 
             <div className="button" onClick={handleLogin}>
-                <img className="button-child" alt="" src="/rectangle-17.svg" />
+                <img className="button-child" alt="" src={rect} />
                 <div className="login">Login</div>
             </div>
             </div>

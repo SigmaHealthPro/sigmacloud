@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {  Input, Space, Tag } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import { Table, Button, Modal, Form , Popconfirm } from 'antd';
+import { Table, Button, Modal, Form , Popconfirm, Pagination} from 'antd';
 
 
 
@@ -30,6 +30,7 @@ const initialData = [
         status: 'Danger',
       },
   ];
+  
 const DataTable = () => {
     const [data, setData] = useState(initialData);
     const [editingKey, setEditingKey] = useState('');
@@ -54,6 +55,14 @@ const DataTable = () => {
         setEditingKey('');
         setIsModalVisible(false);
       };
+      const rowSelection = {
+        type: 'checkbox',
+        onChange: (selectedRowKeys, selectedRows) => {
+          console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+        },
+        // You can also configure `getCheckboxProps` if you need to conditionally disable checkboxes
+      };
+      
       const handleOk = () => {
         form
           .validateFields()
@@ -154,13 +163,18 @@ const DataTable = () => {
   ];
   return (
     <>
-      <Button 
-        icon={<PlusOutlined />} 
-        onClick={showModal}
-        style={{ marginBottom: 16, backgroundColor: '#095df4', color: '#fff', borderRadius:'22px'}}
-      >
-        Add New
-      </Button>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+  <Button
+    icon={<PlusOutlined />}
+    onClick={showModal}
+    style={{ marginBottom: 16, backgroundColor: '#095df4', color: '#fff', borderRadius: '22px' }}
+  >
+    Add New
+  </Button>
+  
+  <span style={{ lineHeight: '32px', marginLeft: 'auto' }}>All Pages (1-20)</span>
+ 
+</div>
       <Modal title="Add New Site" visible={isModalVisible} onOk={() => handleSave(editingKey)} onCancel={handleCancel}>
     <Form form={form} layout="vertical" name="addNewSiteForm">
       <Form.Item name="jurisdiction" label="Jurisdiction" rules={[{ required: true }]}>
@@ -189,7 +203,25 @@ const DataTable = () => {
       </Form.Item>
     </Form>
   </Modal>
-      <Table columns={columns} dataSource={data} />
+  <Table 
+  rowSelection={rowSelection}
+  columns={columns} 
+  dataSource={data} 
+  pagination={false}
+  
+/>
+
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Button
+              icon={<PlusOutlined />}
+              onClick={showModal}
+              style={{ marginBottom: 16, backgroundColor: '#095df4', color: '#fff', borderRadius: '22px' }}
+            >
+              Add New
+            </Button>
+            
+            <span style={{ lineHeight: '32px', marginLeft: 'auto' }}>All Pages (1-20)</span>
+          </div>
     </>
   )
 }
