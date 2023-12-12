@@ -17,7 +17,7 @@ jobs:
       - name: Set up Node.js version
         uses: actions/setup-node@v3
         with:
-          node-version: '20.x'
+          node-version: '14.x'
 
       - name: Clear npm cache
         run: npm cache clean -f
@@ -68,3 +68,6 @@ jobs:
           slot-name: 'Production'
           package: .
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_EAE628A31D174B5084DE02E76D84230B }}
+
+      - name: Install @rollup/rollup-linux-x64-gnu
+        run: npm install @rollup/rollup-linux-x64-gnu
