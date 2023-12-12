@@ -17,7 +17,7 @@ jobs:
       - name: Set up Node.js version
         uses: actions/setup-node@v3
         with:
-          node-version: '20.x'  # Use a stable LTS version
+          node-version: '14.x'  # Use a stable LTS version
 
       - name: Install dependencies
         run: npm install
@@ -50,17 +50,17 @@ jobs:
         with:
           name: react-app
 
+      - name: Conditionally install Rollup based on platform
+        run: |
+          if [[ "$RUNNER_OS" == "Linux" ]]; then
+            npm install --save-dev @rollup/rollup
+          elif [[ "$RUNNER_OS" == "macOS" ]]; then
+            npm install --save-dev @rollup/rollup-darwin-x64
+          fi
+
       - name: Use Azure App Service Deploy action
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'dev-iis-sigmacloud'
           package: ${{ github.workspace }}/react-app/release.zip
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_EAE628A31D174B5084DE02E76D84230B }}
-
-      - name: Install @rollup/rollup based on platform
-        run: |
-          if [ "$(uname)" == "Darwin" ]; then
-            npm install --save-dev @rollup/rollup-darwin-x64
-          else
-            npm install --save-dev @rollup/rollup
-          fi
