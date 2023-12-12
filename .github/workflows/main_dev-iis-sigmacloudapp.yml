@@ -16,7 +16,7 @@ jobs:
       - name: Set up Node.js version
         uses: actions/setup-node@v3
         with:
-          node-version: '18.x'
+          node-version: '20.x'
 
       - name: Clear npm cache
         run: npm cache clean -f
@@ -32,8 +32,8 @@ jobs:
       - name: Update Vite
         run: npm install vite@latest
 
-      - name: Install @rollup/rollup-linux-x64-gnu
-        run: npm install @rollup/rollup-linux-x64-gnu
+      - name: Install @rollup/rollup
+        run: npm install @rollup/rollup@2.64.2
 
       - name: npm run build
         run: npm run build
@@ -61,8 +61,14 @@ jobs:
           name: node-app
 
       - name: Unzip artifact for deployment
-        run: unzip release.zip
-      
+        run: unzip node-app.zip
+
+      - name: Install Rollup globally
+        run: npm install -g rollup
+
+      - name: Install @rollup/rollup-linux-x64-gnu
+        run: npm install @rollup/rollup-linux-x64-gnu
+
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
