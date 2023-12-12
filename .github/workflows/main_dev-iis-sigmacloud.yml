@@ -23,8 +23,12 @@ jobs:
         run: |
           npm install
           npm install -g rollup
+          npm install -g typescript
 
-      - name: Build React app
+      - name: Build TypeScript files
+        run: tsc
+
+      - name: Build React app with cache busting
         run: npm run build
 
       - name: Zip artifact for deployment
@@ -58,11 +62,11 @@ jobs:
       - name: Install @rollup/rollup-linux-x64-gnu
         run: npm install @rollup/rollup-linux-x64-gnu
 
-      - name: 'Deploy to Azure Web App'
-        id: deploy-to-webapp
-        uses: azure/webapps-deploy@v2
+      - name: Azure CLI Login
+        uses: azure/login@v1
         with:
-          app-name: 'dev-iis-sigmacloud'
-          slot-name: 'Production'
-          package: ./build
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_46CF05A49DDB4717B50E5CABFCD4EB64 }}
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy to Azure Web App
+        run: |
+          az webapp deployment source config-zip --resource-group dev-sigmacloud-app_group --name dev-iis-sigmacloud --src ./build.zip
