@@ -17,10 +17,10 @@ jobs:
       - name: Set up Node.js version
         uses: actions/setup-node@v3
         with:
-          node-version: '14.x'  # Use a stable LTS version
+          node-version: '20.x'  # Use a stable LTS version
 
       - name: Install dependencies
-        run: npm install
+        run: npm install --legacy-peer-deps
 
       - name: Build TypeScript files
         run: tsc
@@ -51,7 +51,7 @@ jobs:
           name: react-app
 
       - name: Install Rollup
-        run: npm install --save-dev @rollup/rollup
+        run: npm install --save-dev @rollup/rollup --legacy-peer-deps
 
       - name: Use Azure App Service Deploy action
         uses: azure/webapps-deploy@v2
