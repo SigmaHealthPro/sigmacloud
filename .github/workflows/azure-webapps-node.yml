@@ -50,13 +50,8 @@ jobs:
         with:
           name: react-app
 
-      - name: Conditionally install Rollup based on platform
-        run: |
-          if [[ "$RUNNER_OS" == "Linux" ]]; then
-            npm install --save-dev @rollup/rollup
-          elif [[ "$RUNNER_OS" == "macOS" ]]; then
-            npm install --save-dev @rollup/rollup-darwin-x64
-          fi
+      - name: Install Rollup
+        run: npm install --save-dev @rollup/rollup
 
       - name: Use Azure App Service Deploy action
         uses: azure/webapps-deploy@v2
