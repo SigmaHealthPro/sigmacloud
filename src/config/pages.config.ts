@@ -136,15 +136,15 @@ export const appPages = {
 		subPages: {},
 	},
 	crmAppPages: {
-		id: 'crmApp',
-		to: '/crm',
+		id: 'vaccineManagementAppq',
+		to: '/vaccineManagement',
 		text: 'Vaccine Management',
 		icon: 'HeroUserGroup',
 		subPages: {
 			crmDashboardPage: {
 				id: 'crmDashboardPage',
-				to: '/crm/dashboard',
-				text: 'CRM Dashboard',
+				to: '/vaccineManagement/',
+				text: 'Vaccine Management',
 				icon: 'HeroUserCircle',
 			},
 			customerPage: {

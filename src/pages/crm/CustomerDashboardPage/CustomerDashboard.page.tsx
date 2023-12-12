@@ -20,7 +20,7 @@ const initialData = [
 	},
 ];
 
-const CustomerDashboardPage: React.FC = () => {
+const VaccineManagement: React.FC = () => {
 	const [openModal, setOpenModal] = useState(false);
 	const [datas, setDatas] = useState(initialData || []);
 	const [form] = Form.useForm();
@@ -201,4 +201,4 @@ const CustomerDashboardPage: React.FC = () => {
 	);
 };
 
-export default CustomerDashboardPage;
+export default VaccineManagement;
