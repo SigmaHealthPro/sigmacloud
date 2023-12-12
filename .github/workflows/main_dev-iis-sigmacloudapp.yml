@@ -19,11 +19,25 @@ jobs:
         with:
           node-version: '14.x'  # Use a stable LTS version
 
-      - name: Install dependencies
+      - name: Clear npm cache
+        run: npm cache clean -f
+
+      - name: Remove node_modules and package-lock.json
         run: |
-          npm install
-          npm install -g rollup
-          npm install -g typescript
+          rm -rf node_modules
+          rm -f package-lock.json
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Update Vite
+        run: npm install vite@latest
+
+      - name: Install Rollup globally
+        run: npm install -g rollup
+
+      - name: Install @rollup/rollup-darwin-x64
+        run: npm install @rollup/rollup-darwin-x64
 
       - name: Build TypeScript files
         run: tsc
@@ -46,7 +60,7 @@ jobs:
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    
+
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v3
@@ -59,8 +73,8 @@ jobs:
       - name: Install Rollup globally
         run: npm install -g rollup
 
-      - name: Install @rollup/rollup-linux-x64-gnu
-        run: npm install @rollup/rollup-linux-x64-gnu
+      - name: Install @rollup/rollup-darwin-x64
+        run: npm install @rollup/rollup-darwin-x64
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
