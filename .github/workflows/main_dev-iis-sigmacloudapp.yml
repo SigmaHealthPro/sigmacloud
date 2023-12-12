@@ -1,4 +1,4 @@
-name: Build and deploy Node.js app to Azure Web App - dev-iis-sigmacloudapp
+name: Build and deploy React.js app to Azure Web App - dev-iis-sigmacloud
 
 on:
   push:
@@ -11,40 +11,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Set up Node.js version
         uses: actions/setup-node@v3
         with:
-          node-version: '20.x'
-
-      - name: Clear npm cache
-        run: npm cache clean -f
-
-      - name: Remove node_modules and package-lock.json
-        run: |
-          rm -rf node_modules
-          rm -f package-lock.json
+          node-version: '14.x'  # Use a stable LTS version
 
       - name: Install dependencies
-        run: npm install
+        run: |
+          npm install
+          npm install -g rollup
+          npm install -g typescript
 
-      - name: Update Vite
-        run: npm install vite@latest
+      - name: Build TypeScript files
+        run: tsc
 
-      - name: Install @rollup/rollup
-        run: npm install @rollup/rollup@2.64.2
-
-      - name: npm run build
+      - name: Build React app with cache busting
         run: npm run build
 
       - name: Zip artifact for deployment
-        run: zip -r release.zip ./*
+        run: zip -r release.zip ./build/*
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
-          name: node-app
+          name: react-app
           path: release.zip
 
   deploy:
@@ -58,10 +51,10 @@ jobs:
       - name: Download artifact from build job
         uses: actions/download-artifact@v3
         with:
-          name: node-app
+          name: react-app
 
       - name: Unzip artifact for deployment
-        run: unzip node-app.zip
+        run: unzip react-app.zip
 
       - name: Install Rollup globally
         run: npm install -g rollup
