@@ -139,3 +139,113 @@
 		}
 	}
 }
+
+/* -------------- */
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	margin: 0;
+}
+
+.managment_table {
+	width: 100%;
+	border-spacing: 0px;
+	color: #27272a;
+}
+
+.managment_table thead tr th {
+	text-align: start;
+	font-weight: 500;
+	background: #09090b1a;
+	font-size: 14px;
+	padding: 13px;
+	border-right: 0.5px solid #d3d3d3;
+}
+
+html.dark .managment_table thead tr th {
+	background: #000;
+	border-right: 0.5px solid #222;
+}
+
+.managment_table thead tr th:first-child {
+	border-top-left-radius: 7px;
+	border-bottom-left-radius: 7px;
+}
+.managment_table thead tr th:last-child {
+	border-top-right-radius: 7px;
+	border-bottom-right-radius: 7px;
+	border-right: none;
+}
+
+.managment_table tbody tr td {
+	font-size: 14px;
+	padding: 13px;
+}
+
+.managment_table tbody tr td:first-child {
+	border-top-left-radius: 7px;
+	border-bottom-left-radius: 7px;
+}
+.managment_table tbody tr td:last-child {
+	border-top-right-radius: 7px;
+	border-bottom-right-radius: 7px;
+}
+
+.managment_table tbody tr:nth-child(even) td {
+	background: #71717a0d;
+}
+
+.managment_table tbody tr td button {
+	font-size: 16px;
+}
+
+html.dark .managment_table {
+	color: #fff;
+}
+
+html.dark .managment_table tbody tr:nth-child(even) td {
+	background-color: #00000045;
+}
+
+/* ----------------- */
+
+.modify_vaccine .details_title {
+	border-bottom: 1px solid #222;
+	padding-bottom: 5px;
+	margin-bottom: 10px;
+}
+
+.modify_vaccine .details_area input {
+	outline: none;
+	border: none;
+	border-radius: 15px;
+	padding: 5px 20px;
+	background: #dddddd52;
+}
+
+html.dark .modify_vaccine .details_area input {
+	color: #fff;
+}
+
+:where(.css-dev-only-do-not-override-6j9yrn).ant-form-item {
+	margin-bottom: 10px !important;
+}
+
+button.ant-btn.css-dev-only-do-not-override-6j9yrn.ant-btn-primary {
+	background: blue;
+}
+
+:where(.css-dev-only-do-not-override-6j9yrn).ant-modal {
+	top: 40px !important;
+}
+.ant-modal-content {
+	/* background-color: #ffffff00 !important; */
+}
+
+.ant-modal-header {
+	/* background-color: #ffffff00 !important; */
+}

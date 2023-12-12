@@ -73,6 +73,9 @@ const DefaultAsideTemplate = () => {
 							<NavItem
 								{...appPages.crmAppPages.subPages.customerPage.subPages.editPage}
 							/>
+							<NavItem
+								{...appPages.crmAppPages.subPages.customerPage.subPages.editPage}
+							/>
 						</NavCollapse>
 						<NavCollapse
 							text={appPages.crmAppPages.subPages.rolePage.text}

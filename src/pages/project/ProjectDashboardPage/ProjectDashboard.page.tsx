@@ -1,201 +1,237 @@
 import React, { useState } from 'react';
-import {
-	createColumnHelper,
-	flexRender,
-	getCoreRowModel,
-	useReactTable,
-} from '@tanstack/react-table';
-import Table, { TBody, Td, TFoot, Th, THead, Tr } from '../../../components/ui/Table';
-import Card, { CardBody } from '../../../components/ui/Card';
+import { BiEditAlt } from 'react-icons/bi';
+import { MdDeleteOutline } from 'react-icons/md';
+import { FaEye } from "react-icons/fa6";
+import { Input, Modal, Form, Popconfirm } from 'antd';
 import Button from '../../../components/ui/Button';
-import Dropdown, {
-	DropdownItem,
-	DropdownMenu,
-	DropdownToggle,
-} from '../../../components/ui/Dropdown';
-import Checkbox, { CheckboxGroup } from '../../../components/form/Checkbox';
 
-type Person = {
-	CheckBox: string;
-	Jurisdiction: string;
-	Organization: string;
-	FacilityName: string;
-	Address: string;
-	State: string;
-	ZipCode: number;
-	Action: null;
-};
-
-const defaultData: Person[] = [
+const initialData = [
 	{
-		CheckBox: <Checkbox />,
-		Jurisdiction: 'Michigan-JD1',
-		Organization: 'CVS Pharmacy',
-		FacilityName: 'Troy',
-		Address: '123 Mian',
-		City: 'Troy',
-		State: 'MI',
-		ZipCode: 48098,
-		Action: '',
+		id: '1',
+		jurisdiction: 'Michigan-JD1',
+		organization: 'CVS Pharmacy',
+		facilityName: 'Troy',
+		address: '123 Main',
+		city: 'Troy',
+		state: 'MI',
+		zipCode: '48098',
+		status: 'Danger',
 	},
 	{
-		CheckBox: <Checkbox />,
-		Jurisdiction: 'Michigan-JD1',
-		Organization: 'CVS Pharmacy',
-		FacilityName: 'Rochester Hills',
-		Address: '123 Mian',
-		City: 'Troy',
-		State: 'MI',
-		ZipCode: 48098,
-		Action: '',
+		id: '2',
+		jurisdiction: 'Michigan-JD2',
+		organization: 'CVS Pharmacy',
+		facilityName: 'Rochester Hills',
+		address: '124 Main',
+		city: 'Rochester Hills',
+		state: 'MI',
+		zipCode: '48099',
+		status: 'Danger',
 	},
 	{
-		CheckBox: <Checkbox />,
-		Jurisdiction: 'Michigan-JD1',
-		Organization: 'CVS Pharmacy',
-		FacilityName: 'Auburn Hills',
-		Address: '123 Mian',
-		City: 'Troy',
-		State: 'MI',
-		ZipCode: 48098,
-		Action: '',
+		id: '3',
+		jurisdiction: 'Michigan-JD1',
+		organization: 'CVS Pharmacy',
+		facilityName: 'Troy',
+		address: '123 Main',
+		city: 'Troy',
+		state: 'MI',
+		zipCode: '48098',
+		status: 'Danger',
 	},
 	{
-		CheckBox: <Checkbox />,
-		Jurisdiction: 'Michigan-JD1',
-		Organization: 'CVS Pharmacy',
-		FacilityName: 'Madison Heights',
-		Address: '123 Mian',
-		City: 'Troy',
-		State: 'MI',
-		ZipCode: 48098,
-		Action: '',
+		id: '4',
+		jurisdiction: 'Michigan-JD2',
+		organization: 'CVS Pharmacy',
+		facilityName: 'Rochester Hills',
+		address: '124 Main',
+		city: 'Rochester Hills',
+		state: 'MI',
+		zipCode: '48099',
+		status: 'Danger',
 	},
 	{
-		CheckBox: <Checkbox />,
-		Jurisdiction: 'Michigan-JD1',
-		Organization: 'CVS Pharmacy',
-		FacilityName: 'Royal Oak',
-		Address: '123 Mian',
-		City: 'Troy',
-		State: 'MI',
-		ZipCode: 48098,
-		Action: '',
+		id: '5',
+		jurisdiction: 'Michigan-JD1',
+		organization: 'CVS Pharmacy',
+		facilityName: 'Troy',
+		address: '123 Main',
+		city: 'Troy',
+		state: 'MI',
+		zipCode: '48098',
+		status: 'Danger',
+	},
+	{
+		id: '6',
+		jurisdiction: 'Michigan-JD2',
+		organization: 'CVS Pharmacy',
+		facilityName: 'Rochester Hills',
+		address: '124 Main',
+		city: 'Rochester Hills',
+		state: 'MI',
+		zipCode: '48099',
+		status: 'Danger',
 	},
 ];
 
-const columnHelper = createColumnHelper<Person>();
+const ProjectTable: React.FC = () => {
+	const [openModal, setOpenModal] = useState(false);
+	const [datas, setDatas] = useState(initialData || []);
+	const [form] = Form.useForm();
+	const [editingKey, setEditingKey] = useState('');
 
-const columns = [
-	columnHelper.accessor('CheckBox', {
-		cell: (info) => <span className='capitalize'>{info.getValue()}</span>,
-		header: () => <Checkbox />,
-		footer: () => <Checkbox />,
-	}),
-	columnHelper.accessor('Jurisdiction', {
-		cell: (info) => <span className='capitalize'>{info.getValue()}</span>,
-		header: () => 'Jurisdiction',
-		footer: () => 'Jurisdiction',
-	}),
+	const handleAddOrEdit = (id) => {
+		form.validateFields()
+			.then((data) => {
+				const newData = [...datas];
+				const index = newData?.findIndex((item) => id === item?.id);
 
-	columnHelper.accessor('Organization', {
-		cell: (info) => <span className='capitalize'>{info.getValue()}</span>,
-		header: () => 'Organization',
-		footer: () => 'Organization ',
-	}),
-	columnHelper.accessor('FacilityName', {
-		cell: (info) => <span className='capitalize'>{info.getValue()}</span>,
-		header: () => 'Facility Name',
-		footer: () => 'Facility Name',
-	}),
-	columnHelper.accessor('Address', {
-		cell: (info) => <span className='capitalize'>{info.renderValue()}</span>,
-		header: () => 'Address',
-		footer: () => 'Address',
-	}),
-	columnHelper.accessor('City', {
-		header: () => 'City',
-		footer: () => 'City',
-	}),
-	columnHelper.accessor('State', {
-		header: () => 'State',
-		footer: () => 'State',
-	}),
-	columnHelper.accessor('ZipCode', {
-		header: () => 'ZipCode',
-		footer: () => 'ZipCode',
-	}),
-	columnHelper.accessor('Action', {
-		header: () => 'Action',
-		footer: () => 'Action',
-	}),
-];
+				if (index > -1) {
+					const item = newData[index];
+					newData.splice(index, 1, { ...item, ...data });
+					setDatas(newData);
+					setEditingKey('');
+				} else {
+					newData.push({ id: Date.now(), ...data });
+					setDatas(newData);
+				}
+				setOpenModal(false);
+			})
+			.catch((info) => {
+				console.log('Validate Failed:', info);
+			});
+	};
 
-const SiteManagement = () => {
-	const [data] = useState(() => [...defaultData]);
+	const handleDelete = (id) => {
+		const newData = datas.filter((data) => data?.id !== id);
+		setDatas(newData);
+	};
 
-	const table = useReactTable({
-		data,
-		columns,
-		getCoreRowModel: getCoreRowModel(),
-	});
+	const handleEdit = (data) => {
+		form.setFieldsValue({ ...data });
+		setEditingKey(data?.id);
+		setOpenModal(true);
+	};
+
+	const handleCancel = () => {
+		setEditingKey('');
+		setOpenModal(false);
+	};
+
 	return (
-		<Card className='m-5'>
-			<CardBody>
-				<Button variant='outline' color='zinc' icon='Plus' className='m-2'>
-					Add New
-				</Button>
-				<Table>
-					<THead>
-						{table.getHeaderGroups().map((headerGroup) => (
-							<Tr key={headerGroup.id}>
-								{headerGroup.headers.map((header) => (
-									<Th key={header.id} className='text-left'>
-										{header.isPlaceholder
-											? null
-											: flexRender(
-													header.column.columnDef.header,
-													header.getContext(),
-											  )}
-									</Th>
-								))}
-							</Tr>
+		<div className='m-10'>
+			<div className='flex items-center justify-between'>
+				<div>
+					<Button
+						variant='outline'
+						type='button'
+						onClick={() => {
+							setOpenModal(true);
+							setEditingKey('');
+						}}
+						>
+						Add New +
+					</Button>
+
+					{/* modal */}
+					<Modal
+						title='Basic Modal'
+						open={openModal}
+						onOk={() => handleAddOrEdit(editingKey)}
+						onCancel={handleCancel}>
+						<Form form={form} layout='vertical'>
+							<Form.Item
+								name='jurisdiction'
+								label='Jurisdiction'
+								rules={[{ required: true }]}>
+								<Input />
+							</Form.Item>
+							<Form.Item
+								name='organization'
+								label='Organization'
+								rules={[{ required: true }]}>
+								<Input />
+							</Form.Item>
+							<Form.Item
+								name='facilityName'
+								label='Facility Name'
+								rules={[{ required: true }]}>
+								<Input />
+							</Form.Item>
+							<Form.Item name='address' label='Address' rules={[{ required: true }]}>
+								<Input />
+							</Form.Item>
+							<Form.Item name='city' label='City' rules={[{ required: true }]}>
+								<Input />
+							</Form.Item>
+							<Form.Item name='state' label='State' rules={[{ required: true }]}>
+								<Input />
+							</Form.Item>
+							<Form.Item name='zipCode' label='Zip Code' rules={[{ required: true }]}>
+								<Input />
+							</Form.Item>
+						</Form>
+					</Modal>
+				</div>
+
+				<p className='text-sm text-gray-500'>All Pages (1 - 20)</p>
+			</div>
+
+			<div className='relative mt-4 overflow-x-auto rounded-lg bg-white p-5 dark:bg-zinc-900'>
+				<table className='managment_table'>
+					<thead>
+						<tr>
+							<th>
+								<input type='checkbox' name='' id='' />
+							</th>
+							<th>Jurisdiction</th>
+							<th>Organization</th>
+							<th>Facility Name</th>
+							<th>Address</th>
+							<th>City</th>
+							<th>State</th>
+							<th>Zip</th>
+							<th>Action</th>
+						</tr>
+					</thead>
+					<tbody>
+						{datas?.map((data) => (
+							<tr key={data?.id}>
+								<td>
+									<input type='checkbox' name='' id='' />
+								</td>
+								<td>{data?.jurisdiction}</td>
+								<td>{data?.organization}</td>
+								<td>{data?.facilityName}</td>
+								<td>{data?.address}</td>
+								<td>{data?.city}</td>
+								<td>{data?.state}</td>
+								<td>{data?.zipCode}</td>
+								<td>
+									<div className='flex gap-2'>
+									<button onClick={() => handleEdit(data)}>
+										<FaEye />
+										</button>
+										<button onClick={() => handleEdit(data)}>
+											<BiEditAlt className='text-green-600' />
+										</button>
+										<Popconfirm
+											title='Sure to delete?'
+											onConfirm={() => handleDelete(data?.id)}
+											style={{ backgroundColor: '#ffa5' }}>
+											<button>
+												<MdDeleteOutline className='text-red-600' />
+											</button>
+										</Popconfirm>
+									</div>
+								</td>
+							</tr>
 						))}
-					</THead>
-					<TBody>
-						{table.getRowModel().rows.map((row) => (
-							<Tr key={row.id}>
-								{row.getVisibleCells().map((cell) => (
-									<Td key={cell.id}>
-										{flexRender(cell.column.columnDef.cell, cell.getContext())}
-									</Td>
-								))}
-							</Tr>
-						))}
-					</TBody>
-					<TFoot>
-						{table.getFooterGroups().map((footerGroup) => (
-							<Tr key={footerGroup.id}>
-								{footerGroup.headers.map((header) => (
-									<Th key={header.id} className='text-left'>
-										{header.isPlaceholder
-											? null
-											: flexRender(
-													header.column.columnDef.footer,
-													header.getContext(),
-											  )}
-									</Th>
-								))}
-							</Tr>
-						))}
-					</TFoot>
-				</Table>
-				<Button variant='outline' color='zinc' icon='Plus' className='m-2'>
-					Add New
-				</Button>
-			</CardBody>
-		</Card>
+					</tbody>
+				</table>
+			</div>
+		</div>
 	);
 };
 
-export default SiteManagement;
+export default ProjectTable;
