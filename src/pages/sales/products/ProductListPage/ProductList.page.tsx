@@ -11,7 +11,7 @@ import {
 import { Link } from 'react-router-dom';
 import PageWrapper from '../../../../components/layouts/PageWrapper/PageWrapper';
 import Container from '../../../../components/layouts/Container/Container';
-import priceFormat from '../../../../utils/priceFormat.util';
+import priceFormat from '../../../../Services/utils/priceFormat.util';
 import Progress from '../../../../components/ui/Progress';
 import Badge from '../../../../components/ui/Badge';
 import Card, {

@@ -1,161 +1,203 @@
 import React, { useState } from 'react';
-import { DateRangePicker } from 'react-date-range';
-import dayjs from 'dayjs';
-import colors from 'tailwindcss/colors';
-import { useTranslation } from 'react-i18next';
-import PageWrapper from '../../../components/layouts/PageWrapper/PageWrapper';
-import Container from '../../../components/layouts/Container/Container';
-import MapPartial from './_partial/Map.partial';
-import Subheader, {
-	SubheaderLeft,
-	SubheaderRight,
-} from '../../../components/layouts/Subheader/Subheader';
-import ChartPartial from './_partial/Chart.partial';
-import ReportsPartial from './_partial/Reports.partial';
-import UserListPartial from './_partial/UserList.partial';
-import CalendarPartial from './_partial/Calendar.partial';
-import Mini1Partial from './_partial/Mini1.partial';
-import Mini2Partial from './_partial/Mini2.partial';
-import Mini3Partial from './_partial/Mini3.partial';
-import Mini4Partial from './_partial/Mini4.partial';
-import Mini5Partial from './_partial/Mini5.partial';
-import Mini6Partial from './_partial/Mini6.partial';
+import { Input, Modal, Form, Popconfirm } from 'antd';
+import { BiEditAlt } from 'react-icons/bi';
+import { FaEye } from 'react-icons/fa';
+import { MdDeleteOutline } from 'react-icons/md';
 import Button from '../../../components/ui/Button';
-import Dropdown, { DropdownMenu, DropdownToggle } from '../../../components/ui/Dropdown';
-import themeConfig from '../../../config/theme.config';
 
-const TABS: {
-	[key in 'OVERVIEW' | 'ONLINE_USERS' | 'TASKS']: 'Overview' | 'Online Users' | 'Tasks';
-} = {
-	OVERVIEW: 'Overview',
-	ONLINE_USERS: 'Online Users',
-	TASKS: 'Tasks',
-};
+const initialData = [
+	{
+		id: '1',
+		order_date: 'Michigan-JD1',
+		date_amount: 'CVS Pharmacy',
+		quantity: 'Troy',
+	},
+	{
+		id: '2',
+		order_date: 'Michigan-JD2',
+		date_amount: 'CVS Pharmacy',
+		quantity: 'Rochester Hills',
+	},
+];
 
-const CustomerDashboardPage = () => {
-	const [activeTab, setActiveTab] = useState(TABS.OVERVIEW);
-	const [state, setState] = useState({
-		selection: {
-			startDate: dayjs().startOf('week').add(-1, 'week').toDate(),
-			endDate: dayjs().endOf('week').toDate(),
-			key: 'selection',
-		},
-		selection2: {
-			startDate: dayjs().startOf('week').add(-1, 'week').add(2, 'day').toDate(),
-			endDate: dayjs().endOf('week').add(-4, 'day').toDate(),
-			key: 'selection2',
-		},
-		selection3: {
-			startDate: dayjs().startOf('week').add(2, 'week').add(2, 'day').toDate(),
-			endDate: dayjs().startOf('week').add(3, 'week').add(5, 'day').toDate(),
-			key: 'selection3',
-		},
-	});
+const CustomerDashboardPage: React.FC = () => {
+	const [openModal, setOpenModal] = useState(false);
+	const [datas, setDatas] = useState(initialData || []);
+	const [form] = Form.useForm();
+	const [editingKey, setEditingKey] = useState('');
 
-	const { i18n } = useTranslation();
+	const handleAddOrEdit = (id) => {
+		form.validateFields()
+			.then((data) => {
+				const newData = [...datas];
+				const index = newData?.findIndex((item) => id === item?.id);
+
+				if (index > -1) {
+					const item = newData[index];
+					newData.splice(index, 1, { ...item, ...data });
+					setDatas(newData);
+					setEditingKey('');
+				} else {
+					newData.push({ id: Date.now(), ...data });
+					setDatas(newData);
+				}
+				setOpenModal(false);
+			})
+			.catch((info) => {
+				console.log('Validate Failed:', info);
+			});
+	};
+
+	const handleDelete = (id) => {
+		const newData = datas.filter((data) => data?.id !== id);
+		setDatas(newData);
+	};
+
+	const handleEdit = (data) => {
+		form.setFieldsValue({ ...data });
+		setEditingKey(data?.id);
+		setOpenModal(true);
+	};
+
+	const handleCancel = () => {
+		setEditingKey('');
+		setOpenModal(false);
+	};
 
 	return (
-		<PageWrapper name='CRM Dashboard'>
-			<Subheader>
-				<SubheaderLeft>
-					{Object.values(TABS).map((i) => (
+		<div className='modify_vaccine p-5'>
+			<div className='details_area rounded-lg bg-white dark:bg-zinc-900'>
+				<div className='details_title py-5'>
+					<h4 className='text-center font-normal dark:text-white'>Details</h4>
+				</div>
+				<div className='bg-base-100 mt-6 rounded-lg p-6 shadow-md dark:bg-zinc-900 lg:px-60'>
+					<div className='grid grid-cols-2 gap-8 sm:gap-24'>
+						<div className='flex flex-col gap-3'>
+							<input type='text' placeholder='Vaccine Code' />
+							<input type='text' placeholder='Vaccine Code' />
+							<input type='text' placeholder='Vaccine Code' />
+						</div>
+						<div className='flex flex-col gap-3'>
+							<input type='text' placeholder='Vaccine Code' />
+							<input type='text' placeholder='Vaccine Code' />
+						</div>
+					</div>
+
+					<div className='mt-6 flex justify-end gap-6'>
+						<button className='flex items-center gap-4 rounded-2xl bg-blue-600 px-4 py-1.5 text-white'>
+							Save
+						</button>
+						<button className='flex items-center gap-4 rounded-2xl bg-red-600 px-4 py-1.5 text-white'>
+							Cancel
+						</button>
+					</div>
+				</div>
+			</div>
+
+			<div className='mt-6 gap-4 md:flex'>
+				<div className='p-5 text-[15px] dark:text-white md:w-72'>
+					<p className='rounded-md bg-[#ddd] p-[12px] font-medium dark:bg-zinc-900'>
+						Order
+					</p>
+					<div>
+						<p className='rounded-md p-[12px]'>Shipments</p>
+						<p className='rounded-md bg-[#dddddd45] p-[12px] dark:bg-[#dddddd0f]'>
+							Events
+						</p>
+						<p className='rounded-md p-[12px]'>Inventorys</p>
+					</div>
+				</div>
+
+				<div className='w-full'>
+					<div className='relative overflow-x-auto rounded-lg p-5 dark:bg-zinc-900'>
+						<table className='managment_table'>
+							<thead>
+								<tr>
+									<th>
+										<input type='checkbox' name='' id='' />
+									</th>
+									<th>Order Date</th>
+									<th>Date Amount</th>
+									<th>Quantity</th>
+									<th>Action</th>
+								</tr>
+							</thead>
+							<tbody>
+								{datas?.map((data) => (
+									<tr key={data?.id}>
+										<td>
+											<input type='checkbox' name='' id='' />
+										</td>
+										<td>{data?.order_date}</td>
+										<td>{data?.date_amount}</td>
+										<td>{data?.quantity}</td>
+										<td>
+											<div className='flex gap-2'>
+												<button>
+													<FaEye />
+												</button>
+												<button
+													type='button'
+													onClick={() => handleEdit(data)}>
+													<BiEditAlt className='text-green-600' />
+												</button>
+												<Popconfirm
+													title='Sure to delete?'
+													onConfirm={() => handleDelete(data?.id)}
+													style={{ backgroundColor: '#ffa5' }}>
+													<button type='button'>
+														<MdDeleteOutline className='text-red-600' />
+													</button>
+												</Popconfirm>
+											</div>
+										</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</div>
+
+					<div className='mt-8 flex items-center justify-between'>
 						<Button
-							key={i}
-							className='!p-0'
-							isActive={i === activeTab}
-							onClick={() => setActiveTab(i)}>
-							{i}
+							variant='outline'
+							type='button'
+							onClick={() => {
+								setOpenModal(true);
+								setEditingKey('');
+							}}>
+							Add New +
 						</Button>
-					))}
-				</SubheaderLeft>
-				<SubheaderRight>
-					<Dropdown>
-						<DropdownToggle>
-							<Button icon='HeroCalendarDays'>{`${dayjs(state.selection.startDate)
-								.locale(i18n.language)
-								.format('LL')} - ${dayjs(state.selection3.endDate).format(
-								'LL',
-							)}`}</Button>
-						</DropdownToggle>
-						<DropdownMenu className='!p-0'>
-							<DateRangePicker
-								onChange={(item) =>
-									setState({
-										...state,
-										...item,
-									})
-								}
-								moveRangeOnFirstSelection={false}
-								retainEndDateOnFirstSelection={false}
-								months={2}
-								ranges={Object.values(state)}
-								direction='horizontal'
-								rangeColors={[
-									colors[themeConfig.themeColor][themeConfig.themeColorShade],
-									colors.emerald[themeConfig.themeColorShade],
-									colors.amber[themeConfig.themeColorShade],
-								]}
-							/>
-						</DropdownMenu>
-					</Dropdown>
-				</SubheaderRight>
-			</Subheader>
-			<Container breakpoint={null} className='h-full w-full'>
-				{activeTab === TABS.OVERVIEW && (
-					<div className='grid grid-cols-12 gap-4'>
-						<div className='col-span-12 sm:col-span-6 2xl:col-span-2'>
-							<Mini1Partial />
-						</div>
-						<div className='col-span-12 sm:col-span-6 2xl:col-span-2'>
-							<Mini2Partial />
-						</div>
-						<div className='col-span-12 sm:col-span-6 2xl:col-span-2'>
-							<Mini3Partial />
-						</div>
-						<div className='col-span-12 sm:col-span-6 2xl:col-span-2'>
-							<Mini4Partial />
-						</div>
-						<div className='col-span-12 sm:col-span-6 2xl:col-span-2'>
-							<Mini5Partial />
-						</div>
-						<div className='col-span-12 sm:col-span-6 2xl:col-span-2'>
-							<Mini6Partial />
-						</div>
 
-						<div className='col-span-12 2xl:col-span-3'>
-							<MapPartial />
-						</div>
-						<div className='col-span-12 2xl:col-span-3'>
-							<ChartPartial />
-						</div>
-						<div className='col-span-12 2xl:col-span-6'>
-							<ReportsPartial />
-						</div>
+						<p className='text-sm text-gray-500'>All Pages (1 - 20)</p>
+					</div>
+				</div>
 
-						<div className='col-span-12 2xl:col-span-6'>
-							<UserListPartial />
-						</div>
-						<div className='col-span-12 2xl:col-span-6'>
-							<CalendarPartial />
-						</div>
-					</div>
-				)}
-				{activeTab === TABS.ONLINE_USERS && (
-					<div className='grid grid-cols-12 gap-4'>
-						<div className='col-span-12'>
-							<MapPartial composableMapClassName='aspect-[2/1]' />
-						</div>
-					</div>
-				)}
-				{activeTab === TABS.TASKS && (
-					<div className='grid h-full grid-cols-12 gap-4'>
-						<div className='col-span-12 h-full'>
-							<CalendarPartial height='100%' />
-						</div>
-					</div>
-				)}
-			</Container>
-		</PageWrapper>
+				{/* Modal */}
+				<Modal
+					title='Basic Modal'
+					open={openModal}
+					onOk={() => handleAddOrEdit(editingKey)}
+					onCancel={handleCancel}>
+					<Form form={form} layout='vertical'>
+						<Form.Item
+							name='order_date'
+							label='Order Date'
+							rules={[{ required: true }]}>
+							<Input />
+						</Form.Item>
+						<Form.Item
+							name='date_amount'
+							label='Date Amount'
+							rules={[{ required: true }]}>
+							<Input />
+						</Form.Item>
+						<Form.Item name='quantity' label='Quantity' rules={[{ required: true }]}>
+							<Input />
+						</Form.Item>
+					</Form>
+				</Modal>
+			</div>
+		</div>
 	);
 };
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import Card, { CardBody } from '../../../../components/ui/Card';
 import { BalanceIcon } from '../../../../components/Balance';
-import priceFormat from '../../../../utils/priceFormat.util';
+import priceFormat from '../../../../Services/utils/priceFormat.util';
 
 const Mini3Partial = () => {
 	return (

@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import useRoundedSize from '../../../hooks/useRoundedSize';
 import useAsideStatus from '../../../hooks/useAsideStatus';
 import themeConfig from '../../../config/theme.config';
-import getFirstLetter from '../../../utils/getFirstLetter';
+import getFirstLetter from '../../../Services/utils/getFirstLetter';
 
 interface IUserProps extends HTMLAttributes<HTMLDivElement> {
 	children: ReactNode;

@@ -7,7 +7,7 @@ import Card, {
 } from '../../../../components/ui/Card';
 import usersDb from '../../../../mocks/db/users.db';
 import productsDb from '../../../../mocks/db/products.db';
-import getFirstLetter from '../../../../utils/getFirstLetter';
+import getFirstLetter from '../../../../Services/utils/getFirstLetter';
 
 interface ICommentItemProps {
 	image?: string;

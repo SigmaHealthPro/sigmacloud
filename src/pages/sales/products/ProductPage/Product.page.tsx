@@ -21,7 +21,7 @@ import Subheader, {
 	SubheaderSeparator,
 } from '../../../../components/layouts/Subheader/Subheader';
 import Button from '../../../../components/ui/Button';
-import priceFormat from '../../../../utils/priceFormat.util';
+import priceFormat from '../../../../Services/utils/priceFormat.util';
 import Badge from '../../../../components/ui/Badge';
 import Radio, { RadioGroup } from '../../../../components/form/Radio';
 import { categoriesDbList } from '../../../../mocks/db/categories.db';

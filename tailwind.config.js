@@ -8,7 +8,7 @@ module.exports = {
 	theme: {
 		extend: {
 			fontFamily: {
-				sans: ['Poppins', ...defaultTheme.fontFamily.sans],
+				sans: ['Roboto', ...defaultTheme.fontFamily.sans],
 			},
 			backgroundImage: {
 				chevronDown: '/src/assets/required/chevron-down.svg',
@@ -16,6 +16,12 @@ module.exports = {
 			},
 			transitionProperty: {
 				margin: 'margin',
+			},
+			SecondFamily: {
+				sans:['League Spartan', ...defaultTheme.fontFamily.sans],
+			},
+			ThirdFamily: {
+				sans:['Poppins', ...defaultTheme.fontFamily.sans],
 			},
 		},
 	},

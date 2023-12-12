@@ -22,7 +22,7 @@ import Card, {
 } from '../../../../components/ui/Card';
 import Button from '../../../../components/ui/Button';
 import Badge from '../../../../components/ui/Badge';
-import getFirstLetter from '../../../../utils/getFirstLetter';
+import getFirstLetter from '../../../../Services/utils/getFirstLetter';
 import TableTemplate, {
 	TableCardFooterTemplate,
 } from '../../../../templates/common/TableParts.template';

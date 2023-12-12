@@ -4,6 +4,7 @@ import Visible from '../../../../components/utils/Visible';
 import Icon from '../../../../components/icon/Icon';
 import useAsideStatus from '../../../../hooks/useAsideStatus';
 import LogoTemplate from '../../Logo/Logo.template';
+// import logo from '../../../../../public/SigmaHealthProWhite.png';
 
 const LogoAndAsideTogglePart = () => {
 	const { asideStatus, setAsideStatus } = useAsideStatus();
@@ -12,6 +13,7 @@ const LogoAndAsideTogglePart = () => {
 			<Visible is={asideStatus}>
 				<Link to='/' aria-label='Logo'>
 					<LogoTemplate className='h-12' />
+					{/* <img src={logo} alt='Sigma Heath Logo' className=' w-full' /> */}
 				</Link>
 			</Visible>
 			<button

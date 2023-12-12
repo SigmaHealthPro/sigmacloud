@@ -1,419 +1,237 @@
-import React, { FC, useEffect, useRef } from 'react';
-import dayjs from 'dayjs';
-import { useFormik } from 'formik';
-import { Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import PageWrapper from '../../../components/layouts/PageWrapper/PageWrapper';
-import Container from '../../../components/layouts/Container/Container';
-import Subheader, {
-	SubheaderLeft,
-	SubheaderRight,
-} from '../../../components/layouts/Subheader/Subheader';
+import React, { useState } from 'react';
+import { BiEditAlt } from 'react-icons/bi';
+import { MdDeleteOutline } from 'react-icons/md';
+import { FaEye } from "react-icons/fa6";
+import { Input, Modal, Form, Popconfirm } from 'antd';
 import Button from '../../../components/ui/Button';
-import Card, {
-	CardBody,
-	CardFooter,
-	CardFooterChild,
-	CardHeader,
-	CardHeaderChild,
-	CardTitle,
-} from '../../../components/ui/Card';
-import NewProjectButtonPartial from '../_partial/NewProjectButton.partial';
-import Dropdown, {
-	DropdownItem,
-	DropdownMenu,
-	DropdownToggle,
-} from '../../../components/ui/Dropdown';
-import projectsDb, { TProject } from '../../../mocks/db/projects.db';
-import Icon from '../../../components/icon/Icon';
-import Header, { HeaderLeft, HeaderRight } from '../../../components/layouts/Header/Header';
-import Checkbox from '../../../components/form/Checkbox';
-import { appPages } from '../../../config/pages.config';
-import DefaultHeaderRightCommon from '../../../templates/layouts/Headers/_common/DefaultHeaderRight.common';
-import Breadcrumb from '../../../components/layouts/Breadcrumb/Breadcrumb';
 
-interface IProjectItemProps {
-	project: TProject;
-}
-const ProjectItem: FC<IProjectItemProps> = ({ project }) => {
+const initialData = [
+	{
+		id: '1',
+		jurisdiction: 'Michigan-JD1',
+		organization: 'CVS Pharmacy',
+		facilityName: 'Troy',
+		address: '123 Main',
+		city: 'Troy',
+		state: 'MI',
+		zipCode: '48098',
+		status: 'Danger',
+	},
+	{
+		id: '2',
+		jurisdiction: 'Michigan-JD2',
+		organization: 'CVS Pharmacy',
+		facilityName: 'Rochester Hills',
+		address: '124 Main',
+		city: 'Rochester Hills',
+		state: 'MI',
+		zipCode: '48099',
+		status: 'Danger',
+	},
+	{
+		id: '3',
+		jurisdiction: 'Michigan-JD1',
+		organization: 'CVS Pharmacy',
+		facilityName: 'Troy',
+		address: '123 Main',
+		city: 'Troy',
+		state: 'MI',
+		zipCode: '48098',
+		status: 'Danger',
+	},
+	{
+		id: '4',
+		jurisdiction: 'Michigan-JD2',
+		organization: 'CVS Pharmacy',
+		facilityName: 'Rochester Hills',
+		address: '124 Main',
+		city: 'Rochester Hills',
+		state: 'MI',
+		zipCode: '48099',
+		status: 'Danger',
+	},
+	{
+		id: '5',
+		jurisdiction: 'Michigan-JD1',
+		organization: 'CVS Pharmacy',
+		facilityName: 'Troy',
+		address: '123 Main',
+		city: 'Troy',
+		state: 'MI',
+		zipCode: '48098',
+		status: 'Danger',
+	},
+	{
+		id: '6',
+		jurisdiction: 'Michigan-JD2',
+		organization: 'CVS Pharmacy',
+		facilityName: 'Rochester Hills',
+		address: '124 Main',
+		city: 'Rochester Hills',
+		state: 'MI',
+		zipCode: '48099',
+		status: 'Danger',
+	},
+];
+
+const ProjectTable: React.FC = () => {
+	const [openModal, setOpenModal] = useState(false);
+	const [datas, setDatas] = useState(initialData || []);
+	const [form] = Form.useForm();
+	const [editingKey, setEditingKey] = useState('');
+
+	const handleAddOrEdit = (id) => {
+		form.validateFields()
+			.then((data) => {
+				const newData = [...datas];
+				const index = newData?.findIndex((item) => id === item?.id);
+
+				if (index > -1) {
+					const item = newData[index];
+					newData.splice(index, 1, { ...item, ...data });
+					setDatas(newData);
+					setEditingKey('');
+				} else {
+					newData.push({ id: Date.now(), ...data });
+					setDatas(newData);
+				}
+				setOpenModal(false);
+			})
+			.catch((info) => {
+				console.log('Validate Failed:', info);
+			});
+	};
+
+	const handleDelete = (id) => {
+		const newData = datas.filter((data) => data?.id !== id);
+		setDatas(newData);
+	};
+
+	const handleEdit = (data) => {
+		form.setFieldsValue({ ...data });
+		setEditingKey(data?.id);
+		setOpenModal(true);
+	};
+
+	const handleCancel = () => {
+		setEditingKey('');
+		setOpenModal(false);
+	};
+
 	return (
-		<Card className='w-full'>
-			<CardHeader>
-				<CardHeaderChild>
-					<CardTitle>
-						<Link to={`../${appPages.projectAppPages.subPages.projectBoardPage.to}`}>
-							{project.name}
-						</Link>
-					</CardTitle>
-				</CardHeaderChild>
-			</CardHeader>
-			<CardBody>
-				<div className='flex flex-wrap gap-4'>
-					<div className='text-zinc-500'>{project.description}</div>
+		<div className='m-10'>
+			<div className='flex items-center justify-between'>
+				<div>
+					<Button
+						variant='outline'
+						type='button'
+						onClick={() => {
+							setOpenModal(true);
+							setEditingKey('');
+						}}
+						>
+						Add New +
+					</Button>
 
-					{/* Only image */}
-					{project.image?.length === 1 && (
-						<div>
-							<img
-								src={project.image[0]}
-								alt={project.name}
-								className='aspect-video rounded-lg object-cover'
-							/>
-						</div>
-					)}
-
-					{/* Multiple images */}
-					{typeof project.image !== 'undefined' &&
-						typeof project.image === 'object' &&
-						project.image?.length > 1 && (
-							<div className='grid grid-cols-12 gap-4'>
-								{project.image.map(
-									(i, index) =>
-										index < 3 && (
-											<img
-												className='col-span-3 aspect-video rounded-lg object-cover'
-												key={i}
-												src={i}
-												alt={project.name}
-											/>
-										),
-								)}
-								{project.image.length > 3 && (
-									<div
-										className='col-span-3 overflow-hidden rounded-lg bg-cover'
-										style={{
-											backgroundImage: `url(${project.image[3]})`,
-										}}>
-										<div className='flex h-full w-full items-center justify-center font-semibold backdrop-blur'>
-											+{project.image.length - 3}
-										</div>
-									</div>
-								)}
-							</div>
-						)}
+					{/* modal */}
+					<Modal
+						title='Basic Modal'
+						open={openModal}
+						onOk={() => handleAddOrEdit(editingKey)}
+						onCancel={handleCancel}>
+						<Form form={form} layout='vertical'>
+							<Form.Item
+								name='jurisdiction'
+								label='Jurisdiction'
+								rules={[{ required: true }]}>
+								<Input />
+							</Form.Item>
+							<Form.Item
+								name='organization'
+								label='Organization'
+								rules={[{ required: true }]}>
+								<Input />
+							</Form.Item>
+							<Form.Item
+								name='facilityName'
+								label='Facility Name'
+								rules={[{ required: true }]}>
+								<Input />
+							</Form.Item>
+							<Form.Item name='address' label='Address' rules={[{ required: true }]}>
+								<Input />
+							</Form.Item>
+							<Form.Item name='city' label='City' rules={[{ required: true }]}>
+								<Input />
+							</Form.Item>
+							<Form.Item name='state' label='State' rules={[{ required: true }]}>
+								<Input />
+							</Form.Item>
+							<Form.Item name='zipCode' label='Zip Code' rules={[{ required: true }]}>
+								<Input />
+							</Form.Item>
+						</Form>
+					</Modal>
 				</div>
-			</CardBody>
-			<CardFooter>
-				<CardFooterChild>
-					{project.users && (
-						<>
-							<div className='flex -space-x-2 overflow-hidden'>
-								{project.users.map(
-									(user, index) =>
-										index < 5 && (
-											<img
-												key={user.id}
-												src={user.image?.thumb}
-												alt={`${user.firstName} ${user.lastName}`}
-												className='inline-block h-8 w-8 rounded-full ring-2 ring-white dark:ring-zinc-900'
-											/>
-										),
-								)}
-							</div>
-							{project.users.length > 5 && (
-								<div className='-ms-2 flex h-8 w-auto min-w-[2rem] items-center justify-center rounded-full border border-dashed border-zinc-500 px-1 text-sm text-zinc-500'>
-									{project.users.length - 5}
-								</div>
-							)}
-						</>
-					)}
-				</CardFooterChild>
-				<CardFooterChild>
-					<div className='flex gap-4'>
-						{project.comments && (
-							<div className='flex items-center gap-2 text-amber-500'>
-								<Icon icon='HeroChatBubbleBottomCenterText' />
-								<div>{project.comments?.length}</div>
-							</div>
-						)}
-						{project.image && (
-							<div className='flex items-center gap-2 text-blue-500'>
-								<Icon icon='HeroPaperClip' />
-								<div>{project.image?.length}</div>
-							</div>
-						)}
-					</div>
-				</CardFooterChild>
-			</CardFooter>
-		</Card>
+
+				<p className='text-sm text-gray-500'>All Pages (1 - 20)</p>
+			</div>
+
+			<div className='relative mt-4 overflow-x-auto rounded-lg bg-white p-5 dark:bg-zinc-900'>
+				<table className='managment_table'>
+					<thead>
+						<tr>
+							<th>
+								<input type='checkbox' name='' id='' />
+							</th>
+							<th>Jurisdiction</th>
+							<th>Organization</th>
+							<th>Facility Name</th>
+							<th>Address</th>
+							<th>City</th>
+							<th>State</th>
+							<th>Zip</th>
+							<th>Action</th>
+						</tr>
+					</thead>
+					<tbody>
+						{datas?.map((data) => (
+							<tr key={data?.id}>
+								<td>
+									<input type='checkbox' name='' id='' />
+								</td>
+								<td>{data?.jurisdiction}</td>
+								<td>{data?.organization}</td>
+								<td>{data?.facilityName}</td>
+								<td>{data?.address}</td>
+								<td>{data?.city}</td>
+								<td>{data?.state}</td>
+								<td>{data?.zipCode}</td>
+								<td>
+									<div className='flex gap-2'>
+									<button onClick={() => handleEdit(data)}>
+										<FaEye />
+										</button>
+										<button onClick={() => handleEdit(data)}>
+											<BiEditAlt className='text-green-600' />
+										</button>
+										<Popconfirm
+											title='Sure to delete?'
+											onConfirm={() => handleDelete(data?.id)}
+											style={{ backgroundColor: '#ffa5' }}>
+											<button>
+												<MdDeleteOutline className='text-red-600' />
+											</button>
+										</Popconfirm>
+									</div>
+								</td>
+							</tr>
+						))}
+					</tbody>
+				</table>
+			</div>
+		</div>
 	);
 };
 
-const ProjectDashboardPage = () => {
-	const { i18n } = useTranslation();
-
-	const formik = useFormik({
-		initialValues: {
-			projects: projectsDb.map((project) => project.id),
-			selectAll: false,
-		},
-		onSubmit: () => {},
-	});
-
-	const filteredProjects = projectsDb.filter((project) =>
-		formik.values.projects.includes(project.id),
-	);
-
-	const ref = useRef<HTMLInputElement>(null);
-	useEffect(() => {
-		if (ref.current) {
-			if (projectsDb.length > filteredProjects.length) {
-				ref.current.checked = false;
-				ref.current.indeterminate = true;
-			} else {
-				ref.current.checked = false;
-				ref.current.indeterminate = false;
-			}
-		}
-		return () => {};
-	}, [filteredProjects.length]);
-
-	return (
-		<>
-			<Header>
-				<HeaderLeft>
-					<Breadcrumb path='Pages / Dashboard' currentPage='Project' />
-				</HeaderLeft>
-				<HeaderRight>
-					<DefaultHeaderRightCommon />
-				</HeaderRight>
-			</Header>
-			<PageWrapper name='Project Dashboard'>
-				<Subheader>
-					<SubheaderLeft>
-						<Dropdown>
-							<DropdownToggle hasIcon={false}>
-								<Button
-									icon='HeroRectangleGroup'
-									variant='outline'
-									rounded='rounded-full'
-									color='zinc'>
-									All Projects
-								</Button>
-							</DropdownToggle>
-							<DropdownMenu className='p-4'>
-								<Checkbox
-									ref={ref}
-									dimension='sm'
-									name='selectAll'
-									label='Select All'
-									onChange={() => {
-										formik
-											.setFieldValue('selectAll', true)
-											.then(() => {})
-											.catch(() => {});
-										formik
-											.setFieldValue(
-												'projects',
-												projectsDb.map((project) => project.id),
-											)
-											.then(() => {})
-											.catch(() => {});
-									}}
-									checked={projectsDb.length === filteredProjects.length}
-								/>
-								{projectsDb.map((project) => (
-									<Checkbox
-										key={project.id}
-										className='ms-4'
-										dimension='sm'
-										id={project.id}
-										name='projects'
-										label={project.name}
-										onChange={formik.handleChange}
-										checked={formik.values.projects?.includes(project.id)}
-									/>
-								))}
-							</DropdownMenu>
-						</Dropdown>
-						<Dropdown>
-							<DropdownToggle hasIcon={false}>
-								<Button
-									icon='HeroBarsArrowDown'
-									variant='outline'
-									rounded='rounded-full'
-									color='zinc'>
-									Sort
-								</Button>
-							</DropdownToggle>
-							<DropdownMenu>
-								<DropdownItem icon='HeroBarsArrowDown'>
-									Sort from A to Z
-								</DropdownItem>
-								<DropdownItem icon='HeroBarsArrowUp'>Sort from Z to A</DropdownItem>
-								<div className='h-0.5 bg-zinc-500/50' />
-								<DropdownItem icon='HeroBarsArrowDown'>
-									Sort from A to Z
-								</DropdownItem>
-								<DropdownItem icon='HeroBarsArrowUp'>Sort from Z to A</DropdownItem>
-							</DropdownMenu>
-						</Dropdown>
-
-						<Button
-							icon='HeroEyeDropper'
-							variant='outline'
-							rounded='rounded-full'
-							color='zinc'>
-							Customize
-						</Button>
-						<div className='relative'>
-							<Button
-								icon='HeroFunnel'
-								variant='outline'
-								rounded='rounded-full'
-								color='zinc'>
-								Filter
-							</Button>
-							<span className='absolute end-0 top-0 flex h-3 w-3'>
-								<span className='absolute inline-flex h-full w-full animate-ping rounded-full bg-violet-400 opacity-75' />
-								<span className='relative inline-flex h-3 w-3 rounded-full bg-violet-500' />
-							</span>
-						</div>
-					</SubheaderLeft>
-					<SubheaderRight>
-						<div className='text-end'>
-							<div>{dayjs().locale(i18n.language).format('LL')}</div>
-							<div className='flex items-center gap-1 text-xs'>
-								<span className='flex h-2 w-2 rounded-full bg-emerald-500' />
-								<span>Edited 3 hours ago</span>
-							</div>
-						</div>
-					</SubheaderRight>
-				</Subheader>
-				<Container>
-					<div className='grid grid-cols-12 gap-4'>
-						<div className='col-span-12 md:col-span-6 xl:col-span-3'>
-							<Card className='!bg-zinc-900/5 dark:!bg-zinc-900/50'>
-								<CardHeader>
-									<CardHeaderChild>
-										<span className='flex h-3 w-3 rounded-full bg-amber-500' />
-										<CardTitle>Backlog</CardTitle>
-									</CardHeaderChild>
-									<CardHeaderChild>
-										<Dropdown>
-											<DropdownToggle hasIcon={false}>
-												<Button icon='HeroEllipsisVertical' />
-											</DropdownToggle>
-											<DropdownMenu placement='bottom-end'>
-												<DropdownItem icon='HeroArchiveBox'>
-													Archived items
-												</DropdownItem>
-												<DropdownItem icon='HeroCog8Tooth'>
-													Settings
-												</DropdownItem>
-												<DropdownItem icon='HeroClipboardDocument'>
-													Make a copy
-												</DropdownItem>
-											</DropdownMenu>
-										</Dropdown>
-									</CardHeaderChild>
-								</CardHeader>
-								<CardBody>
-									<NewProjectButtonPartial />
-								</CardBody>
-								<CardBody>
-									<div className='flex flex-wrap gap-4'>
-										{filteredProjects
-											.filter((filter) => filter.status === 'backlog')
-											.map((project) => (
-												<ProjectItem key={project.id} project={project} />
-											))}
-									</div>
-								</CardBody>
-							</Card>
-						</div>
-						<div className='col-span-12 md:col-span-6 xl:col-span-3'>
-							<Card className='!bg-zinc-900/5 dark:!bg-zinc-900/50'>
-								<CardHeader>
-									<CardHeaderChild>
-										<span className='flex h-3 w-3 rounded-full bg-blue-500' />
-										<CardTitle>In Progress</CardTitle>
-									</CardHeaderChild>
-									<CardHeaderChild>
-										<Dropdown>
-											<DropdownToggle hasIcon={false}>
-												<Button icon='HeroEllipsisVertical' />
-											</DropdownToggle>
-											<DropdownMenu placement='bottom-end'>
-												<DropdownItem icon='HeroArchiveBox'>
-													Archived items
-												</DropdownItem>
-												<DropdownItem icon='HeroCog8Tooth'>
-													Settings
-												</DropdownItem>
-												<DropdownItem icon='HeroClipboardDocument'>
-													Make a copy
-												</DropdownItem>
-											</DropdownMenu>
-										</Dropdown>
-									</CardHeaderChild>
-								</CardHeader>
-								<CardBody>
-									<NewProjectButtonPartial />
-								</CardBody>
-								<CardBody>
-									<div className='flex flex-wrap gap-4'>
-										{filteredProjects
-											.filter((filter) => filter.status === 'inProgress')
-											.map((project) => (
-												<ProjectItem key={project.id} project={project} />
-											))}
-									</div>
-								</CardBody>
-							</Card>
-						</div>
-						<div className='col-span-12 md:col-span-6 xl:col-span-3'>
-							<Card className='!bg-zinc-900/5 dark:!bg-zinc-900/50'>
-								<CardHeader>
-									<CardHeaderChild>
-										<span className='flex h-3 w-3 rounded-full bg-emerald-500' />
-										<CardTitle>Completed</CardTitle>
-									</CardHeaderChild>
-									<CardHeaderChild>
-										<Dropdown>
-											<DropdownToggle hasIcon={false}>
-												<Button icon='HeroEllipsisVertical' />
-											</DropdownToggle>
-											<DropdownMenu placement='bottom-end'>
-												<DropdownItem icon='HeroArchiveBox'>
-													Archived items
-												</DropdownItem>
-												<DropdownItem icon='HeroCog8Tooth'>
-													Settings
-												</DropdownItem>
-												<DropdownItem icon='HeroClipboardDocument'>
-													Make a copy
-												</DropdownItem>
-											</DropdownMenu>
-										</Dropdown>
-									</CardHeaderChild>
-								</CardHeader>
-								<CardBody>
-									<NewProjectButtonPartial />
-								</CardBody>
-								<CardBody>
-									<div className='flex flex-wrap gap-4'>
-										{filteredProjects
-											.filter((filter) => filter.status === 'completed')
-											.map((project) => (
-												<ProjectItem key={project.id} project={project} />
-											))}
-									</div>
-								</CardBody>
-							</Card>
-						</div>
-						<div className='col-span-12 md:col-span-6 xl:col-span-3'>
-							<Card className='!bg-zinc-900/5 dark:!bg-zinc-900/50'>
-								<CardBody>
-									<NewProjectButtonPartial />
-								</CardBody>
-							</Card>
-						</div>
-					</div>
-				</Container>
-			</PageWrapper>
-		</>
-	);
-};
-
-export default ProjectDashboardPage;
+export default ProjectTable;

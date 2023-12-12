@@ -17,7 +17,7 @@ import MdViewer from '../../../../components/MdViewer';
 import Radio, { RadioGroup, TRadioDimension } from '../../../../components/form/Radio';
 import Icon from '../../../../components/icon/Icon';
 import Badge from '../../../../components/ui/Badge';
-import priceFormat from '../../../../utils/priceFormat.util';
+import priceFormat from '../../../../Services/utils/priceFormat.util';
 
 import RadioInterfaceMD from './md/RadioInterface.md';
 import RadioExample1MD from './md/RadioExample1.md';

@@ -7,7 +7,7 @@ import * as HeroIcon from './heroicons';
 import { TIcons } from '../../types/icons.type';
 import { TColors } from '../../types/colors.type';
 import { TColorIntensity } from '../../types/colorIntensities.type';
-import { textColor } from '../../utils/textColor.util';
+import { textColor } from '../../Services/utils/textColor.util';
 import { TFontSizes } from '../../types/fontSizes.type';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

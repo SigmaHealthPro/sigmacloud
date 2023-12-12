@@ -23,14 +23,14 @@ export const appPages = {
 	aiAppPages: {
 		id: 'aiApp',
 		to: '/ai',
-		text: 'AI',
+		text: 'Patient Management',
 		icon: 'HeroRocketLaunch',
 		subPages: {
 			aiDashboardPage: {
 				id: 'aiDashboardPage',
 				to: '/ai/dashboard',
-				text: 'AI Dashboard',
-				icon: 'HeroRocketLaunch',
+				text: 'Dashboard',
+				icon: 'dashboard',
 			},
 			chatPages: {
 				id: 'customerPage',
@@ -60,7 +60,7 @@ export const appPages = {
 						id: 'audioPage',
 						to: '/ai/chat/code',
 						text: 'Code Generation',
-						icon: 'HeroCommandLine',
+						icon: 'HeroCommandLin',
 					},
 				},
 			},
@@ -69,13 +69,13 @@ export const appPages = {
 	salesAppPages: {
 		id: 'salesApp',
 		to: '/sales',
-		text: 'Sales',
+		text: 'Enrollment Request',
 		icon: 'HeroBanknotes',
 		subPages: {
 			salesDashboardPage: {
 				id: 'salesDashboardPage',
 				to: '/',
-				text: 'Sales Dashboard',
+				text: 'Dashboard',
 				icon: 'HeroRectangleGroup',
 			},
 			productPage: {
@@ -128,10 +128,17 @@ export const appPages = {
 			},
 		},
 	},
+	PatientManagement: {
+		id: 'patientManagement',
+		to: '/patient-management',
+		text: 'Patient Management',
+		icon: 'HeroEnvelope',
+		subPages: {},
+	},
 	crmAppPages: {
 		id: 'crmApp',
 		to: '/crm',
-		text: 'CRM',
+		text: 'Vaccine Management',
 		icon: 'HeroUserGroup',
 		subPages: {
 			crmDashboardPage: {
@@ -191,15 +198,15 @@ export const appPages = {
 		},
 	},
 	projectAppPages: {
-		id: 'projectApp',
-		to: '/project',
-		text: 'Project',
+		id: 'SiteManagement',
+		to: '/sitemanagement',
+		text: 'Site Management',
 		icon: 'HeroClipboardDocumentCheck',
 		subPages: {
 			projectDashboardPage: {
-				id: 'projectDashboardPage',
-				to: '/project/dashboard',
-				text: 'Projects Dashboard',
+				id: 'SiteManagement',
+				to: '/site-management',
+				text: 'Site Management',
 				icon: 'HeroClipboardDocumentCheck',
 			},
 			projectBoardPage: {
@@ -217,30 +224,36 @@ export const appPages = {
 	educationAppPages: {
 		id: 'educationApp',
 		to: '/education',
-		text: 'Education',
+		text: 'User	Management',
 		icon: 'HeroBookOpen',
-		subPages: {},
 	},
 	reservationAppPages: {
 		id: 'reservationApp',
 		to: '/reservation',
-		text: 'Reservation',
+		text: 'Access Management',
 		icon: 'HeroCalendarDays',
+		subPages: {},
+	},
+	vaccineForecasting: {
+		id: 'vaccineForecasting',
+		to: '/vaccineForecasting',
+		text: 'vaccine Forecasting',
+		icon: 'HeroEnvelopeOpen',
 		subPages: {},
 	},
 	mailAppPages: {
 		id: 'mailApp',
 		to: '/mail',
-		text: 'Mail',
+		text: 'Reference Data',
 		icon: 'HeroEnvelope',
-		subPages: {
-			inboxPages: {
-				id: 'inboxPages',
-				to: '/mail/inbox',
-				text: 'Inbox',
-				icon: 'HeroEnvelope',
-			},
-		},
+		subPages: {},
+	},
+	reports: {
+		id: 'reports',
+		to: '/reports',
+		text: 'Reports',
+		icon: 'HeroUser',
+		subPages: {},
 	},
 	chatAppPages: {
 		id: 'chatApp',

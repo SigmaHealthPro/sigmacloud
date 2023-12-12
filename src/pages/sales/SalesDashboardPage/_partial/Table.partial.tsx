@@ -13,7 +13,7 @@ import Button from '../../../../components/ui/Button';
 import Table, { TBody, Td, TFoot, Th, THead, Tr } from '../../../../components/ui/Table';
 import Icon from '../../../../components/icon/Icon';
 import Badge from '../../../../components/ui/Badge';
-import priceFormat from '../../../../utils/priceFormat.util';
+import priceFormat from '../../../../Services/utils/priceFormat.util';
 import Progress from '../../../../components/ui/Progress';
 import productsDb, { TProduct } from '../../../../mocks/db/products.db';
 import { appPages } from '../../../../config/pages.config';

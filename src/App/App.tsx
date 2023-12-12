@@ -7,7 +7,7 @@ import HeaderRouter from '../components/router/HeaderRouter';
 import ContentRouter from '../components/router/ContentRouter';
 import FooterRouter from '../components/router/FooterRouter';
 import useFontSize from '../hooks/useFontSize';
-import getOS from '../utils/getOS.util';
+import getOS from '../Services/utils/getOS.util';
 
 const App = () => {
 	getOS();
