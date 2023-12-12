@@ -3,10 +3,7 @@
 
 name: Build and deploy Node.js app to Azure Web App - dev-sigmacloud-app
 
-on:
-  push:
-    branches:
-      - main
+
   workflow_dispatch:
 
 jobs:
