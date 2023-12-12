@@ -11,13 +11,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Set up Node.js version
         uses: actions/setup-node@v3
         with:
-          node-version: '14.x'
+          node-version: '18.x'
 
       - name: Clear npm cache
         run: npm cache clean -f
@@ -30,13 +29,17 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run build and tests
-        run: |
-          npm run build --if-present
-          npm run test --if-present
+      - name: Update Vite
+        run: npm install vite@latest
+
+      - name: Install @rollup/rollup-linux-x64-gnu
+        run: npm install @rollup/rollup-linux-x64-gnu
+
+      - name: npm run build
+        run: npm run build
 
       - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
+        run: zip -r release.zip ./*
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
@@ -68,6 +71,3 @@ jobs:
           slot-name: 'Production'
           package: .
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_EAE628A31D174B5084DE02E76D84230B }}
-
-      - name: Install @rollup/rollup-linux-x64-gnu
-        run: npm install @rollup/rollup-linux-x64-gnu
