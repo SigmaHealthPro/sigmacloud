@@ -28,7 +28,7 @@ jobs:
           npm run test --if-present
       
       - name: Prepare deployment artifact
-        run: Compress-Archive -Path .\* -DestinationPath release.zip -Force -Update -Path '.\node_modules\*' -Exclude '.git\*'
+        run: Compress-Archive -Path .\* -DestinationPath release.zip -Force -Exclude '.git\*'
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
