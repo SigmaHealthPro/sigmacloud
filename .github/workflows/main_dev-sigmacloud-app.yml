@@ -19,7 +19,7 @@ jobs:
       - name: Set up Node.js version
         uses: actions/setup-node@v3
         with:
-          node-version: '18'  # Use a stable LTS version
+          node-version: '14'  # Use a stable LTS version
 
       - name: npm install, build, and test
         run: |
@@ -28,7 +28,7 @@ jobs:
           npm run test --if-present
       
       - name: Prepare deployment artifact
-        run: Compress-Archive -Path .\* -DestinationPath release.zip -Force -Update -Path '.\node_modules\*'
+        run: Compress-Archive -Path .\* -DestinationPath release.zip -Force -Update -Path 'node_modules\*'
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
