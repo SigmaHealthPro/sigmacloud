@@ -28,7 +28,8 @@ jobs:
           npm run test --if-present
       
       - name: Prepare deployment artifact
-        run: Compress-Archive -Path .\* -DestinationPath release.zip -Force -Exclude '.git\*'
+        run: |
+          Get-ChildItem -Recurse | Where-Object { $_.FullName -notmatch '\\.git\\' } | Compress-Archive -DestinationPath release.zip -Force
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
