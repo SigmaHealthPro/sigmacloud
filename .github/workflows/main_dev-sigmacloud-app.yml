@@ -19,7 +19,7 @@ jobs:
       - name: Set up Node.js version
         uses: actions/setup-node@v3
         with:
-          node-version: '18.x'  # Use a stable LTS version
+          node-version: '20.x'  # Use a stable LTS version
 
       - name: npm install, build, and test
         run: |
@@ -29,7 +29,7 @@ jobs:
 
       - name: Prepare deployment artifact
         run: |
-          Get-ChildItem -Recurse | Where-Object { $_.FullName -notmatch '\\.git\\' } | Compress-Archive -DestinationPath release.zip -Force
+          Get-ChildItem -Recurse | Where-Object { $_.FullName -notmatch '\\.git\\' -and $_.FullName -notmatch '\\.github\\' -and $_.FullName -notmatch '\\iis-frontend\\' } | Compress-Archive -DestinationPath release.zip -Force
           Expand-Archive -Path release.zip -DestinationPath release
 
       - name: Upload artifact for deployment job
