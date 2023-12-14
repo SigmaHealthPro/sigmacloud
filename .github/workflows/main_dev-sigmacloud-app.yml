@@ -4,34 +4,38 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Set up Node.js version
         uses: actions/setup-node@v3
         with:
-          node-version: '14.x'  # Use a stable LTS version
+          node-version: '20.x'  # Use a stable LTS version
 
       - name: npm install, build, and test
         run: |
           npm install
           npm run build --if-present
           npm run test --if-present
-
-      # Commented out the Remove-Item step
-      # - name: Remove unnecessary file
-      #   run: Remove-Item -Path 'D:\a\sigmacloud\sigmacloud\release\.github\workflows\main_dev-sigmacloud-app.yml' -Force
-
+      
       - name: Prepare deployment artifact
         run: |
-          Get-ChildItem -Recurse | Compress-Archive -DestinationPath release.zip -Force
-          Expand-Archive -Path release.zip -DestinationPath release
+          Get-ChildItem -Recurse | Where-Object { $_.FullName -notmatch '\\.git\\' } | Compress-Archive -DestinationPath release.zip -Force
+
+      - name: Upload artifact for deployment job
+        uses: actions/upload-artifact@v3
+        with:
+          name: node-app
+          path: release.zip
 
   deploy:
     runs-on: windows-latest
@@ -51,5 +55,5 @@ jobs:
         with:
           app-name: 'dev-sigmacloud-app'
           slot-name: 'Production'
-          package: ./release
+          package: .
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1FB49F843ED74443A690AF0668C70FBC }}
