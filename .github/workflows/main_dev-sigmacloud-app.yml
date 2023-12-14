@@ -29,14 +29,13 @@ jobs:
 
       - name: Prepare deployment artifact
         run: |
-          git archive --format zip -o release.zip HEAD
-          Expand-Archive -Path release.zip -DestinationPath release
+          git archive --format zip -o ${{ github.workspace }}/release.zip HEAD
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
           name: node-app
-          path: release
+          path: ${{ github.workspace }}/release
 
   deploy:
     runs-on: windows-latest
@@ -53,12 +52,12 @@ jobs:
 
       - name: Extract artifact
         run: |
-          Expand-Archive -Path ${{ github.workspace }}/release.zip -DestinationPath ${{ github.workspace }}/release
+          Expand-Archive -Path ${{ github.workspace }}/node-app/release.zip -DestinationPath ${{ github.workspace }}/node-app/release
 
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'dev-sigmacloud-app'
           slot-name: 'Production'
-          package: ${{ github.workspace }}/release
+          package: ${{ github.workspace }}/node-app/release
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1FB49F843ED74443A690AF0668C70FBC }}
