@@ -4,22 +4,19 @@ on:
   push:
     branches:
       - main
-  pull_request:
-    branches:
-      - main
-  workflow_dispatch:
 
 jobs:
   build:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
       - name: Set up Node.js version
         uses: actions/setup-node@v3
         with:
-          node-version: '14.x'  # Use a stable LTS version
+          node-version: '18.x'  # Use a stable LTS version
 
       - name: npm install, build, and test
         run: |
@@ -29,14 +26,8 @@ jobs:
 
       - name: Prepare deployment artifact
         run: |
-          Get-ChildItem -Recurse | Where-Object { $_.FullName -notmatch '\\.git\\' -and $_.FullName -notmatch '\\iis-frontend\\' -and $_.FullName -notmatch '\\.github\\workflows\\' } | Compress-Archive -DestinationPath release.zip -Force
+          Get-ChildItem -Recurse | Where-Object { $_.FullName -notmatch '\\.git\\' } | Compress-Archive -DestinationPath release.zip -Force
           Expand-Archive -Path release.zip -DestinationPath release
-
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v3
-        with:
-          name: node-app
-          path: release
 
   deploy:
     runs-on: windows-latest
