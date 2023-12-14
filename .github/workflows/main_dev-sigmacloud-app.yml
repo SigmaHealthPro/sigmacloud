@@ -56,11 +56,11 @@ jobs:
       - name: Debug - List contents of working directory
         run: ls -R
 
+      - name: Unzip artifact
+        run: unzip -o node-app.zip -d node-app/
+
       - name: Debug - List contents of node-app directory
         run: ls -R node-app
-
-      - name: Unzip artifact
-        run: unzip -o node-app/node-app.zip -d node-app/
 
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v2
