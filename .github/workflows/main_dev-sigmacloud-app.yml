@@ -51,10 +51,14 @@ jobs:
         with:
           name: node-app
       
+      - name: Extract artifact
+        run: |
+          Expand-Archive -Path node-app.zip -DestinationPath node-app
+
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'dev-sigmacloud-app'
           slot-name: 'Production'
-          package: ./release
+          package: ./node-app
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1FB49F843ED74443A690AF0668C70FBC }}
