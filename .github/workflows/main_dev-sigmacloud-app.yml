@@ -53,6 +53,9 @@ jobs:
         with:
           name: node-app
 
+      - name: Debug - List contents of node-app directory
+        run: ls -R node-app
+
       - name: Unzip artifact
         run: unzip -o node-app/node-app.zip -d node-app/
 
