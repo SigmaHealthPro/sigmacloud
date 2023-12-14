@@ -24,6 +24,10 @@ jobs:
           npm run build --if-present
           npm run test --if-present
 
+      # Commented out the Remove-Item step
+      # - name: Remove unnecessary file
+      #   run: Remove-Item -Path 'D:\a\sigmacloud\sigmacloud\release\.github\workflows\main_dev-sigmacloud-app.yml' -Force
+
       - name: Prepare deployment artifact
         run: |
           Get-ChildItem -Recurse | Compress-Archive -DestinationPath release.zip -Force
