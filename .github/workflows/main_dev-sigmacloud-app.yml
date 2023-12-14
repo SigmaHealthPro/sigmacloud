@@ -19,7 +19,7 @@ jobs:
       - name: Set up Node.js version
         uses: actions/setup-node@v3
         with:
-          node-version: '20.x'  # Use a stable LTS version
+          node-version: '18.x'  # Use a stable LTS version
 
       - name: npm install, build, and test
         run: |
@@ -31,6 +31,11 @@ jobs:
         run: |
           Get-ChildItem -Recurse -Exclude .git, .github, iis-frontend | Compress-Archive -DestinationPath release.zip -Force
           Expand-Archive -Path release.zip -DestinationPath release
+
+          # Check if the file exists before attempting to remove it
+          if (Test-Path .\release\workflows\main_dev-sigmacloud-app.yml) {
+            Remove-Item -Path .\release\workflows\main_dev-sigmacloud-app.yml -Force
+          }
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
