@@ -115,9 +115,7 @@ const CategoryPage = lazy(() => import('../pages/sales/categories/CategoryPage/C
 /**
  * CRM
  */
-const CustomerDashboardPage = lazy(
-	() => import('../pages/crm/CustomerDashboardPage/CustomerDashboard.page'),
-);
+
 const CustomerListPage = lazy(
 	() => import('../pages/crm/customer/CustomerListPage/CustomerList.page'),
 );
@@ -128,9 +126,6 @@ const RolePage = lazy(() => import('../pages/crm/role/RolePage/Role.page'));
 /**
  * Project
  */
-const ProjectDashboardPage = lazy(
-	() => import('../pages/project/ProjectDashboardPage/ProjectDashboard.page'),
-);
 const ProjectBoardPage = lazy(() => import('../pages/project/ProjectBoardPage/ProjectBoard.page'));
 
 const ExamplesPage = lazy(() => import('../pages/ExamplePage/Examples.page'));
@@ -186,10 +181,7 @@ const contentRoutes: RouteProps[] = [
 	/**
 	 * CRM::BEGIN
 	 */
-	{
-		path: appPages.crmAppPages.subPages.crmDashboardPage.to,
-		element: <CustomerDashboardPage />,
-	},
+	
 	{
 		path: appPages.crmAppPages.subPages.customerPage.subPages.listPage.to,
 		element: <CustomerListPage />,
@@ -213,14 +205,7 @@ const contentRoutes: RouteProps[] = [
 	/**
 	 * Project::BEGIN
 	 */
-	{
-		path: appPages.projectAppPages.subPages.projectDashboardPage.to,
-		element: <ProjectDashboardPage />,
-	},
-	{
-		path: `${appPages.projectAppPages.subPages.projectBoardPageLink.to}/:id`,
-		element: <ProjectBoardPage />,
-	},
+	
 	/**
 	 * Project::END
 	 */

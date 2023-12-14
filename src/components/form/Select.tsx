@@ -23,6 +23,7 @@ interface ISelectProps
 	dimension?: TSelectDimension;
 	value?: string | number | readonly string[] | undefined;
 	variant?: TSelectVariants;
+	placeholder?: string;
 }
 const Select: FC<ISelectProps> = (props) => {
 	const {
@@ -120,6 +121,7 @@ Select.defaultProps = {
 	dimension: 'default',
 	value: undefined,
 	variant: 'solid',
+	placeholder: undefined
 };
 
 export default Select;
