@@ -19,7 +19,7 @@ jobs:
       - name: Set up Node.js version
         uses: actions/setup-node@v3
         with:
-          node-version: '18.x'  # Use a stable LTS version
+          node-version: '20.x'  # Use a stable LTS version
 
       - name: npm install, build, and test
         run: |
@@ -29,13 +29,13 @@ jobs:
 
       - name: Prepare deployment artifact
         run: |
-          git archive --format zip -o ${{ github.workspace }}/release.zip HEAD
+          Get-ChildItem -Recurse -Exclude .git, .github, iis-frontend | Compress-Archive -DestinationPath release.zip -Force
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
           name: node-app
-          path: ${{ github.workspace }}/release
+          path: release.zip
 
   deploy:
     runs-on: windows-latest
@@ -49,15 +49,11 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: node-app
-
-      - name: Extract artifact
-        run: |
-          Expand-Archive -Path ${{ github.workspace }}/node-app/release.zip -DestinationPath ${{ github.workspace }}/node-app/release
-
+      
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'dev-sigmacloud-app'
           slot-name: 'Production'
-          package: ${{ github.workspace }}/node-app/release
+          package: .
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1FB49F843ED74443A690AF0668C70FBC }}
