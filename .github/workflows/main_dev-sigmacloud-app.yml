@@ -14,32 +14,19 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Node.js version
         uses: actions/setup-node@v3
         with:
-          node-version: '18'  # Use a stable LTS version
+          node-version: '14'  # Use a stable LTS version
 
-      # Install dependencies
-      - name: Install dependencies (excluding incompatible)
-        run: npm install --ignore-scripts
+      - name: Install dependencies
+        run: npm install
 
-      # Install rollup manually with platform check
-      - name: Install rollup for current platform
-        run: |
-          if [ "$(uname)" == "Darwin" ]; then
-            npm install "@rollup/rollup-darwin-x64"
-          else
-            # Replace "@rollup/rollup-darwin-x64" with a compatible package for your platform
-            npm install "@rollup/plugin-node-resolve"
-          fi
-
-      # Run build script
-      - name: npm run build
-        run: npm run build
-
-      # Upload artifact for deployment job
+      - name: Build and test
+        run: npm run build --if-present && npm run test --if-present
+      
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
@@ -52,14 +39,13 @@ jobs:
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-
+    
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v3
         with:
           name: node-app
-
-      # Deploy to Azure Web App
+      
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v2
         with:
