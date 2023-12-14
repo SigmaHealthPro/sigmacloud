@@ -29,6 +29,18 @@ jobs:
 
       - name: Prepare deployment artifact
         run: |
+          $filePath = "$env:GITHUB_WORKSPACE\release\.github\workflows\azure-webapps-node.yml"
+
+          # Debug: Output contents of the directories
+          Get-ChildItem -Recurse | Write-Host
+
+          if (Test-Path $filePath) {
+            Write-Host "File exists: $($filePath)"
+            Remove-Item -Path $filePath -Force
+          } else {
+            Write-Host "File not found: $($filePath)"
+          }
+
           Get-ChildItem -Recurse | Where-Object { $_.FullName -notmatch '\\.git\\' -and $_.FullName -notmatch '\\iis-frontend\\' } | Compress-Archive -DestinationPath release.zip -Force
           Expand-Archive -Path release.zip -DestinationPath release
 
