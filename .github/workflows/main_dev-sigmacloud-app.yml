@@ -29,13 +29,8 @@ jobs:
 
       - name: Prepare deployment artifact
         run: |
-          Get-ChildItem -Recurse -Exclude .git, .github, iis-frontend | Compress-Archive -DestinationPath release.zip -Force
+          git archive --format zip -o release.zip HEAD
           Expand-Archive -Path release.zip -DestinationPath release
-
-          # Check if the file exists before attempting to remove it
-          if (Test-Path .\release\workflows\main_dev-sigmacloud-app.yml) {
-            Remove-Item -Path .\release\workflows\main_dev-sigmacloud-app.yml -Force
-          }
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
