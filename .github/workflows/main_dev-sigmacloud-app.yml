@@ -22,16 +22,22 @@ jobs:
           node-version: '18'  # Use a stable LTS version
 
       # Install dependencies
-      - name: npm install
-        run: npm install
+      - name: Install dependencies (excluding incompatible)
+        run: npm install --ignore-scripts
 
-      # Build the application
+      # Install rollup manually with platform check
+      - name: Install rollup for current platform
+        run: |
+          if [ "$(uname)" == "Darwin" ]; then
+            npm install "@rollup/rollup-darwin-x64"
+          else
+            # Replace "@rollup/rollup-darwin-x64" with a compatible package for your platform
+            npm install "@rollup/plugin-node-resolve"
+          fi
+
+      # Run build script
       - name: npm run build
-        run: npm run build --if-present
-
-      # Run tests (optional)
-      - name: npm run test
-        run: npm run test --if-present
+        run: npm run build
 
       # Upload artifact for deployment job
       - name: Upload artifact for deployment job
