@@ -51,19 +51,20 @@ jobs:
       - name: Download artifact from build job
         uses: actions/download-artifact@v3
         with:
-          name: node-app
+          name: node-app  # Update to match the artifact name
+          path: dist
 
       - name: Debug - List contents of working directory
         run: ls -R
 
       - name: Debug - List contents of node-app directory
-        run: ls -R node-app
+        run: ls -R dist/node-app  # Update to match the artifact name
 
       - name: Debug - Check disk space before deployment
         run: df -h
 
       - name: Unzip artifact
-        run: unzip -o node-app/node-app.zip -d /tmp/zipdeploy/extracted
+        run: unzip -o dist/node-app/node-app.zip -d /tmp/zipdeploy/extracted
 
       - name: Debug - List contents of extracted folder
         run: ls -R /tmp/zipdeploy/extracted
