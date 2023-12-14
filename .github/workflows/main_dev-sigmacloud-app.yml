@@ -56,16 +56,22 @@ jobs:
       - name: Debug - List contents of working directory
         run: ls -R
 
-      - name: Unzip artifact
-        run: unzip -o node-app.zip -d node-app/
-
       - name: Debug - List contents of node-app directory
         run: ls -R node-app
+
+      - name: Debug - Check disk space before deployment
+        run: df -h
+
+      - name: Unzip artifact
+        run: unzip -o node-app/node-app.zip -d /tmp/zipdeploy/extracted
+
+      - name: Debug - List contents of extracted folder
+        run: ls -R /tmp/zipdeploy/extracted
 
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'dev-sigmacloud-app'
           slot-name: 'Production'
-          package: node-app
+          package: /tmp/zipdeploy/extracted
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1FB49F843ED74443A690AF0668C70FBC }}
