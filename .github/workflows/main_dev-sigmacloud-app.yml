@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -25,23 +25,16 @@ jobs:
         run: npm install
 
       - name: Build and test
-        run: |
-          npm run build --if-present
-          npm run test --if-present
-
-      - name: Create ZIP archive
-        run: |
-          mkdir dist
-          zip -r dist/node-app.zip *
-
+        run: npm run build --if-present && npm run test --if-present
+      
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
           name: node-app
-          path: dist
+          path: .
 
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     needs: build
     environment:
       name: 'Production'
@@ -52,27 +45,11 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: node-app
-          path: dist  # Update to match the artifact path
-
-      - name: Debug - List contents of working directory
-        run: ls -R
-
-      - name: Debug - List contents of node-app directory
-        run: ls -R dist/node-app  # Update to match the artifact path
-
-      - name: Debug - Check disk space before deployment
-        run: df -h
-
-      - name: Unzip artifact
-        run: unzip -o dist/node-app.zip -d /tmp/zipdeploy/extracted
-
-      - name: Debug - List contents of extracted folder
-        run: ls -R /tmp/zipdeploy/extracted
-
+      
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'dev-sigmacloud-app'
           slot-name: 'Production'
-          package: /tmp/zipdeploy/extracted
+          package: .
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1FB49F843ED74443A690AF0668C70FBC }}
