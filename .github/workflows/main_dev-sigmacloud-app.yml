@@ -29,10 +29,10 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-        
+
       - name: Build for production
         run: npm run build
-        
+
       - name: Archive project
         run: Compress-Archive -Path . -DestinationPath dist\node-app.zip
 
@@ -55,8 +55,9 @@ jobs:
           if (Test-Path C:\local\Temp\zipdeploy) {
             Remove-Item -Recurse -Force C:\local\Temp\zipdeploy
           }
+
       - name: Clean up server folder
-        run: Remove-Item -Recurse -Force .\* # Remove the contents of the directory
+        run: Remove-Item -Recurse -Force .\* -ErrorAction SilentlyContinue # Remove the contents of the directory, ignore errors if the directory is empty
 
       - name: Download artifact from build job
         uses: actions/download-artifact@v3
@@ -65,12 +66,14 @@ jobs:
 
       - name: Unzip artifact
         run: Expand-Archive -Path node-app.zip -DestinationPath .
-        
+
       - name: Remove original .zip file
         run: Remove-Item -Path .\node-app.zip
-     
+
       - name: Move files to root
-        run: Move-Item -Path sigmacloud\* -Destination .
+        run: |
+          Remove-Item -Recurse -Force * -ErrorAction SilentlyContinue
+          Move-Item -Path .\sigmacloud\* -Destination .\ -Force -ErrorAction SilentlyContinue
 
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v2
