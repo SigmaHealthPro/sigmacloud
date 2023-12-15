@@ -69,7 +69,6 @@ jobs:
 
       - name: Move files to root
         run: |
-          Remove-Item -Recurse -Force * -ErrorAction SilentlyContinue
           Move-Item -Path .\sigmacloud\* -Destination .\ -Force -ErrorAction SilentlyContinue
 
       - name: 'Deploy to Azure Web App'
