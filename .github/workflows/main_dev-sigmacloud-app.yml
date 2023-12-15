@@ -34,10 +34,12 @@ jobs:
         run: npm run build
       
       - name: Lint and format code
-        run: npm run lint:fix || exit 0
+        run: npm run lint:fix
+        continue-on-error: true
          
       - name: Build for icon
-        run: npm run icon || exit 0
+        run: npm run icon 
+        continue-on-error: true
            
       - name: Archive project
         run: Compress-Archive -Path . -DestinationPath dist\node-app.zip
