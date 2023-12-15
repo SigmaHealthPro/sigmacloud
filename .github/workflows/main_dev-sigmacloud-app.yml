@@ -27,6 +27,9 @@ jobs:
       - name: Build and test
         run: npm run build --if-present && npm run test --if-present
       
+      - name: Create dist folder
+        run: mkdir dist
+
       - name: Archive project
         run: Compress-Archive -Path . -DestinationPath dist\node-app.zip
 
