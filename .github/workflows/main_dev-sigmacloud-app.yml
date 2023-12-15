@@ -19,7 +19,7 @@ jobs:
       - name: Set up Node.js version
         uses: actions/setup-node@v3
         with:
-          node-version: '14'  # Use a stable LTS version
+          node-version: '18'  # Use a stable LTS version
 
       - name: Install dependencies
         run: npm install
@@ -63,5 +63,5 @@ jobs:
         with:
           app-name: 'dev-sigmacloud-app'
           slot-name: 'Production'
-          package: ${{ github.workspace }}/dist/node-app.zip
+          package: D:\\a\\sigmacloud\\sigmacloud\\dist\\node-app.zip
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1FB49F843ED74443A690AF0668C70FBC }}
