@@ -62,7 +62,7 @@ jobs:
         run: sudo apt-get install unzip
 
       - name: Unzip artifact
-        run: unzip -o node-app.zip -d extracted
+        run: unzip -o node-app.zip -d .
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v2
         with:
