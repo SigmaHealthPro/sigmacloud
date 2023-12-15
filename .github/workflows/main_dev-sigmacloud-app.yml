@@ -60,10 +60,13 @@ jobs:
 
       - name: Unzip artifact
         run: Expand-Archive -Path node-app.zip -DestinationPath .
+        
+      - name: Remove original .zip file
+        run: Remove-Item -Path node-app.zip
 
       # Add this step to remove existing content in the server folder
       - name: Clean server folder
-        run: Remove-Item -Recurse -Force .
+        run: Remove-Item -Recurse -Force .\* # Remove the contents of the directory
 
       - name: Move files to root
         run: Move-Item -Path sigmacloud\* -Destination .
