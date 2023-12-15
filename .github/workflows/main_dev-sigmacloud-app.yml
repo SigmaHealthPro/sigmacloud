@@ -67,9 +67,12 @@ jobs:
       # Add this step to remove existing content in the server folder
       - name: Clean server folder
         run: Remove-Item -Recurse -Force .\* # Remove the contents of the directory
+      
+      - name: Debug - List contents of working directory
+        run: ls -R
 
       - name: Move files to root
-        run: Move-Item -Path sigmacloud\* -Destination .
+        run: Move-Item -Path .\sigmacloud\* -Destination .
 
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v2
