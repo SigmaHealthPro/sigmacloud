@@ -58,11 +58,9 @@ jobs:
         with:
           name: node-app
           
-      - name: Install unzip
-        run: sudo apt-get install unzip
-
+     
       - name: Unzip artifact
-        run: unzip -o node-app.zip -d .
+        run: Expand-Archive -Path node-app.zip -DestinationPath .
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v2
         with:
@@ -70,6 +68,3 @@ jobs:
           slot-name: 'Production'
           package: .  # Use the current working directory
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1FB49F843ED74443A690AF0668C70FBC }}
-
-      - name: Unzip artifact
-        run: Expand-Archive -Path ./node-app.zip -DestinationPath .
