@@ -39,29 +39,29 @@ jobs:
           name: node-app
           path: dist
 
-  deploy:
-    runs-on: windows-latest
-    needs: build
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    
-    steps:
-      - name: Clean up temp folders
-        run: |
-          if (Test-Path C:\local\Temp\zipdeploy) {
-            Remove-Item -Recurse -Force C:\local\Temp\zipdeploy
-          }
+deploy:
+  runs-on: windows-latest
+  needs: build
+  environment:
+    name: 'Production'
+    url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v3
-        with:
-          name: node-app
+  steps:
+    - name: Clean up temp folders
+      run: |
+        if (Test-Path C:\local\Temp\zipdeploy) {
+          Remove-Item -Recurse -Force C:\local\Temp\zipdeploy
+        }
 
-      - name: 'Deploy to Azure Web App'
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: 'dev-sigmacloud-app'
-          slot-name: 'Production'
-          package: D:\\a\\sigmacloud\\sigmacloud\\dist\\node-app.zip
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1FB49F843ED74443A690AF0668C70FBC }}
+    - name: Download artifact from build job
+      uses: actions/download-artifact@v3
+      with:
+        name: node-app
+
+    - name: 'Deploy to Azure Web App'
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: 'dev-sigmacloud-app'
+        slot-name: 'Production'
+        package: ./dist/node-app.zip  # Update the path here
+        publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1FB49F843ED74443A690AF0668C70FBC }}
