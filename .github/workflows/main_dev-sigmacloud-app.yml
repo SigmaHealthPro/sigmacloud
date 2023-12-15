@@ -55,6 +55,8 @@ jobs:
           if (Test-Path C:\local\Temp\zipdeploy) {
             Remove-Item -Recurse -Force C:\local\Temp\zipdeploy
           }
+      - name: Clean up server folder
+        run: Remove-Item -Recurse -Force .\* # Remove the contents of the directory
 
       - name: Download artifact from build job
         uses: actions/download-artifact@v3
