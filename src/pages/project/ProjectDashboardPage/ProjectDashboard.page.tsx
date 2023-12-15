@@ -72,6 +72,17 @@ const initialData = [
 		zipCode: '48099',
 		status: 'Danger',
 	},
+	{
+		id: '7',
+		jurisdiction: 'Michigan-JD2',
+		organization: 'CVS Pharmacy',
+		facilityName: 'Rochester Hills',
+		address: '124 Main',
+		city: 'Rochester Hills',
+		state: 'MI',
+		zipCode: '48099',
+		status: 'Danger',
+	},
 ];
 
 const ProjectTable: React.FC = () => {
@@ -80,7 +91,7 @@ const ProjectTable: React.FC = () => {
 	const [form] = Form.useForm();
 	const [editingKey, setEditingKey] = useState('');
 
-	const handleAddOrEdit = (id) => {
+	const handleAddOrEdit = (id: string) => {
 		form.validateFields()
 			.then((data) => {
 				const newData = [...datas];
@@ -102,12 +113,12 @@ const ProjectTable: React.FC = () => {
 			});
 	};
 
-	const handleDelete = (id) => {
+	const handleDelete = (id: string) => {
 		const newData = datas.filter((data) => data?.id !== id);
 		setDatas(newData);
 	};
 
-	const handleEdit = (data) => {
+	const handleEdit = (data: { id: any; jurisdiction?: string; organization?: string; facilityName?: string; address?: string; city?: string; state?: string; zipCode?: string; status?: string; }) => {
 		form.setFieldsValue({ ...data });
 		setEditingKey(data?.id);
 		setOpenModal(true);
@@ -124,7 +135,6 @@ const ProjectTable: React.FC = () => {
 				<div>
 					<Button
 						variant='outline'
-						type='button'
 						onClick={() => {
 							setOpenModal(true);
 							setEditingKey('');

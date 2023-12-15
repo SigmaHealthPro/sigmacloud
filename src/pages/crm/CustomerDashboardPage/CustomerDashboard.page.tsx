@@ -26,7 +26,7 @@ const VaccineManagement: React.FC = () => {
 	const [form] = Form.useForm();
 	const [editingKey, setEditingKey] = useState('');
 
-	const handleAddOrEdit = (id) => {
+	const handleAddOrEdit = (id: string) => {
 		form.validateFields()
 			.then((data) => {
 				const newData = [...datas];
@@ -48,12 +48,12 @@ const VaccineManagement: React.FC = () => {
 			});
 	};
 
-	const handleDelete = (id) => {
+	const handleDelete = (id: string) => {
 		const newData = datas.filter((data) => data?.id !== id);
 		setDatas(newData);
 	};
 
-	const handleEdit = (data) => {
+	const handleEdit = (data: { id: any; order_date?: string; date_amount?: string; quantity?: string; }) => {
 		form.setFieldsValue({ ...data });
 		setEditingKey(data?.id);
 		setOpenModal(true);
@@ -160,7 +160,6 @@ const VaccineManagement: React.FC = () => {
 					<div className='mt-8 flex items-center justify-between'>
 						<Button
 							variant='outline'
-							type='button'
 							onClick={() => {
 								setOpenModal(true);
 								setEditingKey('');
