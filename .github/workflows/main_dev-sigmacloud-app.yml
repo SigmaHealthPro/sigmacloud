@@ -63,5 +63,5 @@ jobs:
         with:
           app-name: 'dev-sigmacloud-app'
           slot-name: 'Production'
-          package: dist\node-app.zip
+          package: ${{ github.workspace }}/dist/node-app.zip
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1FB49F843ED74443A690AF0668C70FBC }}
