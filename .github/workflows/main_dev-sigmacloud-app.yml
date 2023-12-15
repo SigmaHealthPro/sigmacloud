@@ -56,9 +56,6 @@ jobs:
             Remove-Item -Recurse -Force C:\local\Temp\zipdeploy
           }
 
-      - name: Clean up server folder
-        run: Remove-Item -Recurse -Force .\* -ErrorAction SilentlyContinue # Remove the contents of the directory, ignore errors if the directory is empty
-
       - name: Download artifact from build job
         uses: actions/download-artifact@v3
         with:
