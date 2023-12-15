@@ -29,7 +29,10 @@ jobs:
 
       - name: Install dependencies
         run: npm install
-
+        
+      - name: Build for production
+        run: npm run build
+        
       - name: Archive project
         run: Compress-Archive -Path . -DestinationPath dist\node-app.zip
 
