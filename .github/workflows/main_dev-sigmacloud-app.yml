@@ -65,3 +65,6 @@ jobs:
           slot-name: 'Production'
           package: .  # Use the current working directory
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1FB49F843ED74443A690AF0668C70FBC }}
+
+      - name: Unzip artifact
+        run: Expand-Archive -Path ./node-app.zip -DestinationPath .
