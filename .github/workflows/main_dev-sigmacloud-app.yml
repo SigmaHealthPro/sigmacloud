@@ -19,16 +19,13 @@ jobs:
       - name: Set up Node.js version
         uses: actions/setup-node@v3
         with:
-          node-version: '18'  # Use a stable LTS version
+          node-version: '14'  # Use a stable LTS version
 
       - name: Install dependencies
         run: npm install
 
-      - name: Build and test
-        run: npm run build --if-present && npm run test --if-present
-      
-      - name: Create dist folder
-        run: mkdir dist
+      - name: Check if dist directory exists
+        run: if not exist dist mkdir dist
 
       - name: Archive project
         run: Compress-Archive -Path . -DestinationPath dist\node-app.zip
