@@ -32,7 +32,13 @@ jobs:
 
       - name: Build for production
         run: npm run build
-
+      
+      - name: Build for lint
+        run: npm run lint
+        
+      - name: Build for icon
+        run: npm run icon
+        
       - name: Archive project
         run: Compress-Archive -Path . -DestinationPath dist\node-app.zip
 
