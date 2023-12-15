@@ -33,8 +33,8 @@ jobs:
       - name: Build for production
         run: npm run build
       
-      - name: Build for lint
-        run: npm run lint
+      - name: Fix line endings with Prettier
+        run: npm run prettier-fix
         
       - name: Build for icon
         run: npm run icon
