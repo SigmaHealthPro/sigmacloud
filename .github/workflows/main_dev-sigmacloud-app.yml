@@ -19,7 +19,7 @@ jobs:
       - name: Set up Node.js version
         uses: actions/setup-node@v3
         with:
-          node-version: '14'  # Use a stable LTS version
+          node-version: '18'  # Use a stable LTS version
 
       - name: Check if dist directory exists
         run: |
@@ -57,7 +57,12 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: node-app
+          
+      - name: Install unzip
+        run: sudo apt-get install unzip
 
+      - name: Unzip artifact
+        run: unzip -o node-app.zip -d extracted
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v2
         with:
