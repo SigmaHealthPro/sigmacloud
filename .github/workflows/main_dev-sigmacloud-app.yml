@@ -21,11 +21,14 @@ jobs:
         with:
           node-version: '14'  # Use a stable LTS version
 
+      - name: Check if dist directory exists
+        run: |
+          if (!(Test-Path -Path dist)) {
+            New-Item -ItemType Directory -Path dist
+          }
+
       - name: Install dependencies
         run: npm install
-
-      - name: Check if dist directory exists
-        run: if not exist dist mkdir dist
 
       - name: Archive project
         run: Compress-Archive -Path . -DestinationPath dist\node-app.zip
