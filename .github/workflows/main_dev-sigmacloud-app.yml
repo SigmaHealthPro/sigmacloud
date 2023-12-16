@@ -75,9 +75,9 @@ jobs:
       - name: Remove original .zip file
         run: Remove-Item -Path .\node-app.zip
 
-      - name: Copy files to root
+      - name: Move files to root
         run: |
-             robocopy .\sigmacloud\ .\ /E /MOVE /IS
+          Move-Item -Path .\sigmacloud\* -Destination .\ -Force -ErrorAction SilentlyContinue
 
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v2
