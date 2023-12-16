@@ -76,8 +76,7 @@ jobs:
         run: Remove-Item -Path .\node-app.zip
 
       - name: Move files to root
-        run: |
-          Move-Item -Path .\sigmacloud\* -Destination .\ -Force -ErrorAction SilentlyContinue
+        run: Move-Item -Path .\dist\* -Destination .\ -Force
 
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v2
