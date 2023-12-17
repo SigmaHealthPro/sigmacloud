@@ -29,7 +29,6 @@ import Subheader, {
 	SubheaderLeft,
 	SubheaderRight,
 } from '../../../../components/layouts/Subheader/Subheader';
-import FieldWrap from '../../../../components/form/FieldWrap';
 import Dropdown, {
 	DropdownItem,
 	DropdownMenu,
@@ -39,6 +38,7 @@ import Dropdown, {
 import TableTemplate, {
 	TableCardFooterTemplate,
 } from '../../../../templates/common/TableParts.template';
+import FieldWrap from '../../../../components/form/FieldWrap';
 
 const columnHelper = createColumnHelper<TProduct>();
 

@@ -124,7 +124,7 @@ export const DropdownToggle: FC<IDropdownToggleProps> = (props) => {
 					rightIcon: hasIcon
 						? // @ts-ignore
 						  (children.type.displayName === 'Button' && 'HeroChevronDown') ||
-						  'HeroChevronRight'
+						  'HeroEllipsisVertical'
 						: undefined,
 					isActive: isOpen,
 					className: classNames(

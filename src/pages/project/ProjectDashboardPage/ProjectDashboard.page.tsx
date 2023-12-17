@@ -1,247 +1,243 @@
 import React, { useState } from 'react';
-import { BiEditAlt } from 'react-icons/bi';
-import { MdDeleteOutline } from 'react-icons/md';
-import { FaEye } from "react-icons/fa6";
-import { Input, Modal, Form, Popconfirm } from 'antd';
+import {
+	createColumnHelper,
+	getCoreRowModel,
+	getFilteredRowModel,
+	getPaginationRowModel,
+	getSortedRowModel,
+	SortingState,
+	useReactTable,
+} from '@tanstack/react-table';
+import { Link } from 'react-router-dom';
+import PageWrapper from '../../../components/layouts/PageWrapper/PageWrapper';
+import Container from '../../../components/layouts/Container/Container';
+import Badge from '../../../components/ui/Badge';
+import Card, {
+	CardBody,
+	CardHeader,
+	CardHeaderChild,
+	CardTitle,
+} from '../../../components/ui/Card';
 import Button from '../../../components/ui/Button';
+import Icon from '../../../components/icon/Icon';
+import Input from '../../../components/form/Input';
+import { appPages } from '../../../config/pages.config';
+import Subheader, {
+	SubheaderLeft,
+	SubheaderRight,
+} from '../../../components/layouts/Subheader/Subheader';
+import FieldWrap from '../../../components/form/FieldWrap';
+import Dropdown, {
+	DropdownItem,
+	DropdownMenu,
+	DropdownNavLinkItem,
+	DropdownToggle,
+} from '../../../components/ui/Dropdown';
+import TableTemplate, {
+	TableCardFooterTemplate,
+} from '../../../templates/common/TableParts.template';
+import TsiteManageDb, { SiteManageData } from '../../../mocks/db/Sitemanagement';
+import { HeroAdjustmentsVertical } from '../../../components/icon/heroicons';
 
-const initialData = [
-	{
-		id: '1',
-		jurisdiction: 'Michigan-JD1',
-		organization: 'CVS Pharmacy',
-		facilityName: 'Troy',
-		address: '123 Main',
-		city: 'Troy',
-		state: 'MI',
-		zipCode: '48098',
-		status: 'Danger',
-	},
-	{
-		id: '2',
-		jurisdiction: 'Michigan-JD2',
-		organization: 'CVS Pharmacy',
-		facilityName: 'Rochester Hills',
-		address: '124 Main',
-		city: 'Rochester Hills',
-		state: 'MI',
-		zipCode: '48099',
-		status: 'Danger',
-	},
-	{
-		id: '3',
-		jurisdiction: 'Michigan-JD1',
-		organization: 'CVS Pharmacy',
-		facilityName: 'Troy',
-		address: '123 Main',
-		city: 'Troy',
-		state: 'MI',
-		zipCode: '48098',
-		status: 'Danger',
-	},
-	{
-		id: '4',
-		jurisdiction: 'Michigan-JD2',
-		organization: 'CVS Pharmacy',
-		facilityName: 'Rochester Hills',
-		address: '124 Main',
-		city: 'Rochester Hills',
-		state: 'MI',
-		zipCode: '48099',
-		status: 'Danger',
-	},
-	{
-		id: '5',
-		jurisdiction: 'Michigan-JD1',
-		organization: 'CVS Pharmacy',
-		facilityName: 'Troy',
-		address: '123 Main',
-		city: 'Troy',
-		state: 'MI',
-		zipCode: '48098',
-		status: 'Danger',
-	},
-	{
-		id: '6',
-		jurisdiction: 'Michigan-JD2',
-		organization: 'CVS Pharmacy',
-		facilityName: 'Rochester Hills',
-		address: '124 Main',
-		city: 'Rochester Hills',
-		state: 'MI',
-		zipCode: '48099',
-		status: 'Danger',
-	},
-	{
-		id: '7',
-		jurisdiction: 'Michigan-JD2',
-		organization: 'CVS Pharmacy',
-		facilityName: 'Rochester Hills',
-		address: '124 Main',
-		city: 'Rochester Hills',
-		state: 'MI',
-		zipCode: '48099',
-		status: 'Danger',
-	},
+const columnHelper = createColumnHelper<SiteManageData>();
+
+const editLinkPath = `../${appPages.salesAppPages.subPages.productPage.subPages.editPageLink.to}/`;
+
+const columns = [
+	columnHelper.accessor('jurisdiction', {
+		cell: (info) => (
+			<div className='font-bold'>{info.getValue()}</div>
+			
+		),
+		header: 'Jurisdiction >',
+		footer: 'Jurisdiction',
+	}),
+	columnHelper.accessor('organization', {
+		cell: (info) => (
+			<div className='font-bold'>{info.getValue()}</div>
+		),
+		header: 'Organization',
+		footer: 'Organization',
+	}),
+	columnHelper.accessor('facilityName', {
+		cell: (info) => (
+			<div className='font-bold'>{info.getValue()}</div>
+		),
+		header: 'Facility Name',
+		footer: 'Facility Name',
+	}),
+	columnHelper.accessor('address', {
+		cell: (info) => (
+			<div className='font-bold'>{info.getValue()}</div>
+		),
+		header: 'Address',
+		footer: 'Address',
+	}),
+	columnHelper.accessor('city', {
+		cell: (info) => (
+			<div className='font-bold'>{info.getValue()}</div>
+		),
+		header: 'City',
+		footer: 'City',
+	}),
+	columnHelper.accessor('state', {
+		cell: (info) => (
+			<div className='font-bold'>{info.getValue()}</div>
+		),
+		header: 'State',
+		footer: 'State',
+	}),
+	columnHelper.accessor('zipCode', {
+		cell: (info) => (
+			<div className='font-bold'>{info.getValue()}</div>
+		),
+		header: 'Zip Code',
+		footer: 'Zip Code',
+	}),
+	columnHelper.accessor('icon', {
+		cell: (_info) => (
+			<Dropdown>
+				<DropdownToggle>
+					<Button icon='HeroEllipsisVertical'></Button>
+				</DropdownToggle>
+				<DropdownMenu placement='bottom-end'>
+					<div className='flex flex-col p-3 gap-4 divide-zinc-200 dark:divide-zinc-800 md:divide-x'>
+						<div>
+							Edit
+						</div>
+						<div>
+							Edit
+						</div>
+						<div>
+							Edit
+						</div>
+					</div>
+				</DropdownMenu>
+			</Dropdown>
+		),
+		header: 'Action',
+		footer: 'Action',
+	}),
 ];
 
-const ProjectTable: React.FC = () => {
-	const [openModal, setOpenModal] = useState(false);
-	const [datas, setDatas] = useState(initialData || []);
-	const [form] = Form.useForm();
-	const [editingKey, setEditingKey] = useState('');
+const SiteManagement = () => {
+	const [sorting, setSorting] = useState<SortingState>([]);
+	const [globalFilter, setGlobalFilter] = useState<string>('');
 
-	const handleAddOrEdit = (id: string) => {
-		form.validateFields()
-			.then((data) => {
-				const newData = [...datas];
-				const index = newData?.findIndex((item) => id === item?.id);
+	const [data] = useState<SiteManageData[]>(() => [...TsiteManageDb]);
 
-				if (index > -1) {
-					const item = newData[index];
-					newData.splice(index, 1, { ...item, ...data });
-					setDatas(newData);
-					setEditingKey('');
-				} else {
-					newData.push({ id: Date.now(), ...data });
-					setDatas(newData);
-				}
-				setOpenModal(false);
-			})
-			.catch((info) => {
-				console.log('Validate Failed:', info);
-			});
-	};
-
-	const handleDelete = (id: string) => {
-		const newData = datas.filter((data) => data?.id !== id);
-		setDatas(newData);
-	};
-
-	const handleEdit = (data: { id: any; jurisdiction?: string; organization?: string; facilityName?: string; address?: string; city?: string; state?: string; zipCode?: string; status?: string; }) => {
-		form.setFieldsValue({ ...data });
-		setEditingKey(data?.id);
-		setOpenModal(true);
-	};
-
-	const handleCancel = () => {
-		setEditingKey('');
-		setOpenModal(false);
-	};
+	const table = useReactTable({
+		data,
+		columns,
+		state: {
+			sorting,
+			globalFilter,
+		},
+		onSortingChange: setSorting,
+		enableGlobalFilter: true,
+		onGlobalFilterChange: setGlobalFilter,
+		getCoreRowModel: getCoreRowModel(),
+		getFilteredRowModel: getFilteredRowModel(),
+		getSortedRowModel: getSortedRowModel(),
+		getPaginationRowModel: getPaginationRowModel(),
+		initialState: {
+			pagination: { pageSize: 10 },
+		},
+		// debugTable: true,
+	});
 
 	return (
-		<div className='m-10'>
-			<div className='flex items-center justify-between'>
-				<div>
-					<Button
-						variant='outline'
-						onClick={() => {
-							setOpenModal(true);
-							setEditingKey('');
-						}}
-						>
-						Add New +
-					</Button>
-
-					{/* modal */}
-					<Modal
-						title='Basic Modal'
-						open={openModal}
-						onOk={() => handleAddOrEdit(editingKey)}
-						onCancel={handleCancel}>
-						<Form form={form} layout='vertical'>
-							<Form.Item
-								name='jurisdiction'
-								label='Jurisdiction'
-								rules={[{ required: true }]}>
-								<Input />
-							</Form.Item>
-							<Form.Item
-								name='organization'
-								label='Organization'
-								rules={[{ required: true }]}>
-								<Input />
-							</Form.Item>
-							<Form.Item
-								name='facilityName'
-								label='Facility Name'
-								rules={[{ required: true }]}>
-								<Input />
-							</Form.Item>
-							<Form.Item name='address' label='Address' rules={[{ required: true }]}>
-								<Input />
-							</Form.Item>
-							<Form.Item name='city' label='City' rules={[{ required: true }]}>
-								<Input />
-							</Form.Item>
-							<Form.Item name='state' label='State' rules={[{ required: true }]}>
-								<Input />
-							</Form.Item>
-							<Form.Item name='zipCode' label='Zip Code' rules={[{ required: true }]}>
-								<Input />
-							</Form.Item>
-						</Form>
-					</Modal>
-				</div>
-
-				<p className='text-sm text-gray-500'>All Pages (1 - 20)</p>
-			</div>
-
-			<div className='relative mt-4 overflow-x-auto rounded-lg bg-white p-5 dark:bg-zinc-900'>
-				<table className='managment_table'>
-					<thead>
-						<tr>
-							<th>
-								<input type='checkbox' name='' id='' />
-							</th>
-							<th>Jurisdiction</th>
-							<th>Organization</th>
-							<th>Facility Name</th>
-							<th>Address</th>
-							<th>City</th>
-							<th>State</th>
-							<th>Zip</th>
-							<th>Action</th>
-						</tr>
-					</thead>
-					<tbody>
-						{datas?.map((data) => (
-							<tr key={data?.id}>
-								<td>
-									<input type='checkbox' name='' id='' />
-								</td>
-								<td>{data?.jurisdiction}</td>
-								<td>{data?.organization}</td>
-								<td>{data?.facilityName}</td>
-								<td>{data?.address}</td>
-								<td>{data?.city}</td>
-								<td>{data?.state}</td>
-								<td>{data?.zipCode}</td>
-								<td>
-									<div className='flex gap-2'>
-									<button onClick={() => handleEdit(data)}>
-										<FaEye />
-										</button>
-										<button onClick={() => handleEdit(data)}>
-											<BiEditAlt className='text-green-600' />
-										</button>
-										<Popconfirm
-											title='Sure to delete?'
-											onConfirm={() => handleDelete(data?.id)}
-											style={{ backgroundColor: '#ffa5' }}>
-											<button>
-												<MdDeleteOutline className='text-red-600' />
-											</button>
-										</Popconfirm>
+		<PageWrapper name='Products List'>
+			<Subheader>
+				<SubheaderLeft>
+					<FieldWrap
+						firstSuffix={<Icon className='mx-2' icon='HeroMagnifyingGlass' />}
+						lastSuffix={
+							globalFilter && (
+								<Icon
+									icon='HeroXMark'
+									color='red'
+									className='mx-2 cursor-pointer'
+									onClick={() => {
+										setGlobalFilter('');
+									}}
+								/>
+							)
+						}>
+						<Input
+							id='example'
+							name='example'
+							placeholder='Search...'
+							value={globalFilter ?? ''}
+							onChange={(e) => setGlobalFilter(e.target.value)}
+						/>
+					</FieldWrap>
+				</SubheaderLeft>
+				<SubheaderRight>
+					<Link to={`#`}>
+						<Button variant='outline' icon='HeroPlus'>
+							Add New
+						</Button>
+					</Link>
+				</SubheaderRight>
+			</Subheader>
+			<Container>
+				<Card className='h-full'>
+					<CardHeader>
+						<CardHeaderChild>
+							<CardTitle>Site Management</CardTitle>
+							<Badge
+								variant='outline'
+								className='border-transparent px-4'
+								rounded='rounded-full'>
+								{table.getFilteredRowModel().rows.length} items
+							</Badge>
+						</CardHeaderChild>
+						<CardHeaderChild>
+							<Dropdown>
+								<DropdownToggle>
+									<Button icon='HeroEllipsisVertical'></Button>
+								</DropdownToggle>
+								<DropdownMenu placement='bottom-end'>
+									<div className='grid grid-cols-12 gap-4 divide-zinc-200 dark:divide-zinc-800 md:divide-x'>
+										<div className='col-span-12 gap-4 md:col-span-3'>
+											<DropdownNavLinkItem to='/' icon='HeroLink'>
+												Home Page
+											</DropdownNavLinkItem>
+											<DropdownNavLinkItem to='/ui/dropdown' icon='HeroLink'>
+												Dropdown
+											</DropdownNavLinkItem>
+											<DropdownItem icon='HeroSquare2Stack'>
+												Item 3
+											</DropdownItem>
+										</div>
+										<div className='col-span-12 gap-4 md:col-span-3'>
+											<DropdownItem icon='HeroSquare2Stack'>
+												Item 4
+											</DropdownItem>
+											<DropdownItem icon='HeroSquare2Stack'>
+												Item 5
+											</DropdownItem>
+											<DropdownItem icon='HeroSquare2Stack'>
+												Item 6
+											</DropdownItem>
+										</div>
+										<div className='col-span-12 gap-4 px-4 md:col-span-6'>
+											Lorem ipsum dolor sit amet.
+										</div>
 									</div>
-								</td>
-							</tr>
-						))}
-					</tbody>
-				</table>
-			</div>
-		</div>
+								</DropdownMenu>
+							</Dropdown>
+						</CardHeaderChild>
+					</CardHeader>
+					<CardBody className='overflow-auto'>
+						<TableTemplate className='table-fixed max-md:min-w-[70rem]' table={table} />
+					</CardBody>
+					<TableCardFooterTemplate table={table} />
+				</Card>
+			</Container>
+		</PageWrapper>
 	);
 };
 
-export default ProjectTable;
+export default SiteManagement;
