@@ -13,7 +13,7 @@ export type SiteManageData = {
 	city: string;
 	state: string;
 	zipCode: string;
-	icon?:string | string[];
+	icon?:string;
 };
 
 const TsiteManageDb: SiteManageData[] = [
@@ -30,51 +30,51 @@ const TsiteManageDb: SiteManageData[] = [
 	},
 	{
 		id: '2',
-		jurisdiction: 'Michigan-JD1',
+		jurisdiction: 'Michigan-JD2',
 		organization: 'CVS Pharmacy',
-		facilityName: 'Troy',
+		facilityName: 'Rochester Hills',
 		address: '123 Mian',
 		city: 'Troy',
 		state: 'MI',
-		zipCode: '48098',
+		zipCode: '48099',
 		// icon: [HeroEllipsisVertical],
 	},
 	{
 		id: '3',
-		jurisdiction: 'Michigan-JD1',
+		jurisdiction: 'Michigan-JD3',
 		organization: 'CVS Pharmacy',
-		facilityName: 'Troy',
+		facilityName: 'Auburn Hills',
 		address: '123 Mian',
 		city: 'Troy',
 		state: 'MI',
-		zipCode: '48098',
-		// icon: [HeroEllipsisVertical],
+		zipCode: '48100',
+		icon: 'HeroEllipsisVertical',
 	},
 	{
 		id: '4',
-		jurisdiction: 'Michigan-JD1',
+		jurisdiction: 'Michigan-JD4',
 		organization: 'CVS Pharmacy',
-		facilityName: 'Troy',
+		facilityName: 'Madison Heights',
 		address: '123 Mian',
 		city: 'Troy',
 		state: 'MI',
-		zipCode: '48098',
+		zipCode: '48101',
 		// icon: [HeroEllipsisVertical],
 	},
 	{
 		id: '5',
-		jurisdiction: 'Michigan-JD1',
+		jurisdiction: 'Michigan-JD5',
 		organization: 'CVS Pharmacy',
-		facilityName: 'Troy',
+		facilityName: 'Royal Oak',
 		address: '123 Mian',
 		city: 'Troy',
 		state: 'MI',
-		zipCode: '48098',
+		zipCode: '48102',
 		// icon: [HeroEllipsisVertical],
 	},
 	{
 		id: '6',
-		jurisdiction: 'Michigan-JD1',
+		jurisdiction: 'Michigan-JD6',
 		organization: 'CVS Pharmacy',
 		facilityName: 'Troy',
 		address: '123 Mian',
@@ -129,7 +129,7 @@ const TsiteManageDb: SiteManageData[] = [
 	},
 	{
 		id: '11',
-		jurisdiction: 'Michigan-JD1',
+		jurisdiction: 'Michigan-JD11',
 		organization: 'CVS Pharmacy',
 		facilityName: 'Troy',
 		address: '123 Mian',
@@ -162,7 +162,7 @@ const TsiteManageDb: SiteManageData[] = [
 	},
 	{
 		id: '14',
-		jurisdiction: 'Michigan-JD1',
+		jurisdiction: 'Michigan-JD14',
 		organization: 'CVS Pharmacy',
 		facilityName: 'Troy',
 		address: '123 Mian',
@@ -217,7 +217,7 @@ const TsiteManageDb: SiteManageData[] = [
 	},
 	{
 		id: '19',
-		jurisdiction: 'Michigan-JD1',
+		jurisdiction: 'Michigan-JD19',
 		organization: 'CVS Pharmacy',
 		facilityName: 'Troy',
 		address: '123 Mian',

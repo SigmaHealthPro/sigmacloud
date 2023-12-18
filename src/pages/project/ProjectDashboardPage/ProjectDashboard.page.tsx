@@ -37,7 +37,11 @@ import TableTemplate, {
 	TableCardFooterTemplate,
 } from '../../../templates/common/TableParts.template';
 import TsiteManageDb, { SiteManageData } from '../../../mocks/db/Sitemanagement';
-import { HeroAdjustmentsVertical } from '../../../components/icon/heroicons';
+import { HeroAdjustmentsVertical, HeroEye, HeroPlusSmall } from '../../../components/icon/heroicons';
+import { DuoEdit1, DuoTrash } from '../../../components/icon/duotone';
+import Modal, { ModalHeader, ModalBody, ModalFooter, ModalFooterChild } from '../../../components/ui/Modal';
+import Label from '../../../components/form/Label';
+import { useFormik } from 'formik';
 
 const columnHelper = createColumnHelper<SiteManageData>();
 
@@ -46,10 +50,10 @@ const editLinkPath = `../${appPages.salesAppPages.subPages.productPage.subPages.
 const columns = [
 	columnHelper.accessor('jurisdiction', {
 		cell: (info) => (
-			<div className='font-bold'>{info.getValue()}</div>
-			
+			<div aria-hidden="false" className='font-bold'>{info.getValue()}</div>
+
 		),
-		header: 'Jurisdiction >',
+		header: 'Jurisdiction',
 		footer: 'Jurisdiction',
 	}),
 	columnHelper.accessor('organization', {
@@ -95,25 +99,26 @@ const columns = [
 		footer: 'Zip Code',
 	}),
 	columnHelper.accessor('icon', {
-		cell: (_info) => (
+		cell: (_icon) => (
 			<Dropdown>
-				<DropdownToggle>
-					<Button icon='HeroEllipsisVertical'></Button>
+				<DropdownToggle hasIcon={false}>
+					<Button color='zinc' icon='HeroEllipsisVertical' />
 				</DropdownToggle>
 				<DropdownMenu placement='bottom-end'>
-					<div className='flex flex-col p-3 gap-4 divide-zinc-200 dark:divide-zinc-800 md:divide-x'>
-						<div>
-							Edit
-						</div>
-						<div>
-							Edit
-						</div>
-						<div>
-							Edit
-						</div>
+					<div className='flex flex-col gap-4'>
+						<Button>
+							<DuoEdit1 fontSize={"18px"} />
+						</Button>
+						<Button>
+							<HeroEye fontSize={"18px"} />
+						</Button>
+						<Button>
+							<DuoTrash fontSize={"18px"} />
+						</Button>
 					</div>
 				</DropdownMenu>
 			</Dropdown>
+			// <div className='font-bold'>{info.getValue()}</div>
 		),
 		header: 'Action',
 		footer: 'Action',
@@ -145,7 +150,19 @@ const SiteManagement = () => {
 		},
 		// debugTable: true,
 	});
-
+	const [modalStatus, setModalStatus] = useState<boolean>(false);
+	const formik = useFormik({
+		initialValues: {
+			textJurisdiction: '',
+			textOrganization: '',
+			textFacilityName: '',
+			textAddress: '',
+			textCity: '',
+			textState: '',
+			textZipCode: '',
+		},
+		onSubmit: () => { },
+	});
 	return (
 		<PageWrapper name='Products List'>
 			<Subheader>
@@ -175,9 +192,132 @@ const SiteManagement = () => {
 				</SubheaderLeft>
 				<SubheaderRight>
 					<Link to={`#`}>
-						<Button variant='outline' icon='HeroPlus'>
-							Add New
-						</Button>
+						<Button variant='outline' icon='HeroPlusSmall' onClick={() => setModalStatus(true)}>Add New</Button>
+						<Modal isOpen={modalStatus} setIsOpen={setModalStatus}>
+							<ModalHeader>Add New Site Management</ModalHeader>
+							<ModalBody>
+								<div>
+									<Label
+										htmlFor='urlAddress'
+										description=' '>
+										Jurisdiction
+									</Label>
+									<FieldWrap>
+										<Input
+											type='text'
+											id='TextJurisdiction'
+											name='TextJurisdiction'
+											onChange={formik.handleChange}
+											value={formik.values.textJurisdiction}
+											placeholder='Michigan-JD1'
+										/>
+									</FieldWrap>
+								</div>
+								<div>
+									<Label
+										htmlFor='urlAddress'
+										description=' '>
+										Organization
+									</Label>
+									<FieldWrap>
+										<Input
+											type='text'
+											id='TextOrganization'
+											name='TextOrganization'
+											onChange={formik.handleChange}
+											value={formik.values.textOrganization}
+											placeholder='CVS Pharmacy'
+										/>
+									</FieldWrap>
+								</div>
+								<div>
+									<Label
+										htmlFor='urlAddress'
+										description=' '>
+										Facility Name
+									</Label>
+									<FieldWrap>
+										<Input
+											type='text'
+											id='TextJurisdiction'
+											name='TextJurisdiction'
+											onChange={formik.handleChange}
+											value={formik.values.textFacilityName}
+											placeholder='Michigan-JD1'
+										/>
+									</FieldWrap>
+								</div>
+								<div>
+									<Label
+										htmlFor='text'
+										description=' '>
+										Address
+									</Label>
+									<FieldWrap>
+										<Input
+											type='text'
+											id='textAddress'
+											name='textAddress'
+											onChange={formik.handleChange}
+											value={formik.values.textAddress}
+											placeholder='Michigan-JD1'
+										/>
+									</FieldWrap>
+								</div>
+								<div>
+									<Label
+										htmlFor='city'
+										description=' '>
+										City
+									</Label>
+									<FieldWrap>
+										<Input
+											type='text'
+											id='TextJurisdiction'
+											name='TextJurisdiction'
+											onChange={formik.handleChange}
+											value={formik.values.textCity}
+											placeholder='Michigan-JD1'
+										/>
+									</FieldWrap>
+								</div>
+								<div>
+									<Label
+										htmlFor='urlAddress'
+										description=' '>
+										State
+									</Label>
+									<FieldWrap>
+										<Input
+											type='text'
+											id='state'
+											name='textState'
+											onChange={formik.handleChange}
+											value={formik.values.textState}
+											placeholder='Michigan-JD1'
+										/>
+									</FieldWrap>
+								</div>
+								<div>
+									<Label
+										htmlFor='urlAddress'
+										description=' '>
+										Zip Code
+									</Label>
+									<FieldWrap>
+										<Input
+											type='text'
+											id='TextJurisdiction'
+											name='TextJurisdiction'
+											onChange={formik.handleChange}
+											value={formik.values.textZipCode}
+											placeholder='Michigan-JD1'
+										/>
+									</FieldWrap>
+								</div>
+									<Button className=' mt-3' variant='outline'>Submit</Button>
+							</ModalBody>
+						</Modal>
 					</Link>
 				</SubheaderRight>
 			</Subheader>
@@ -192,42 +332,6 @@ const SiteManagement = () => {
 								rounded='rounded-full'>
 								{table.getFilteredRowModel().rows.length} items
 							</Badge>
-						</CardHeaderChild>
-						<CardHeaderChild>
-							<Dropdown>
-								<DropdownToggle>
-									<Button icon='HeroEllipsisVertical'></Button>
-								</DropdownToggle>
-								<DropdownMenu placement='bottom-end'>
-									<div className='grid grid-cols-12 gap-4 divide-zinc-200 dark:divide-zinc-800 md:divide-x'>
-										<div className='col-span-12 gap-4 md:col-span-3'>
-											<DropdownNavLinkItem to='/' icon='HeroLink'>
-												Home Page
-											</DropdownNavLinkItem>
-											<DropdownNavLinkItem to='/ui/dropdown' icon='HeroLink'>
-												Dropdown
-											</DropdownNavLinkItem>
-											<DropdownItem icon='HeroSquare2Stack'>
-												Item 3
-											</DropdownItem>
-										</div>
-										<div className='col-span-12 gap-4 md:col-span-3'>
-											<DropdownItem icon='HeroSquare2Stack'>
-												Item 4
-											</DropdownItem>
-											<DropdownItem icon='HeroSquare2Stack'>
-												Item 5
-											</DropdownItem>
-											<DropdownItem icon='HeroSquare2Stack'>
-												Item 6
-											</DropdownItem>
-										</div>
-										<div className='col-span-12 gap-4 px-4 md:col-span-6'>
-											Lorem ipsum dolor sit amet.
-										</div>
-									</div>
-								</DropdownMenu>
-							</Dropdown>
 						</CardHeaderChild>
 					</CardHeader>
 					<CardBody className='overflow-auto'>
