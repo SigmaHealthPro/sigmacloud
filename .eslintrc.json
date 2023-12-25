@@ -7,10 +7,7 @@
 		"plugin:@typescript-eslint/recommended-requiring-type-checking",
 		"prettier"
 	],
-	"plugins": ["prettier"],
-	"parserOptions": {
-		"project": "./tsconfig.eslint.json"
-	},
+	
 	"rules": {
 		"no-use-before-define": "off",
 		"no-case-declarations": "off",

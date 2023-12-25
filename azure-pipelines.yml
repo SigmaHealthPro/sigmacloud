@@ -4,28 +4,28 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
 
 trigger:
-- main
+    - main
 
 pool:
-  vmImage: ubuntu-latest
+    vmImage: ubuntu-latest
 
 steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '10.x'
-  displayName: 'Install Node.js'
+    - task: NodeTool@0
+      inputs:
+          versionSpec: '10.x'
+      displayName: 'Install Node.js'
 
-- script: |
-    npm install
-    npm run build
-  displayName: 'npm install and build'
-- task: AzureRmWebAppDeployment@4
-  inputs:
-    ConnectionType: 'AzureRM'
-    azureSubscription: 'SigmaPro(1)(bfb6832e-b3c4-44ef-a368-d9058a88d453)'
-    appType: 'webApp'
-    WebAppName: 'dev-sigmacloud-app'
-    deployToSlotOrASE: true
-    ResourceGroupName: 'dev-sigmacloud-app_group'
-    SlotName: 'production'
-    packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
+    - script: |
+          npm install
+          npm run build
+      displayName: 'npm install and build'
+    - task: AzureRmWebAppDeployment@4
+      inputs:
+          ConnectionType: 'AzureRM'
+          azureSubscription: 'SigmaPro(1)(bfb6832e-b3c4-44ef-a368-d9058a88d453)'
+          appType: 'webApp'
+          WebAppName: 'dev-sigmacloud-app'
+          deployToSlotOrASE: true
+          ResourceGroupName: 'dev-sigmacloud-app_group'
+          SlotName: 'production'
+          packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'

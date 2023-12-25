@@ -18,10 +18,10 @@ module.exports = {
 				margin: 'margin',
 			},
 			SecondFamily: {
-				sans:['League Spartan', ...defaultTheme.fontFamily.sans],
+				sans: ['League Spartan', ...defaultTheme.fontFamily.sans],
 			},
 			ThirdFamily: {
-				sans:['Poppins', ...defaultTheme.fontFamily.sans],
+				sans: ['Poppins', ...defaultTheme.fontFamily.sans],
 			},
 		},
 	},
@@ -30,6 +30,7 @@ module.exports = {
 		// 	pattern: /bg-(inherit|current|transparent|black|white)$/,
 		// 	variants: ['hover', 'active'],
 		// },
+		
 		{
 			pattern:
 				// /bg-(slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(50|100|200|300|400|500|600|700|800|900)$/,
@@ -63,7 +64,13 @@ module.exports = {
 				/text-(zinc|red|amber|lime|emerald|sky|blue|violet)-(50|100|200|300|400|500|600|700|800|900|950)$/,
 			variants: ['hover', 'active', 'dark:hover'],
 		},
+		
 	],
+	variants: {
+		extend: {
+			display: ['group-hover'], // Adding display group-hover variant
+		},
+	},
 	plugins: [require('@tailwindcss/typography')],
 	darkMode: 'class',
 };

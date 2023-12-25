@@ -121,7 +121,7 @@ Select.defaultProps = {
 	dimension: 'default',
 	value: undefined,
 	variant: 'solid',
-	placeholder: undefined
+	placeholder: undefined,
 };
 
 export default Select;

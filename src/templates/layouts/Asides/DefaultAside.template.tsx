@@ -112,6 +112,11 @@ const DefaultAsideTemplate = () => {
 						to={appPages.educationAppPages.to}
 						icon={appPages.educationAppPages.icon}
 					/>
+					<NavItem
+						text={appPages.facilityAppPages.text}
+						to={appPages.facilityAppPages.to}
+						icon={appPages.facilityAppPages.icon}
+					/>
 					{/* Access Management  */}
 					<NavItem
 						text={appPages.reservationAppPages.text}

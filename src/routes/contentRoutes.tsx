@@ -3,6 +3,8 @@ import { RouteProps } from 'react-router-dom';
 import { appPages, authPages, componentsPages, examplePages } from '../config/pages.config';
 import NotFoundPage from '../pages/NotFound.page';
 import LoginPage from '../pages/Login.page';
+import VaccineForecasting from '../pages/Vaccine \u2028Forecasting/VaccineForecasting';
+import FacilitiesPage from '../pages/FacilityManagement/Facilities.page';
 
 /**
  * UI
@@ -111,7 +113,7 @@ const CategoryListPage = lazy(
 	() => import('../pages/sales/categories/CategoryListPage/CategoryList.page'),
 );
 const CategoryPage = lazy(() => import('../pages/sales/categories/CategoryPage/Category.page'));
-
+const Facilities = lazy(() => import('../pages/FacilityManagement/Facilities.page'));
 /**
  * CRM
  */
@@ -181,7 +183,7 @@ const contentRoutes: RouteProps[] = [
 	/**
 	 * CRM::BEGIN
 	 */
-	
+
 	{
 		path: appPages.crmAppPages.subPages.customerPage.subPages.listPage.to,
 		element: <CustomerListPage />,
@@ -205,7 +207,7 @@ const contentRoutes: RouteProps[] = [
 	/**
 	 * Project::BEGIN
 	 */
-	
+
 	/**
 	 * Project::END
 	 */
@@ -265,6 +267,10 @@ const contentRoutes: RouteProps[] = [
 	{
 		path: appPages.mailAppPages.to,
 		element: <UnderConstructionPage />,
+	},
+	{
+		path: appPages.facilityAppPages.to,
+		element: <FacilitiesPage/>,
 	},
 	/**
 	 * MAIL::END

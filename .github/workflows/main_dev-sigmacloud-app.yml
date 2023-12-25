@@ -1,75 +1,73 @@
 name: Build and deploy Node.js app to Azure Web App - dev-sigmacloud-app
 
 on:
-
-  workflow_dispatch:
+    workflow_dispatch:
 
 jobs:
-  build:
-    runs-on: windows-latest
+    build:
+        runs-on: windows-latest
 
-    steps:
-      - uses: actions/checkout@v4
+        steps:
+            - uses: actions/checkout@v4
 
-      - name: Set up Node.js version
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'  # Use a stable LTS version
+            - name: Set up Node.js version
+              uses: actions/setup-node@v3
+              with:
+                  node-version: '18' # Use a stable LTS version
 
-      - name: Check if dist directory exists
-        run: |
-          if (!(Test-Path -Path dist)) {
-            New-Item -ItemType Directory -Path dist
-          }
+            - name: Check if dist directory exists
+              run: |
+                  if (!(Test-Path -Path dist)) {
+                    New-Item -ItemType Directory -Path dist
+                  }
 
-      - name: Install dependencies
-        run: npm install
+            - name: Install dependencies
+              run: npm install
 
-      - name: Build for production
-        run: npm run build
-      
-      - name: Archive project
-        run: Compress-Archive -Path . -DestinationPath dist\node-app.zip
+            - name: Build for production
+              run: npm run build
 
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v3
-        with:
-          name: node-app
-          path: dist
+            - name: Archive project
+              run: Compress-Archive -Path . -DestinationPath dist\node-app.zip
 
-  deploy:
-    runs-on: windows-latest
-    needs: build
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+            - name: Upload artifact for deployment job
+              uses: actions/upload-artifact@v3
+              with:
+                  name: node-app
+                  path: dist
 
-    steps:
-    
-      - name: Clean up temp folders
-        run: |
-          if (Test-Path C:\local\Temp\zipdeploy) {
-            Remove-Item -Recurse -Force C:\local\Temp\zipdeploy
-          }
-          
-      - name: Clean up server folder
-        run: Remove-Item -Recurse -Force .\* -ErrorAction SilentlyContinue # Remove the contents of the directory, ignore errors if the directory is empty
+    deploy:
+        runs-on: windows-latest
+        needs: build
+        environment:
+            name: 'Production'
+            url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v3
-        with:
-          name: node-app
+        steps:
+            - name: Clean up temp folders
+              run: |
+                  if (Test-Path C:\local\Temp\zipdeploy) {
+                    Remove-Item -Recurse -Force C:\local\Temp\zipdeploy
+                  }
 
-      - name: Unzip artifact
-        run: Expand-Archive -Path node-app.zip -DestinationPath .
+            - name: Clean up server folder
+              run: Remove-Item -Recurse -Force .\* -ErrorAction SilentlyContinue # Remove the contents of the directory, ignore errors if the directory is empty
 
-      - name: Remove original .zip file
-        run: Remove-Item -Path .\node-app.zip
+            - name: Download artifact from build job
+              uses: actions/download-artifact@v3
+              with:
+                  name: node-app
 
-      - name: 'Deploy to Azure Web App'
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: 'dev-sigmacloud-app'
-          slot-name: 'Production'
-          package: .  # Use the current working directory
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1FB49F843ED74443A690AF0668C70FBC }}
+            - name: Unzip artifact
+              run: Expand-Archive -Path node-app.zip -DestinationPath .
+
+            - name: Remove original .zip file
+              run: Remove-Item -Path .\node-app.zip
+
+            - name: 'Deploy to Azure Web App'
+              uses: azure/webapps-deploy@v2
+              with:
+                  app-name: 'dev-sigmacloud-app'
+                  slot-name: 'Production'
+                  package: . # Use the current working directory
+                  publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1FB49F843ED74443A690AF0668C70FBC }}
