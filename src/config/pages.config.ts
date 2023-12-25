@@ -227,6 +227,12 @@ export const appPages = {
 		text: 'User	Management',
 		icon: 'HeroBookOpen',
 	},
+	facilityAppPages: {
+		id: 'facilityApp',
+		to: '/facilities',
+		text: 'Facility	Management',
+		icon: 'HeroBookOpen',
+	},
 	reservationAppPages: {
 		id: 'reservationApp',
 		to: '/reservation',
