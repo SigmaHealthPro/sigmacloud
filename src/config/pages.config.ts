@@ -232,6 +232,20 @@ export const appPages = {
 		to: '/facilities',
 		text: 'Facility	Management',
 		icon: 'HeroBookOpen',
+		subPages: {
+			facilityPage: {
+				id: 'facilitypage',
+				to: '/facilitypage',
+				text: 'Facility Page',
+				icon: 'HeroClipboardDocumentCheck',
+			},
+			newfacilityPage: {
+				id: 'facilitypage',
+				to: '/newfacilitypage',
+				text: 'Facility Page',
+				icon: 'HeroClipboardDocumentCheck',
+			},
+		},
 	},
 	reservationAppPages: {
 		id: 'reservationApp',

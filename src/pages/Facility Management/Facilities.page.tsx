@@ -1,6 +1,6 @@
 import React, { useState, useEffect , useMemo} from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import PageWrapper from '../../components/layouts/PageWrapper/PageWrapper';
 import Container from '../../components/layouts/Container/Container';
 import Card, { CardBody, CardHeader, CardHeaderChild, CardTitle } from '../../components/ui/Card';
@@ -14,36 +14,13 @@ import { Facility } from '../../interface/facility.interface';
 import { MoreVert as MoreVertIcon, Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { debounce } from 'lodash';
 import { makeStyles } from '@mui/styles';
+import { Button as AntButton, Popconfirm, Space } from 'antd';
+import { EditOutlined, DeleteOutlined, MoreOutlined } from '@ant-design/icons';
+import { GridCellParams,GridRowParams } from '@mui/x-data-grid';
+import { appPages } from '../../config/pages.config';
 
-const columns = [
-  { field: 'jurisdiction', headerName: 'Jurisdiction', width: 140 },
-  { field: 'organization', headerName: 'Organization', width: 140 },
-  { field: 'facilityName', headerName: 'Facility Name', width: 140 },
-  { field: 'address', headerName: 'Address', width: 140 },
-  { field: 'city', headerName: 'City', width: 140 },
-  { field: 'state', headerName: 'State', width: 140 },
-  { field: 'zipCode', headerName: 'Zip Code', width: 140 },
-  {
-    field: 'actions',
-    headerName: 'Actions',
-    width: 100,
-    renderCell: () => {
-      return (
-        <div className="group relative"> {/* Ensure this div is relative for positioning context */}
-  <MoreVertIcon className="cursor-pointer" />
-  <div className="absolute hidden group-hover:flex flex-col items-center bg-white shadow-md 
-                  -translate-y-full -translate-x-1/2 transform top-full right-0 mt-1">
-    {/* The action-icons div now shows on hover */}
-    <EditIcon className="cursor-pointer text-gray-600 hover:text-green-600" />
-    <DeleteIcon className="cursor-pointer text-gray-600 hover:text-red-600" />
-  </div>
-</div>
-      );
-    },
-  },
-  
-  
-];
+
+
 const useStyles = makeStyles({
     root: {
         // Increase specificity by repeating the class
@@ -56,7 +33,43 @@ const useStyles = makeStyles({
     },
 });
 
+const editLinkPath = `../${appPages.facilityAppPages.subPages.newfacilityPage.to}`;
+//${appPages.facilityAppPages.subPages.newfacilityPage.to}`
 const FacilitiesPage = () => {
+    
+    const navigate = useNavigate();
+    const columns = [
+        { field: 'jurisdiction', headerName: 'Jurisdiction', width: 140 },
+        { field: 'organization', headerName: 'Organization', width: 140 },
+        { field: 'facilityName', headerName: 'Facility Name', width: 140 },
+        { field: 'address', headerName: 'Address', width: 140 },
+        { field: 'city', headerName: 'City', width: 140 },
+        { field: 'state', headerName: 'State', width: 140 },
+        { field: 'zipCode', headerName: 'Zip Code', width: 140 },
+        {
+          field: 'actions',
+          headerName: 'Actions',
+          width: 100,
+          renderCell: (params: GridCellParams) => {
+            return (
+              <div className="group relative"> {/* Ensure this div is relative for positioning context */}
+                  <MoreVertIcon className="cursor-pointer" />
+                  <div className="absolute hidden group-hover:flex flex-col items-center bg-white shadow-md 
+                        -translate-y-full -translate-x-1/2 transform top-full left-10 mt-1">
+                          <Space size="middle">
+                      <AntButton icon={<EditOutlined />} />
+                      <Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(params.row.id)}>
+                          <AntButton icon={<DeleteOutlined />} />
+                      </Popconfirm>
+                      </Space>
+                  </div>
+              </div>
+            );
+          },
+        },
+        
+        
+      ];
     const classes = useStyles();
     const [facilities, setFacilities] = useState<Facility[]>([]);
     const [globalFilter, setGlobalFilter] = useState<string>('');
@@ -67,8 +80,40 @@ const FacilitiesPage = () => {
         pageSize: 5,
       });
       const [sortModel, setSortModel] = useState([]);
-      
-
+      const handleDelete = async (facilityId: string) => {
+        console.log("this is facility id "+ facilityId)
+        const formData = new FormData();
+        formData.append('facilityId', facilityId); // Add the facility ID to the form data
+    
+        try {
+            const response = await axios.put(
+                'https://dev-api-iis-sigmacloud.azurewebsites.net/api/Facility/delete', 
+                formData, // Send the form data
+                {
+                    headers: { 'Content-Type': 'multipart/form-data' }, // This matches the expected content type
+                }
+            );
+            console.log(response.data); // Handle the response as needed
+            
+            // Refresh the data grid or update state here...
+            if (response.data.status === 'Success') {
+                // Option 1: Re-fetch facilities from the API
+                fetchFacilities();
+    
+                // Option 2: Update state locally (if not re-fetching from the API)
+                // setFacilities(prevFacilities => prevFacilities.filter(facility => facility.id !== facilityId));
+            }
+        } catch (error) {
+            console.error('Error deleting facility:', error);
+            // Handle error as needed...
+        }
+    };
+    const handleRowClick = (params: GridRowParams) => {
+      // Ensure to use backticks for template literals
+      navigate(`${appPages.facilityAppPages.subPages.facilityPage.to}/${params.id}`);
+  };
+  
+    
 
       function CustomPagination() {
         return (
@@ -172,9 +217,9 @@ const handlePaginationModelChange = (newModel: GridPaginationModel) => {
           </FieldWrap>
         </SubheaderLeft>
         <SubheaderRight>
-          <Link to='/new-customer'>
+          <Link to={`${editLinkPath}`}>
             <Button variant='solid' icon='HeroPlus'>
-              New Customer
+              New Facility
             </Button>
           </Link>
         </SubheaderRight>
@@ -198,6 +243,7 @@ const handlePaginationModelChange = (newModel: GridPaginationModel) => {
         paginationMode="server"
         onPaginationModelChange={handlePaginationModelChange}
         checkboxSelection
+        onRowClick={handleRowClick}
         getRowId={(row) => `${row.facilityName}-${row.organization}`}
         sx={{ '& .MuiDataGrid-columnHeaders': { backgroundColor: '#e5e7eb' },
         '& .MuiDataGrid-columnHeaderTitle': {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios, { AxiosHeaders, Method, RawAxiosRequestHeaders } from 'axios';
 
-const BASE_URL = '';
+const BASE_URL = 'https://dev-api-iis-sigmacloud.azurewebsites.net/api/Facility/search';
 
 const axiosInstanceDefault = axios.create({
 	baseURL: BASE_URL,
