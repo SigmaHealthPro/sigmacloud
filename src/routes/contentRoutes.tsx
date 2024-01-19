@@ -8,6 +8,8 @@ import FacilitiesPage from '../pages/Facility Management/Facilities.page'
 import Facilitypage from '../pages/Facility Management/Facilitypage.page';
 import FacilityProfile from '../pages/FacilityProfile.page';
 import FacilityPage from '../pages/Facility Management/Facilitypage.page';
+import PatientManagement from '../pages/Patient Management/PatientManagement';
+import AddPatient from '../pages/Patient Management/AddPatient';
 
 /**
  * UI
@@ -282,6 +284,15 @@ const contentRoutes: RouteProps[] = [
 	{
 		path: appPages.facilityAppPages.to,
 		element: <FacilitiesPage/>,
+	},
+	{
+		path: appPages.PatientManagement.to,
+		element: <PatientManagement/>,
+		
+	},
+	{
+		path: appPages.PatientManagement.subPages.AddPatient.to,
+		element:<AddPatient/>,
 	},
 	/**
 	 * MAIL::END

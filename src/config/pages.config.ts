@@ -133,7 +133,14 @@ export const appPages = {
 		to: '/patient-management',
 		text: 'Patient Management',
 		icon: 'HeroEnvelope',
-		subPages: {},
+		subPages: {
+			AddPatient:{
+				id:'addPatient',
+				to:'/pages/patient-Management/addPatient',
+				text:'AddPatient',
+				icon:'HeroQueueList',
+			}
+		},
 	},
 	crmAppPages: {
 		id: 'crmApp',
