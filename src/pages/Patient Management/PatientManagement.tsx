@@ -7,60 +7,129 @@ import Card, { CardBody, CardHeader, CardHeaderChild, CardTitle } from '../../co
 import Button from '../../components/ui/Button';
 import Icon from '../../components/icon/Icon';
 import Input from '../../components/form/Input';
-import Subheader, { SubheaderLeft, SubheaderRight } from '../../components/layouts/Subheader/Subheader';
+import Subheader, {
+	SubheaderLeft,
+	SubheaderRight,
+} from '../../components/layouts/Subheader/Subheader';
 import FieldWrap from '../../components/form/FieldWrap';
-import { DataGrid, GridPaginationModel, GridToolbarContainer, gridClasses, GridPagination } from '@mui/x-data-grid';
-import { MoreVert as MoreVertIcon, Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
+import {
+	DataGrid,
+	GridPaginationModel,
+	GridToolbarContainer,
+	gridClasses,
+	GridPagination,
+} from '@mui/x-data-grid';
+import {
+	MoreVert as MoreVertIcon,
+	Edit as EditIcon,
+	Delete as DeleteIcon,
+} from '@mui/icons-material';
 import { makeStyles } from '@mui/styles';
 import { Button as AntButton, Popconfirm, Space } from 'antd';
 import { EditOutlined, DeleteOutlined, MoreOutlined } from '@ant-design/icons';
 import { GridCellParams, GridRowParams } from '@mui/x-data-grid';
 import { appPages } from '../../config/pages.config';
 import { Patients } from '../../interface/Patients.interface';
+import Modal, { ModalBody, ModalHeader, ModalFooter } from '../../components/ui/Modal';
+import { UUID } from 'crypto';
+import Validation from '../../components/form/Validation';
+import { useFormik } from 'formik';
+import Label from '../../components/form/Label';
+import { patientApi } from '../../Apis/patientsApi';
+import { v4 as uuidv4 } from 'uuid';
 
+import toast, { Toaster } from 'react-hot-toast';
+import Select from '../../components/form/Select';
 
 const useStyles = makeStyles({
 	root: {
 		// Increase specificity by repeating the class
-		'& .MuiDataGrid-columnHeaderTitleContainer.MuiDataGrid-columnHeaderTitleContainer .MuiDataGrid-menuIcon, .MuiDataGrid-columnHeaderTitleContainer.MuiDataGrid-columnHeaderTitleContainer .MuiDataGrid-sortIcon': {
-			visibility: 'visible !important', // ensure it overrides other styles
-		},
+		'& .MuiDataGrid-columnHeaderTitleContainer.MuiDataGrid-columnHeaderTitleContainer .MuiDataGrid-menuIcon, .MuiDataGrid-columnHeaderTitleContainer.MuiDataGrid-columnHeaderTitleContainer .MuiDataGrid-sortIcon':
+			{
+				visibility: 'visible !important', // ensure it overrides other styles
+			},
 		'& .MuiDataGrid-columnHeader.MuiDataGrid-columnHeader': {
 			color: 'inherit', // Just an example to ensure color is consistent
 		},
 	},
 });
 
-
-
 const PatientManagement = () => {
-
-
+	const [countryData, setCountryData] = useState([]);
+	const [stateData, setStateData] = useState([]);
+	const [genderData, setGenderData] = useState([]);
+	const [filteredState, setFilteredState] = useState([]);
+	const [filteredCity, setFilteredCity] = useState([]);
 	const navigate = useNavigate();
+	const [editTouched , setEditTouched] =useState(false) 
+	const [editData, setEditData] = useState<any>([]);
+	let generatedGUID: string;
+	generatedGUID = uuidv4();
+	const handleEditData = async (params: any, event: any) => {
+		event.preventDefault();
+		// setEditData(params.row);
+		setNewPatientModal(true);
+		setEditTouched(true)
+		formik.setFieldValue('id', params.row.id);
+		formik.setFieldValue('personId', params.row.personId);
+		formik.setFieldValue('firstName', params.row.firstName);
+		formik.setFieldValue('middleName', params.row.middleName);
+		formik.setFieldValue('lastName', params.row.lastName);
+		formik.setFieldValue('gender', params.row.gender);
+		formik.setFieldValue('dateOfBirth', params.row.dateOfBirth);
+		formik.setFieldValue('date_of_history_vaccine', params.row.date_of_history_vaccine);
+		formik.setFieldValue('motherFirstName', params.row.motherFirstName);
+		formik.setFieldValue('motherMaidenLastName', params.row.motherMaidenLastName);
+		formik.setFieldValue('motherLastName', params.row.motherLastName);
+		formik.setFieldValue('patientStatus', params.row.patientStatus);
+		formik.setFieldValue('personType', params.row.personType);		
+		// const data = stateData?.filter((item: any) => item.countryId === params.row.countryId);
+		formik.setFieldValue('country', params.row.countryId);
+		handleState(params.row.countryId);
+		formik.setFieldValue('state', params.row.stateId);
+		handleCity(params.row.stateId);
+		formik.setFieldValue('city', params.row.cityId);
+	};
+
 	const columns = [
 		{ field: 'firstName', headerName: 'Patient Name', width: 140 },
 		{ field: 'dateOfHistoryVaccine', headerName: 'Date Of History Vaccine', width: 140 },
 		{ field: 'patientStatus', headerName: 'Patient Status', width: 140 },
 		{ field: 'personId', headerName: 'Person', width: 140 },
-		{ field: 'address', headerName: 'Address', width: 140 },
 		{ field: 'country', headerName: 'Country', width: 140 },
 		{ field: 'city', headerName: 'City', width: 140 },
 		{ field: 'state', headerName: 'State', width: 140 },
-		{ field: 'zipCode', headerName: 'Zip Code', width: 140 },
 		{
 			field: 'actions',
 			headerName: 'Actions',
 			width: 100,
 			renderCell: (params: GridCellParams) => {
 				return (
-					<div className="group relative"> {/* Ensure this div is relative for positioning context */}
-						<MoreVertIcon className="cursor-pointer" />
-						<div className="absolute hidden group-hover:flex flex-col items-center bg-white shadow-md 
-                        -translate-y-full -translate-x-1/2 transform top-full left-10 mt-1">
-							<Space size="middle">
-								<AntButton icon={<EditOutlined />} />
-								<Popconfirm title="Sure to delete?" onConfirm={() => ""}>
-									<AntButton icon={<DeleteOutlined />} />
+					<div className='group relative'>
+						{' '}
+						{/* Ensure this div is relative for positioning context */}
+						<MoreVertIcon className='cursor-pointer' />
+						<div
+							className='absolute left-10 top-full mt-1 hidden -translate-x-1/2 -translate-y-full 
+                        transform flex-col items-center bg-white shadow-md group-hover:flex'>
+							<Space size='middle'>
+								<AntButton
+									icon={
+										<EditOutlined
+											onClick={(event) => handleEditData(params, event)}
+										/>
+									}
+								/>
+								<Popconfirm title='Sure to delete?'>
+									<AntButton
+										icon={
+											<DeleteOutlined
+												onClick={(event) =>
+													handleDelete(params.row.id, event)
+												}
+											/>
+										}
+									/>
 								</Popconfirm>
 							</Space>
 						</div>
@@ -68,8 +137,6 @@ const PatientManagement = () => {
 				);
 			},
 		},
-
-
 	];
 	const classes = useStyles();
 	const [patients, setPatients] = useState<any[]>([]);
@@ -78,11 +145,11 @@ const PatientManagement = () => {
 	const [rowCountState, setRowCountState] = useState<number>(0); // Total number of items
 	const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
 		page: 0,
-		pageSize: 15,
+		pageSize: 5,
 	});
-	const[searchTouched , setSearchTouched] = useState(false)
-	const [sortModel, setSortModel] = useState([]);
-	const [searchData, setSearchData] = useState<Patients[]>([])
+	const [searchTouched, setSearchTouched] = useState(false);
+	const [newPatientModal, setNewPatientModal] = useState(false);
+	const [searchData, setSearchData] = useState<Patients[]>([]);
 	const handleRowClick = (params: GridRowParams) => {
 		// Ensure to use backticks for template literals
 		navigate(`${appPages.PatientManagement.to}/${params.id}`);
@@ -90,7 +157,7 @@ const PatientManagement = () => {
 
 	function removeDublicates(array: any[], key: any) {
 		const seen = new Set();
-		return array.filter(item => {
+		return array.filter((item) => {
 			const itemKey = key ? item[key] : item;
 			const stringifiedItem = JSON.stringify(itemKey);
 			if (!seen.has(stringifiedItem)) {
@@ -100,15 +167,37 @@ const PatientManagement = () => {
 			return false;
 		});
 	}
-	
 
+	const handleDelete = async (patientId: string, event: any) => {
+		event.preventDefault();
+		console.log('this is Patient id ' + patientId);
+		const formData = new FormData();
+		formData.append('patientId', patientId); // Add the facility ID to the form data
+
+		try {
+			const response = await axios.put(
+				'https://localhost:7155/api/Patients/deletepatient',
+				formData, // Send the form data
+				{
+					headers: { 'Content-Type': 'multipart/form-data' }, // This matches the expected content type
+				},
+			);
+			console.log(response.data); // Handle the response as needed
+
+			if (response.data.status === 'Success') {
+				listPatients();
+			}
+		} catch (error) {
+			console.error('Error deleting facility:', error);
+		}
+	};
 
 	function CustomPagination() {
 		return (
-			<GridToolbarContainer className="flex justify-between items-center w-full">
+			<GridToolbarContainer className='flex w-full items-center justify-between'>
 				<CardHeader>
 					<CardHeaderChild>
-						<CardTitle>All Patients {JSON.stringify(searchTouched)}</CardTitle>
+						<CardTitle>All Patients </CardTitle>
 					</CardHeaderChild>
 				</CardHeader>
 				<GridPagination />
@@ -116,87 +205,284 @@ const PatientManagement = () => {
 		);
 	}
 	const getRowId = (row: Patients) => {
-		return `${row.patientName}-${row.dateOfHistoryVaccine}`;
+		return `${row.patientName}-${row.patientStatus}`;
 	};
 
 	const handlePaginationModelChange = (newModel: GridPaginationModel) => {
 		setPaginationModel(newModel);
 	};
 
-
 	const listPatients = () => {
-
 		setLoading(true);
 		const requestData = {
-			keyword: "",
+			keyword: globalFilter || '',
 			pagenumber: paginationModel.page + 1,
 			pagesize: paginationModel.pageSize,
-			patient_name: "",
-			date_of_history_vaccine: "",
-			patient_status: "",
-			address: "",
-			person: "",
-			city: "",
-			state: "",
-			country: "",
-			zip_code: "",
-			orderby: "patient_name",
+			patient_name: '',
+		
+			date_of_history_vaccine: '',
+			patient_status: '',
+			gender:'',
+			motherFirstName:'',
+			motherMaidenLastName:'',
+			motherLastName:'',
+			personType:'',
+			address: '',
+			person: '',
+			city: '',
+			cityId:'',
+			state: '',
+			country: '',
+			countryId:'',
+			stateId:'',
+			zip_code: '',
+			orderby: 'patient_name',
 		};
 
-
-
-		axios.post('https://localhost:7155/api/Patients/searchpatient', requestData)
-			.then(response => {
+		axios
+			.post('https://localhost:7155/api/Patients/searchpatient', requestData)
+			.then((response) => {
 				setLoading(true);
-				// const { items, totalCount } = response.data;
-				// if (items.length > paginationModel.pageSize) {
-				//     console.warn('API returned more items than the requested page size.');
-				//   }
-				debugger;
-				const data = removeDublicates(response.data , 'personId')
-				setPatients(data);
-				// const totalRowCount = response.data.totalCount; // Assuming API returns totalCount
-				// setRowCountState((prevRowCountState) => 
-				//   totalRowCount !== undefined ? totalRowCount : prevRowCountState
-				// );
-				// Assuming the API returns total count
+				const { items, totalCount } = response.data;
+
+				if (items.length > paginationModel.pageSize) {
+					console.warn('API returned more items than the requested page size.');
+				}
+				setPatients(items);
+				const totalRowCount = response.data.totalCount; // Assuming API returns totalCount
+				setRowCountState((prevRowCountState) =>
+					totalRowCount !== undefined ? totalRowCount : prevRowCountState,
+				);
 				setLoading(false); // End loading
 			})
-			.catch(error => {
+			.catch((error) => {
 				console.error('Error fetching data: ', error);
 				setLoading(false); // End loading
 			});
 	};
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		debugger;
 		setGlobalFilter(e.target.value);
 		if (e.target.value !== '') {
-			const searchDataFilter = patients.filter((item:any) => item?.firstName.startsWith(e.target.value));
-			debugger;
+			const searchDataFilter = patients.filter(
+				(item: any) => item?.firstName.startsWith(e.target.value),
+			);
 			setPatients(searchDataFilter);
-		}
-		else {
-			debugger;
+		} else {
 			listPatients();
 		}
 	};
-	
 
 	useEffect(() => {
 		listPatients();
-		// const timer = setTimeout(() => {
-		//     listPatients();
-		// }, 600); // 300 ms delay
-		// return () => clearTimeout(timer);
-	}, []);
+	}, [globalFilter, paginationModel]);
 
-	
+	useEffect(() => {
+		async function callInitial() {
+			await patientApi('/api/MasterData/Countries', 'GET')
+				.then((response) => {
+					setCountryData(response?.data);
+				})
+				.catch((err) => console.log('Error has occured', err));
+			await patientApi('/api/MasterData/States', 'GET')
+				.then((response) => {
+					setStateData(response?.data);
+				})
+				.catch((err) => console.log('Error has occured', err));
+				await patientApi('/api/MasterData/getlovmasterbylovtype?lovtype=Gender', 'GET')
+				.then((response) => {
+					setGenderData(response?.data);
+				})
+				.catch((err) => console.log('Error has occured', err));
+		}
+		callInitial();
+	}, []);
+	type Patient = {
+		id: string;
+		createdDate: string;
+		createdBy: string;
+		updatedBy: string;
+		patientId: number;
+		patientStatus: string;
+		firstName: string;
+		middleName: string;
+		lastName: string;
+		gender: string;
+		dateOfBirth: string;
+		dateOfHistoryVaccine1: string;
+		motherFirstName: string;
+		motherMaidenLastName: string;
+		motherLastName: string;
+		city: string;
+    	cityId: string;
+    	state: string;
+		stateId: string;
+		country: string;
+		countryId: string;
+		zipCode: string;
+		personId: string;
+		personType: string;
+	};
+
+	const handleState = async (country: any) => {
+		console.log('Selectd state ID', country);
+		const data = stateData?.filter((item: any) => item.countryId === country);
+		console.log('Filtered state', data);
+		setFilteredState(data);
+	};
+
+	const reset =()=>{
+		formik.setFieldValue('firstName', '');
+				formik.setFieldValue('middleName', '');
+				formik.setFieldValue('lastName', '');
+				formik.setFieldValue('gender', '');
+				formik.setFieldValue('dateOfBirth', '');
+				formik.setFieldValue('date_of_history_vaccine1', '');
+				formik.setFieldValue('motherFirstName', '');
+				formik.setFieldValue('motherMaidenLastName', '');
+				formik.setFieldValue('motherLastName', '');
+				formik.setFieldValue('patientStatus', '');
+				formik.setFieldValue('personType', '');
+				formik.setFieldValue('city', '');
+				formik.setFieldValue('state', '');
+				formik.setFieldValue('country', '');
+	}
+
+	const handleCity = async (state: any) => {
+		console.log('Selected State ID', state);
+		const response = await patientApi(
+			`/api/MasterData/getcitiesbystateid?stateid=${state}`,
+			'GET',
+		).then((resp)=>setFilteredCity(resp?.data)).catch(err=>console.log("err",err))
+	};
+
+
+
 	console.log('Patients Data:', patients); // Debugging: Log current state of patients data
 
+	const [modalStatus, setModalStatus] = useState<boolean>(false);
+
+	const formik = useFormik({
+		initialValues: {
+			id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+			createdDate: '2024-01-17T18:25:24.798Z',
+			createdBy: 'string',
+			updatedBy: 'string',
+			patientId: 0,
+			firstName: '',
+			middleName: '',
+			lastName: '',
+			gender: '',
+			dateOfBirth: '',
+			dateOfHistoryVaccine1: '',
+			motherFirstName: '',
+			motherMaidenLastName: '',
+			motherLastName: '',
+			patientStatus: '',
+			personType: '',
+			city: '',
+			cityId:generatedGUID,
+			state: '',
+		    stateId:generatedGUID,
+			country: '',
+			countryId:generatedGUID,
+			zipCode: 'string',
+			personId: generatedGUID
+		},
+
+		validate: (values: Patient) => {
+			const errors: any = {};
+
+			if (!values.firstName) {
+				errors.firstName = 'Required';
+			}
+			if (!values.middleName) {
+				errors.middleName = 'Required';
+			}
+			if (!values.lastName) {
+				errors.lastName = 'Required';
+			}
+			if (!values.gender) {
+				errors.gender = 'Required';
+			}
+			if (!values.dateOfBirth) {
+				errors.dateOfBirth = 'Required';
+			}
+			if (!values.dateOfHistoryVaccine1) {
+				errors.dateOfHistoryVaccine1 = 'Required';
+			}
+			if (!values.motherFirstName) {
+				errors.motherFirstName = 'Required';
+			}
+			if (!values.motherMaidenLastName) {
+				errors.motherMaidenLastName = 'Required';
+			}
+			if (!values.motherLastName) {
+				errors.motherLastName = 'Required';
+			}
+			if (!values.patientStatus) {
+				errors.patientStatus = 'Required';
+			}
+			if (!values.personType) {
+				errors.personType = 'Required';
+			}
+			if (!values.country) {
+				errors.countryName = 'Required';
+			}
+			if (!values.state) {
+				errors.stateName = 'Required';
+			}
+			if (!values.city) {
+				errors.cityName = 'Required';
+			}
+
+			return errors;
+		},
+
+		onSubmit: async (values: Patient) => {
+			console.log('Request Payload: ', values);
+			try {
+				const postResponse = await axios.post(
+					'https://localhost:7155/api/Patients/createpatient',
+					values,
+					{
+						headers: { 'Content-Type': 'application/json' },
+					},
+				);
+				setNewPatientModal(false);
+				setEditTouched(false)
+				setTimeout(() => {
+					toast.success(`Patient ${editTouched ? 'updated' :'added'} successfully!`);
+				}, 2000);
+				listPatients();
+				formik.setFieldValue('id', '');
+				formik.setFieldValue('firstName', '');
+				formik.setFieldValue('middleName', '');
+				formik.setFieldValue('lastName', '');
+				formik.setFieldValue('gender', '');
+				formik.setFieldValue('dateOfBirth', '');
+				formik.setFieldValue('date_of_history_vaccine', '');
+				formik.setFieldValue('motherFirstName', '');
+				formik.setFieldValue('motherMaidenLastName', '');
+				formik.setFieldValue('motherLastName', '');
+				formik.setFieldValue('patientStatus', '');
+				formik.setFieldValue('personType', '');
+				formik.setFieldValue('city', '');
+				formik.setFieldValue('state', '');
+				formik.setFieldValue('country', '');
+			
+
+
+
+			} catch (error) {
+				console.error('Error: ', error);
+			}
+		},
+	});
 
 	return (
 		<PageWrapper name='Customer List'>
 			<Subheader>
+				<Toaster />
 				<SubheaderLeft>
 					<FieldWrap
 						firstSuffix={<Icon className='mx-2' icon='HeroMagnifyingGlass' />}
@@ -206,7 +492,7 @@ const PatientManagement = () => {
 									icon='HeroXMark'
 									color='red'
 									className='mx-2 cursor-pointer'
-									onClick={() =>setGlobalFilter('')}
+									onClick={() => setGlobalFilter('')}
 								/>
 							)
 						}>
@@ -216,25 +502,416 @@ const PatientManagement = () => {
 							placeholder='Search...'
 							value={globalFilter}
 							onChange={handleInputChange} // Modified to use the new handler
-
 						/>
 					</FieldWrap>
 				</SubheaderLeft>
 				<SubheaderRight>
-					<Link to={`${appPages.PatientManagement.subPages.AddPatient.to}`}>
-						<Button variant='solid' icon='HeroPlus'>
-							New Patients
-						</Button>
-					</Link>
+					{/* <Link to={`${appPages.PatientManagement.subPages.AddPatient.to}`}> */}
+					<Button
+						variant='solid'
+						icon='HeroPlus'
+						onClick={() => {setNewPatientModal(true); setEditTouched(false); reset()}}>
+						New Patients
+					</Button>
+					<Modal isOpen={newPatientModal} setIsOpen={setNewPatientModal}>
+						<ModalHeader> {!editTouched ? "Add New Patient" : "Modification"}</ModalHeader>
+						<ModalBody>
+							<div className='col-span-12 lg:col-span-9'>
+								<div className='grid grid-cols-12 gap-4'>
+									<div className='col-span-12'>
+										<Card>
+											<CardBody>
+												<div className='grid grid-cols-12 gap-4'>
+													<div className='col-span-12 lg:col-span-6'>
+														<Label htmlFor='firstName'>
+															First Name{' '}
+														</Label>
+														<Validation
+															isValid={formik.isValid}
+															isTouched={formik.touched.firstName}
+															invalidFeedback={
+																formik.errors.firstName
+															}
+															validFeedback='Good'>
+															<Input
+																id='firstnName'
+																name='firstName'
+																onChange={formik.handleChange}
+																value={formik.values.firstName}
+																onBlur={formik.handleBlur}
+															/>
+														</Validation>
+													</div>
+													<div className='col-span-12 lg:col-span-6'>
+														<Label htmlFor='middleName'>
+															Middle Name
+														</Label>
+														<Validation
+															isValid={formik.isValid}
+															isTouched={formik.touched.middleName}
+															invalidFeedback={
+																formik.errors.middleName
+															}
+															validFeedback='Good'>
+															<Input
+																id='middleName'
+																name='middleName'
+																onChange={formik.handleChange}
+																value={formik.values.middleName}
+																onBlur={formik.handleBlur}
+															/>
+														</Validation>
+													</div>
+													<div className='col-span-12 lg:col-span-6'>
+														<Label htmlFor='lastName'>Last Name</Label>
+														<Validation
+															isValid={formik.isValid}
+															isTouched={formik.touched.lastName}
+															invalidFeedback={formik.errors.lastName}
+															validFeedback='Good'>
+															<Input
+																id='lastName'
+																name='lastName'
+																onChange={formik.handleChange}
+																value={formik.values.lastName}
+																onBlur={formik.handleBlur}
+															/>
+														</Validation>
+													</div>
+													<div className='col-span-12 lg:col-span-6'>
+														<Label htmlFor='gender'>Gender</Label>
+														<Validation
+															isValid={formik.isValid}
+															isTouched={formik.touched.gender}
+															invalidFeedback={formik.errors.gender}
+															validFeedback='Good'>
+															<FieldWrap style={{ color: 'black' }} lastSuffix={<Icon icon='HeroChevronDown' className='mx-2' />}>
+
+															<Select
+																id='gender'
+																name='gender'
+																style={{ color: 'black' }}
+																value={formik.values.gender}
+																onChange={(event) => {
+																	formik.handleChange(event);
+																	handleState(event.target.value);
+																}}
+															    onBlur={formik.handleBlur} 
+																placeholder='Select Gender'>
+																{/* <option value={''}> Select</option> */}
+																{genderData?.map((gender: any) => (																	 (
+																			<option
+																				style={{
+																					color: 'black',
+																				}}
+																				id={gender?.id}
+																				key={gender?.id}
+																				value={gender?.id}>
+																				{
+																					gender?.value
+																				}
+																			</option>
+																		)
+																	),
+																)}
+															</Select>
+														</FieldWrap>
+														</Validation>
+													</div>
+													<div className='col-span-12 lg:col-span-6'>
+														<Label htmlFor='dateOfBirth'>
+															Date Of Birth
+														</Label>
+														<Validation
+															isValid={formik.isValid}
+															isTouched={formik.touched.dateOfBirth}
+															invalidFeedback={
+																formik.errors.dateOfBirth
+															}
+															validFeedback='Good'>
+															<Input
+																type='date'
+																id='dateOfBirth'
+																name='dateOfBirth'
+																onChange={formik.handleChange}
+																value={formik.values.dateOfBirth}
+																onBlur={formik.handleBlur}
+															/>
+														</Validation>
+													</div>
+
+													<div className='col-span-12 lg:col-span-6'>
+														<Label htmlFor='dateOfHistoryVaccine1'>
+															{' '}
+															Date Of History Vaccine
+														</Label>
+														<Validation
+															isValid={formik.isValid}
+															isTouched={
+																formik.touched.dateOfHistoryVaccine1
+															}
+															invalidFeedback={
+																formik.errors.dateOfHistoryVaccine1
+															}
+															validFeedback='Good'>
+															<Input
+																type='date'
+																id=' dateOfHistoryVaccine1'
+																name='dateOfHistoryVaccine1'
+																onChange={formik.handleChange}
+																value={
+																	formik.values
+																		.dateOfHistoryVaccine1
+																}
+																onBlur={formik.handleBlur}
+															/>
+														</Validation>
+													</div>
+													<div className='col-span-12 lg:col-span-6'>
+														<Label htmlFor='motherFirstName'>
+															Mother First Name
+														</Label>
+														<Validation
+															isValid={formik.isValid}
+															isTouched={
+																formik.touched.motherFirstName
+															}
+															invalidFeedback={
+																formik.errors.motherFirstName
+															}
+															validFeedback='Good'>
+															<Input
+																id='motherFirstName'
+																name='motherFirstName'
+																onChange={formik.handleChange}
+																value={
+																	formik.values.motherFirstName
+																}
+																onBlur={formik.handleBlur}
+															/>
+														</Validation>
+													</div>
+													<div className='col-span-12 lg:col-span-6'>
+														<Label htmlFor='motherMaidenLastName'>
+															Mother Maiden Last Name
+														</Label>
+														<Validation
+															isValid={formik.isValid}
+															isTouched={
+																formik.touched.motherMaidenLastName
+															}
+															invalidFeedback={
+																formik.errors.motherMaidenLastName
+															}
+															validFeedback='Good'>
+															<Input
+																id='motherMaidenLastName'
+																name='motherMaidenLastName'
+																onChange={formik.handleChange}
+																value={
+																	formik.values
+																		.motherMaidenLastName
+																}
+																onBlur={formik.handleBlur}
+															/>
+														</Validation>
+													</div>
+													<div className='col-span-12 lg:col-span-6'>
+														<Label htmlFor='motherLastName'>
+															Mother Last Name
+														</Label>
+														<Validation
+															isValid={formik.isValid}
+															isTouched={
+																formik.touched.motherLastName
+															}
+															invalidFeedback={
+																formik.errors.motherLastName
+															}
+															validFeedback='Good'>
+															<Input
+																id='motherLastName'
+																name='motherLastName'
+																onChange={formik.handleChange}
+																value={formik.values.motherLastName}
+																onBlur={formik.handleBlur}
+															/>
+														</Validation>
+													</div>
+													<div className='col-span-12 lg:col-span-6'>
+														<Label htmlFor='patientStatus'>
+															Patient Status
+														</Label>
+														<Validation
+															isValid={formik.isValid}
+															isTouched={formik.touched.patientStatus}
+															invalidFeedback={
+																formik.errors.patientStatus
+															}
+															validFeedback='Good'>
+															<Input
+																id='patientStatus'
+																name='patientStatus'
+																onChange={formik.handleChange}
+																value={formik.values.patientStatus}
+																onBlur={formik.handleBlur}
+															/>
+														</Validation>
+													</div>
+													<div className='col-span-12 lg:col-span-6'>
+														<Label htmlFor='personType'>
+															Person Type
+														</Label>
+														<Validation
+															isValid={formik.isValid}
+															isTouched={formik.touched.personType}
+															invalidFeedback={
+																formik.errors.personType
+															}
+															validFeedback='Good'>
+															<Input
+																id='personType'
+																name='personType'
+																onChange={formik.handleChange}
+																value={formik.values.personType}
+																onBlur={formik.handleBlur}
+															/>
+														</Validation>
+													</div>
+													<div className='col-span-12 lg:col-span-6'>
+														<Label htmlFor='country'>Country</Label>
+														<Validation
+															isValid={formik.isValid}
+															isTouched={formik.touched.country}
+															invalidFeedback={formik.errors.country}
+															validFeedback='Good'>
+														<FieldWrap style={{ color: 'black' }} lastSuffix={<Icon icon='HeroChevronDown' className='mx-2' />}>
+
+															<Select
+																id='country'
+																name='country'
+																style={{ color: 'black' }}
+																value={formik.values.country}
+																onChange={(event) => {
+																	formik.handleChange(event);
+																	handleState(event.target.value);
+																}}
+															    onBlur={formik.handleBlur} 
+																placeholder='Select Country'>
+																{/* <option value={''}> Select</option> */}
+																{countryData?.map((country: any) => (																	 (
+																			<option
+																				style={{
+																					color: 'black',
+																				}}
+																				id={country?.id}
+																				key={country?.id}
+																				value={country?.id}>
+																				{
+																					country?.countryName
+																				}
+																			</option>
+																		)
+																	),
+																)}
+															</Select>
+														</FieldWrap>
+														</Validation>
+													</div>
+													<div className='col-span-12 lg:col-span-6'>
+														<Label htmlFor='state'>State</Label>
+
+														<Validation
+															isValid={formik.isValid}
+															isTouched={formik.touched.state}
+															invalidFeedback={formik.errors.state}
+															validFeedback='Good'>
+														<FieldWrap style={{ color: 'black' }} lastSuffix={<Icon icon='HeroChevronDown' className='mx-2' />}>
+															<Select
+																id='state'
+																name='state'
+																style={{ color: 'black' }}
+																value={formik.values.state}
+																onChange={(event) => {
+																	formik.handleChange(event);
+																	handleCity(event.target.value);
+																}}
+																onBlur={formik.handleBlur}
+																placeholder='Select State'>
+																{/* <option value={''}> Select</option> */}
+																{filteredState?.map((state: any) => (
+																			<option
+																				style={{
+																					color: 'black',
+																				}}
+																				id={state?.id}
+																				key={state?.id}
+																				value={state?.id}>
+																				{state?.stateName}
+																			</option>
+																		)
+																	
+																)}
+															</Select>
+														</FieldWrap>
+														</Validation>
+													</div>
+													<div className='col-span-12 lg:col-span-6'>
+														<Label htmlFor='city'>City</Label>
+
+														<Validation
+															isValid={formik.isValid}
+															isTouched={formik.touched.city}
+															invalidFeedback={formik.errors.city}
+															validFeedback='Good'>
+														<FieldWrap style={{ color: 'black' }} lastSuffix={<Icon icon='HeroChevronDown' className='mx-2' />}>
+															<Select
+																id='city'
+																name='city'
+																style={{ color: 'black' }}
+																value={formik.values.city}
+																onChange={formik.handleChange}
+																onBlur={formik.handleBlur}
+																placeholder='Select City' >
+																{/* <option value={''}> Select</option> */}
+																{filteredCity?.map((city: any) => (
+																		<option 
+																			style={{
+																				color: 'black',
+																			}}
+																			id={city?.id}
+																			key={city?.id}
+																			value={city?.id}>
+																			{city?.cityName}
+																		</option>
+																	)
+																)}
+															</Select>
+														</FieldWrap>
+														</Validation>
+													</div>
+												</div>
+											</CardBody>
+										</Card>
+									</div>
+								</div>
+							</div>
+						</ModalBody>
+						<ModalFooter>
+							<Button variant='solid' onClick={() => {setNewPatientModal(false); setEditTouched(false)}}>
+								Cancel
+							</Button>
+							<Button variant='solid' onClick={() => formik.handleSubmit()}>
+								{!editTouched  ? 'Save' : 'Update'}
+							</Button>
+						</ModalFooter>
+					</Modal>
+
+					{/* </Link> */}
 				</SubheaderRight>
 			</Subheader>
 			<Container>
 				<Card className='h-full'>
-					{/* <CardHeader>
-            <CardHeaderChild>
-              <CardTitle>All Customers</CardTitle>
-            </CardHeaderChild>
-          </CardHeader> */}
 					<CardBody className='overflow-auto'>
 						<DataGrid
 							className={classes.root}
@@ -244,11 +921,11 @@ const PatientManagement = () => {
 							loading={loading}
 							pageSizeOptions={[5, 10, 25]}
 							paginationModel={paginationModel}
-							paginationMode="server"
+							paginationMode='server'
 							onPaginationModelChange={handlePaginationModelChange}
 							checkboxSelection
-							onRowClick={handleRowClick}
-							getRowId={(row) => `${row.patientStatus}`}
+							// onRowClick={handleRowClick}
+							getRowId={(row) => `${row.patientName}-${row.personId}`}
 							sx={{
 								'& .MuiDataGrid-columnHeaders': { backgroundColor: '#e5e7eb' },
 								'& .MuiDataGrid-columnHeaderTitle': {
@@ -259,7 +936,6 @@ const PatientManagement = () => {
 								toolbar: CustomPagination, // 'toolbar' should be all lowercase
 							}}
 						/>
-
 					</CardBody>
 				</Card>
 			</Container>
