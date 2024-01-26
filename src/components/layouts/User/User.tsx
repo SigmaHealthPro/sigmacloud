@@ -1,12 +1,15 @@
-import React, { FC, HTMLAttributes, ReactNode, useId, useState } from 'react';
+import React, { FC, HTMLAttributes, ReactNode, useId, useEffect, useState } from 'react';
 import classNames from 'classnames';
 import { AnimatePresence, motion } from 'framer-motion';
 import useRoundedSize from '../../../hooks/useRoundedSize';
 import useAsideStatus from '../../../hooks/useAsideStatus';
+import { useAuth } from '../../../context/authContext';
+import useFakeUserAPI from '../../../mocks/hooks/useFakeUserAPI';
+import { TUser } from '../../../mocks/db/users.db';
 import themeConfig from '../../../config/theme.config';
 import getFirstLetter from '../../../Services/utils/getFirstLetter';
 
-interface IUserProps extends HTMLAttributes<HTMLDivElement> {
+export interface IUserProps extends HTMLAttributes<HTMLDivElement> {
 	children: ReactNode;
 	className?: string;
 	src?: string;
@@ -15,9 +18,12 @@ interface IUserProps extends HTMLAttributes<HTMLDivElement> {
 	nameSuffix?: ReactNode;
 	position: string;
 	suffix?: ReactNode;
+	facility: string;
+	juridiction: string;
 	isLoading?: boolean;
 }
-const User: FC<IUserProps> = (props) => {
+
+export const User: FC<IUserProps> = (props) => {
 	const {
 		children,
 		className,
@@ -28,6 +34,8 @@ const User: FC<IUserProps> = (props) => {
 		nameSuffix,
 		suffix,
 		isLoading,
+		facility,
+		juridiction,
 		...rest
 	} = props;
 
@@ -35,6 +43,14 @@ const User: FC<IUserProps> = (props) => {
 
 	const id = useId();
 	const [isOpen, setIsOpen] = useState<boolean>(false);
+	const [localData, setLocalData] = useState<TUser | null>(null);
+	useEffect(() => {
+		// Retrieve data from localStorage
+		const storedData = localStorage.getItem('apiData');
+		if (storedData) {
+			setLocalData(JSON.parse(storedData));
+		}
+	}, []);
 
 	const { roundedCustom } = useRoundedSize('rounded-xl');
 
@@ -70,16 +86,18 @@ const User: FC<IUserProps> = (props) => {
 								'flex aspect-square h-12 w-12 items-center justify-center bg-blue-500/20 text-blue-500',
 								[`${roundedCustom(-2)}`],
 							)}>
-							{name && getFirstLetter(name)}
+							{localData?.username && getFirstLetter(localData.username)}
 						</div>
 					)}
 					<div className='flex basis-full flex-wrap items-center truncate'>
 						<div className='flex basis-full items-center gap-2 truncate'>
 							{namePrefix && <span>{namePrefix}</span>}
-							<span className='truncate font-semibold'>{name}</span>
+							<span className='truncate font-semibold'>{localData?.username}</span>
 							{nameSuffix && <span>{nameSuffix}</span>}
 						</div>
-						<div className='basis-full truncate text-xs'>{position}</div>
+						<div className='basis-full truncate text-xs'>{localData?.position}</div>
+						<div className='basis-full truncate text-xs'>{localData?.facility}</div>
+						<div className='basis-full truncate text-xs'>{localData?.juridiction}</div>
 					</div>
 					{suffix && <div className='flex items-center'>{suffix}</div>}
 				</div>

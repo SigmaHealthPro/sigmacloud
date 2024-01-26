@@ -24,8 +24,8 @@ const LoginPage = () => {
 
 	const formik = useFormik({
 		initialValues: {
-			username: usersDb[5].username,
-			password: usersDb[5].password,
+			username: '',
+			password: '',
 		},
 		validate: (values: TValues) => {
 			const errors: Partial<TValues> = {};

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useFormik } from 'formik';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
-import { Descendant } from 'slate';
+import { Descendant, string } from 'slate';
 import PageWrapper from '../components/layouts/PageWrapper/PageWrapper';
 import { useAuth } from '../context/authContext';
 import Container from '../components/layouts/Container/Container';
@@ -27,6 +27,7 @@ import RichText from '../components/RichText';
 import Radio, { RadioGroup } from '../components/form/Radio';
 import useDarkMode from '../hooks/useDarkMode';
 import { TDarkMode } from '../types/darkMode.type';
+import { TUser } from '../mocks/db/users.db';
 
 type TTab = {
 	text:
@@ -88,10 +89,19 @@ const TAB: TTabs = {
 
 const ProfilePage = () => {
 	const { i18n } = useTranslation();
+	const [localData, setLocalData] = useState<TUser | null>(null);
+	useEffect(() => {
+		// Retrieve data from localStorage
+		const storedData = localStorage.getItem('apiData');
+		if (storedData) {
+			setLocalData(JSON.parse(storedData));
+		}
+	}, []);
 
 	const { setDarkModeStatus } = useDarkMode();
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 	const { userData, isLoading } = useAuth();
 	const [activeTab, setActiveTab] = useState<TTab>(TAB.EDIT);
 
@@ -107,33 +117,51 @@ const ProfilePage = () => {
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	const [isSaving, setIsSaving] = useState<boolean>(false);
+	const selectedDate = localStorage.getItem('birthdate');
+	const formatDateString = (inputDateString: string): string => {
+		const parts = inputDateString.split('-');
+		if (parts.length === 3) {
+			const [day, month, year] = parts;
+			// Ensure the month and day are two digits
+			const formattedMonth = month.padStart(2, '0');
+			const formattedDay = day.padStart(2, '0');
+			const formatDay = formattedDay.replace('"', '');
+			const years = year.replace('"', '');
+			return `${years}-${formattedMonth}-${formatDay}`;
+		}
+		// Return the original string if the format is not as expected
+		return inputDateString;
+	};
 
+	console.log('modified', formatDateString(selectedDate || ''));
 	const formik = useFormik({
 		enableReinitialize: true,
 		initialValues: {
 			fileUpload: '',
-			username: userData?.username,
-			email: userData?.email,
-			firstName: userData?.firstName,
-			lastName: userData?.lastName,
-			position: userData?.position,
-			role: userData?.role,
+			username: localData?.username,
+			email: localData?.email,
+			firstName: localData?.firstName,
+			lastName: localData?.lastName,
+			position: localData?.position,
+			role: localData?.role,
+			facility: localData?.facility,
+			jurisdiction: localData?.juridiction,
 			oldPassword: '',
 			newPassword: '',
 			newPasswordConfirmation: '',
-			twitter: userData?.socialProfiles?.twitter,
-			facebook: userData?.socialProfiles?.facebook,
-			instagram: userData?.socialProfiles?.instagram,
-			github: userData?.socialProfiles?.github,
-			twoFactorAuth: userData?.twoFactorAuth,
-			weeklyNewsletter: userData?.newsletter?.weeklyNewsletter || false,
-			lifecycleEmails: userData?.newsletter?.lifecycleEmails || false,
-			promotionalEmails: userData?.newsletter?.promotionalEmails || false,
-			productUpdates: userData?.newsletter?.productUpdates || false,
-			bio: (userData?.bio && (JSON.parse(userData.bio) as Descendant[])) || [],
-			gender: 'Male',
+			twitter: localData?.socialProfiles?.twitter,
+			facebook: localData?.socialProfiles?.facebook,
+			instagram: localData?.socialProfiles?.instagram,
+			github: localData?.socialProfiles?.github,
+			twoFactorAuth: localData?.twoFactorAuth,
+			weeklyNewsletter: localData?.newsletter?.weeklyNewsletter || false,
+			lifecycleEmails: localData?.newsletter?.lifecycleEmails || false,
+			promotionalEmails: localData?.newsletter?.promotionalEmails || false,
+			productUpdates: localData?.newsletter?.productUpdates || false,
+			bio: (localData?.bio && (JSON.parse(localData.bio) as Descendant[])) || [],
+			gender: localData?.gender, //userData.gender,
 			theme: 'dark',
-			birth: '1987-12-21',
+			birth: formatDateString(selectedDate || ''), //'1987-12-21',
 		},
 		onSubmit: () => {},
 	});
@@ -298,7 +326,7 @@ const ProfilePage = () => {
 											</div>
 
 											<div className='col-span-12 lg:col-span-6'>
-												<Label htmlFor='birth'>Last Name</Label>
+												<Label htmlFor='birth'>Date of Birth</Label>
 												<Input
 													type='date'
 													id='birth'

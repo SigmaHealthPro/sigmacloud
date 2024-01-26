@@ -15,6 +15,8 @@ const UserTemplate = () => {
 			name={userData?.firstName}
 			nameSuffix={userData?.isVerified && <Icon icon='HeroCheckBadge' color='blue' />}
 			position={userData?.position}
+			facility={userData?.facility}
+			juridiction={userData?.juridiction}
 			src={userData?.image?.thumb}
 			suffix={
 				<Badge color='amber' variant='solid' className='text-xs font-bold'>

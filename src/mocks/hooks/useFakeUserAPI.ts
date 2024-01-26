@@ -1,39 +1,79 @@
 import { useEffect, useState } from 'react';
-import usersDb, { TUser } from '../db/users.db';
+import { constant, method } from 'lodash';
+import { TUser } from '../db/users.db';
+import apiconfig from '../../config/apiconfig';
 
 const useFakeUserAPI = (username: string) => {
-	const allUserData = usersDb;
-	const userData = allUserData.filter((f) => f.username === username)[0];
-
+	// const allUserData = usersDb;
+	const [isLoading, setIsLoading] = useState<boolean>(true);
+	const [response, setResponse] = useState<TUser | undefined>();
+	const [data, setData] = useState(null);
 	const getCheckUser = (userNameOrMail: string, password: string) => {
-		const filteredUserData = allUserData.filter(
-			(f) => f.username === userNameOrMail || f.email === userNameOrMail,
-		)[0];
-
+		username = userNameOrMail;
+		const apiUrl = apiconfig.apiHostUrl;
+		console.log('apiurl' + apiUrl);
 		return new Promise((resolve, reject) => {
-			if (!filteredUserData)
-				reject(
-					new Error('The username is invalid!', {
-						cause: 'username',
-					}),
-				);
-			if (filteredUserData.password === password) resolve(true);
-			else reject(new Error('The password is invalid!', { cause: 'password' }));
+			fetch(
+				apiUrl +
+					'api/User/Authenticate/Authenticate?username=' +
+					username +
+					'&password=' +
+					password,
+				{
+					method: 'POST',
+					mode: 'cors',
+					headers: {
+						authorization: localStorage.token,
+						'Access-Control-Allow-Origin': '*',
+					},
+				},
+			)
+				.then((response) => {
+					if (!response.ok) {
+						throw new Error(`HTTP error! Status: ${response.status}`);
+					}
+
+					return response.json();
+				})
+				.then((data) => {
+					resolve(data);
+					setResponse(data as TUser);
+					localStorage.setItem('apiData', JSON.stringify(data));
+					localStorage.setItem('birthdate', JSON.stringify(data.birthdate));
+					localStorage.setItem('loggedinname', data.userName);
+					console.log(data.userName);
+					localStorage.setItem('position', data.position);
+					localStorage.setItem('facilityname', data.facility);
+					localStorage.setItem('juridictionname', data.juridiction);
+				})
+				.catch((error) => {
+					reject(error.message);
+				});
+		});
+	};
+	// Function to retrieve data from localStorage
+	const getDataFromLocalStorage = () => {
+		return new Promise((resolve, reject) => {
+			const storedData = localStorage.getItem('apiData');
+			if (storedData) {
+				resolve(JSON.parse(storedData));
+			} else {
+				reject(new Error('No data found in localStorage'));
+			}
 		});
 	};
 
-	const [isLoading, setIsLoading] = useState<boolean>(true);
-	const [response, setResponse] = useState<TUser | undefined>();
 	useEffect(() => {
 		setTimeout(() => {
-			setResponse(userData);
+			setResponse(response);
 			setIsLoading(false);
+			getDataFromLocalStorage();
 		}, 500);
 
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		// 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [username]);
 
-	return { response, isLoading, getCheckUser, allUserData };
+	return { response, isLoading, getCheckUser, getDataFromLocalStorage };
 };
 
 export default useFakeUserAPI;

@@ -24,12 +24,16 @@ export type TUser = {
 	username: string;
 	firstName: string;
 	lastName: string;
+	gender: string;
+	birthdate: string;
 	email: string;
 	phone?: string;
 	password: string;
 	position: string;
 	role?: string;
 	isVerified: boolean;
+	facility: string;
+	juridiction: string;
 	image?: {
 		org: string;
 		thumb: string;
@@ -61,10 +65,14 @@ export const usersDbList = {
 		username: 'sophiejones',
 		firstName: 'Sophie',
 		lastName: 'Jones',
+		gender: 'male',
+		birthdate: '',
 		email: 'sophiejones@site.com',
 		password: '!123Asd',
 		position: 'Web Developer',
 		isVerified: true,
+		facility: '',
+		juridiction: '',
 		image: { org: User1 as string, thumb: User1Thumb as string },
 		socialAuth: {
 			google: true,
@@ -86,10 +94,14 @@ export const usersDbList = {
 		username: 'johndoe',
 		firstName: 'John',
 		lastName: 'Doe',
+		gender: 'male',
+		birthdate: '',
 		email: 'johndoe@site.com',
 		password: '!123Asd',
 		position: 'Administrator',
 		isVerified: true,
+		facility: '',
+		juridiction: '',
 		image: { org: User2 as string, thumb: User2Thumb as string },
 		socialAuth: {
 			google: true,
@@ -103,10 +115,14 @@ export const usersDbList = {
 		username: 'aulistiainen',
 		firstName: 'Aulis',
 		lastName: 'Tiainen',
+		gender: 'male',
+		birthdate: '',
 		email: 'aulistiainen@site.com',
 		password: '!123Asd',
 		position: 'Administrator',
 		isVerified: true,
+		facility: '',
+		juridiction: '',
 		image: { org: User3 as string, thumb: User3Thumb as string },
 		socialAuth: {
 			google: true,
@@ -120,10 +136,14 @@ export const usersDbList = {
 		username: 'juliusmolesen',
 		firstName: 'Julius M.',
 		lastName: 'Olesen',
+		gender: 'male',
+		birthdate: '',
 		email: 'juliusmolesen@site.com',
 		password: '!123Asd',
 		position: 'Administrator',
 		isVerified: true,
+		facility: '',
+		juridiction: '',
 		image: { org: User4 as string, thumb: User4Thumb as string },
 		socialAuth: {
 			google: false,
@@ -137,10 +157,14 @@ export const usersDbList = {
 		username: 'jakecorbin',
 		firstName: 'Jake',
 		lastName: 'Corbin',
+		gender: 'male',
+		birthdate: '',
 		email: 'jakecorbin@site.com',
 		password: '!123Asd',
 		position: 'Administrator',
 		isVerified: true,
+		facility: '',
+		juridiction: '',
 		image: { org: User5 as string, thumb: User5Thumb as string },
 		socialAuth: {
 			google: true,
@@ -154,10 +178,14 @@ export const usersDbList = {
 		username: 'scottnewton',
 		firstName: 'Scott',
 		lastName: 'Newton',
+		gender: 'male',
+		birthdate: '',
 		email: 'scottnewton@site.com',
 		password: '!123Asd',
 		position: 'Web Developer',
 		isVerified: true,
+		facility: '',
+		juridiction: '',
 		image: { org: User6 as string, thumb: User6Thumb as string },
 		socialAuth: {
 			google: true,
@@ -185,10 +213,14 @@ export const usersDbList = {
 		username: 'erinslater',
 		firstName: 'Erin',
 		lastName: 'Slater',
+		gender: 'male',
+		birthdate: '',
 		email: 'erinslater@site.com',
 		password: '!123Asd',
 		position: 'User',
 		isVerified: true,
+		facility: '',
+		juridiction: '',
 		image: { org: User7 as string, thumb: User7Thumb as string },
 		socialAuth: {
 			google: true,
@@ -202,10 +234,14 @@ export const usersDbList = {
 		username: 'jeanetteneufville',
 		firstName: 'Jeanette',
 		lastName: 'Neufville',
+		gender: 'male',
+		birthdate: '',
 		email: 'jeanetteneufville@site.com',
 		password: '!123Asd',
 		position: 'User',
 		isVerified: true,
+		facility: '',
+		juridiction: '',
 		image: { org: User8 as string, thumb: User8Thumb as string },
 		socialAuth: {
 			google: false,
@@ -219,10 +255,14 @@ export const usersDbList = {
 		username: 'semihraifgurel',
 		firstName: 'Semih Raif',
 		lastName: 'Gurel',
+		birthdate: '',
+		gender: 'male',
 		email: 'semihraifgurel@site.com',
 		password: '!123Asd',
 		position: 'Administrator',
 		isVerified: true,
+		facility: '',
+		juridiction: '',
 		socialAuth: {
 			google: false,
 			facebook: false,
@@ -235,10 +275,14 @@ export const usersDbList = {
 		username: 'patriciadionne',
 		firstName: 'Patricia',
 		lastName: 'Dionne',
+		gender: 'male',
+		birthdate: '',
 		email: 'patriciadionne@site.com',
 		password: '!123Asd',
 		position: 'User',
 		isVerified: true,
+		facility: '',
+		juridiction: '',
 		image: { org: User9 as string, thumb: User9Thumb as string },
 		socialAuth: {
 			google: true,
