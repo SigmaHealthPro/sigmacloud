@@ -70,6 +70,7 @@ const FacilitiesPage = () => {
         
         
       ];
+      
     const classes = useStyles();
     const [facilities, setFacilities] = useState<Facility[]>([]);
     const [globalFilter, setGlobalFilter] = useState<string>('');
