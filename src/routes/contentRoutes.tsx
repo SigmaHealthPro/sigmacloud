@@ -4,7 +4,12 @@ import { appPages, authPages, componentsPages, examplePages } from '../config/pa
 import NotFoundPage from '../pages/NotFound.page';
 import LoginPage from '../pages/Login.page';
 import VaccineForecasting from '../pages/Vaccine \u2028Forecasting/VaccineForecasting';
-import FacilitiesPage from '../pages/FacilityManagement/Facilities.page';
+import FacilitiesPage from '../pages/Facility Management/Facilities.page'
+import Facilitypage from '../pages/Facility Management/Facilitypage.page';
+import FacilityProfile from '../pages/FacilityProfile.page';
+import FacilityPage from '../pages/Facility Management/Facilitypage.page';
+import PatientManagement from '../pages/Patient Management/PatientManagement';
+import AddPatient from '../pages/Patient Management/AddPatient';
 
 /**
  * UI
@@ -113,7 +118,7 @@ const CategoryListPage = lazy(
 	() => import('../pages/sales/categories/CategoryListPage/CategoryList.page'),
 );
 const CategoryPage = lazy(() => import('../pages/sales/categories/CategoryPage/Category.page'));
-const Facilities = lazy(() => import('../pages/FacilityManagement/Facilities.page'));
+const Facilities = lazy(() => import('../pages/Facility Management/Facilities.page'));
 /**
  * CRM
  */
@@ -254,6 +259,14 @@ const contentRoutes: RouteProps[] = [
 	 * RESERVATION::BEGIN
 	 */
 	{
+		path: `${appPages.facilityAppPages.subPages.newfacilityPage.to}`,
+		element: <FacilityPage/>,
+	},
+	{
+		path: `${appPages.facilityAppPages.subPages.facilityPage.to}/:id`,
+		element: <FacilityProfile/>,
+	},
+	{
 		path: appPages.reservationAppPages.to,
 		element: <UnderConstructionPage />,
 	},
@@ -271,6 +284,15 @@ const contentRoutes: RouteProps[] = [
 	{
 		path: appPages.facilityAppPages.to,
 		element: <FacilitiesPage/>,
+	},
+	{
+		path: appPages.PatientManagement.to,
+		element: <PatientManagement/>,
+		
+	},
+	{
+		path: appPages.PatientManagement.subPages.AddPatient.to,
+		element:<AddPatient/>,
 	},
 	/**
 	 * MAIL::END

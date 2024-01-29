@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { MoreVert as MoreVertIcon, Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import {
 	createColumnHelper,
 	getCoreRowModel,

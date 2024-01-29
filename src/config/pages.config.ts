@@ -133,7 +133,14 @@ export const appPages = {
 		to: '/patient-management',
 		text: 'Patient Management',
 		icon: 'HeroEnvelope',
-		subPages: {},
+		subPages: {
+			AddPatient:{
+				id:'addPatient',
+				to:'/pages/patient-Management/addPatient',
+				text:'AddPatient',
+				icon:'HeroQueueList',
+			}
+		},
 	},
 	crmAppPages: {
 		id: 'crmApp',
@@ -232,6 +239,20 @@ export const appPages = {
 		to: '/facilities',
 		text: 'Facility	Management',
 		icon: 'HeroBookOpen',
+		subPages: {
+			facilityPage: {
+				id: 'facilitypage',
+				to: '/facilitypage',
+				text: 'Facility Page',
+				icon: 'HeroClipboardDocumentCheck',
+			},
+			newfacilityPage: {
+				id: 'facilitypage',
+				to: '/newfacilitypage',
+				text: 'Facility Page',
+				icon: 'HeroClipboardDocumentCheck',
+			},
+		},
 	},
 	reservationAppPages: {
 		id: 'reservationApp',
