@@ -44,7 +44,7 @@ import PlacesAutocomplete, {geocodeByAddress,getLatLng,} from 'react-places-auto
 import Alert from '../components/ui/Alert';
 
 
-interface AddressType {
+interface LovMasterType {
 	id: string;
 	key: string;
 	value: string;
@@ -68,6 +68,7 @@ interface AddressType {
 	Red = 'red',
 	Lime = 'lime',
 	Blue = 'blue',
+	Amber='amber'
 	// Add other colors as needed
   }
   
@@ -149,7 +150,7 @@ const FacilityProfile = () => {
 	const [entityAddressmodalStatus, entityAddresssetModalStatus] = useState<boolean>(false);
 	const [addressmodalStatus, addresssetModalStatus] = useState<boolean>(false);
 	const [showAlert, setShowAlert] = useState(false);
-
+	const [entityContactmodalStatus, setEntityContactmodalStatus] = useState<boolean>(false);
   const [alertMessage, setAlertMessage] = useState('');
   const [alertColor, setAlertColor] = useState<TColors>(TColors.Red);
   const [alertTitle, setAlertTitle] = useState('');
@@ -175,7 +176,7 @@ const FacilityProfile = () => {
 				<div className="absolute hidden group-hover:flex flex-col items-center bg-white shadow-md 
 					  -translate-y-full -translate-x-1/2 transform top-full left-10 mt-1">
 						<Space size="middle">
-					<AntButton icon={<EditOutlined />} />
+					
 					<Popconfirm title="Sure to delete?" onConfirm={() => handleDelete(params.row.id)}>
 						<AntButton icon={<DeleteOutlined />} />
 					</Popconfirm>
@@ -192,16 +193,61 @@ const FacilityProfile = () => {
       setShowAlert(false);
     }, 10000);
 
-    // Clear the timeout when the component unmounts or when showAlert changes
+
     return () => clearTimeout(timeoutId);
   }, [showAlert]);
 
-  const handleDelete = (_id: string) => {
-	// Assuming you want to show a confirmation dialog before deleting the contact
-	//const isConfirmed = window.confirm('Are you sure you want to delete this contact?');
-  
+  const handleDelete = async (entityAddressId: string) => {
+	try {
+		console.log("this is facility id "+ entityAddressId);
+
+		const response = await axios.delete('https://dev-api-iis-sigmacloud.azurewebsites.net/api/Addresses/delete-entity-addresses', {
+      headers: {
+        'Accept': '*/*',
+        'Content-Type': 'multipart/form-data',
+      },
+      data: {
+        entityAddressId: entityAddressId,
+      },
+    });
+
+	  if (response.data.status === 'Success') {
+
+		console.log(response.data.message);
+		setAlertMessage(response.data.message);
+		setAlertColor(TColors.Lime);
+		setAlertTitle('Success')
+        setShowAlert(true);
+		fetchAddressData();
+
+	  } else if (response.data.status === 'Error') {
+
+	   console.error('Failed to insert address:', response.data.message);
+		setAlertColor(TColors.Red);
+		setAlertTitle('Fail')
+		setAlertMessage(response.data.message);
+        setShowAlert(true);
+
+	  } else {
+			console.error('Unexpected response status. Please try again.', response.data.message);
+		setAlertColor(TColors.Red);
+		setAlertTitle('Fail')
+		setAlertMessage('Error saving address.');
+        setShowAlert(true);
+		
+	  }
+	} catch (error) {
+
+		console.error('Error deleting address:', error);
+		setAlertColor(TColors.Red);
+		setAlertTitle('Fail')
+		setAlertMessage('Error deleting address.');
+        setShowAlert(true);
 	
+	  
+	}
   };
+  
   const fetchAddressData = async () => {
     try {
       const response = await axios.post('https://dev-api-iis-sigmacloud.azurewebsites.net/api/Addresses/get-entity-addresses', {
@@ -232,31 +278,32 @@ const FacilityProfile = () => {
     { field: 'createdBy', headerName: 'Created By', flex: 1 },
     { field: 'contactType', headerName: 'Contact Type', flex: 1 },
   ];
-  useEffect(() => {
-    const fetchContactData = async () => {
-      try {
-        const response = await axios.post('https://dev-api-iis-sigmacloud.azurewebsites.net/api/Contact/get-entity-contact', {
-          entityId: '9e5806b4-b96e-49e4-9220-1b512d15eb71',
-          identifier: null,
-          recordCount: null,
-        });
 
-        if (response.data && response.data.status === 'Success') {
-			setContactData(response.data.dataList);
-        } else {
-          // Handle error
-          console.error('Error fetching contact data');
-        }
-      } catch (error) {
-        // Handle error
-        console.error('Error fetching contact data', error);
-      }
-    };
+  const fetchContactData = async () => {
+	try {
+	  const response = await axios.post('https://dev-api-iis-sigmacloud.azurewebsites.net/api/Contact/get-entity-contact', {
+		entityId: 'dbfb63ca-058c-4e96-b485-4652d8fa9776',
+		identifier: null,
+		recordCount: null,
+	  });
+
+	  if (response.data && response.data.status === 'Success') {
+		  setContactData(response.data.dataList);
+	  } else {
+		// Handle error
+		console.error('Error fetching contact data');
+	  }
+	} catch (error) {
+	  // Handle error
+	  console.error('Error fetching contact data', error);
+	}
+  };
+  useEffect(() => {
 
     fetchContactData();
   }, []);
 
-  const [addressTypes, setAddressTypes] = useState<AddressType[]>([]);
+  const [addressTypes, setAddressTypes] = useState<LovMasterType[]>([]);
   const [selectedAddressType, setSelectedAddressType] = useState<string>('');
 
   useEffect(() => {
@@ -295,6 +342,104 @@ const FacilityProfile = () => {
   const handleAddressTypeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedAddressType(event.target.value);
   };
+  const [contactTypes, setContactTypes] = useState<LovMasterType[]>([]);
+  const [selectedContactType, setContactAddressType] = useState<string>('');
+  const [contactValue, setContactValue] = useState('');
+  useEffect(() => {
+    const fetchContactTypes = async () => {
+      try {
+        const response = await axios.get(
+          'https://dev-api-iis-sigmacloud.azurewebsites.net/api/MasterData/getlovmasterbylovtype?lovtype=ContactType'
+        );
+
+        console.log('Lov Types API Response:', response);
+
+        if (response.data && Array.isArray(response.data)) {
+          // Adding a default item at the beginning
+          const defaultItem = {
+            id: 'default',
+            key: 'default',
+            value: 'Select an Contact Type',
+            lovType: 'ContactType',
+            longDescription: 'Select an Contact Type',
+          };
+
+          setContactTypes([defaultItem, ...response.data]);
+        } else {
+          console.error('Error fetching contact type data');
+        }
+      } catch (error) {
+        console.error('Error fetching contact type data', error);
+      }
+    };
+
+    fetchContactTypes();
+  }, []);
+
+
+
+  const handleContactTypeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setContactAddressType(event.target.value);
+  };
+  const currentDate = new Date();
+      const createdDate = currentDate.toISOString();
+
+  const handleSaveEntityContact = async () => {
+	try {
+		if (!selectedContactType || !contactValue) {
+			setAlertColor(TColors.Amber);
+		setAlertTitle('Validation Fail')
+		setAlertMessage('Please fill in all the fields.');
+        setShowAlert(true);
+			return;
+		  }
+	  const response = await axios.post(
+		'https://dev-api-iis-sigmacloud.azurewebsites.net/api/Contact/create-entity-contact',
+		{
+		  contactValue: contactValue,
+		  createdDate: createdDate,
+		  createdBy: 'quasif',
+		  isdelete: false,
+		  contactType: selectedContactType,
+		  entityId: 'dbfb63ca-058c-4e96-b485-4652d8fa9776',
+		  entityType: 'facility',
+		},
+		{
+		  headers: {
+			'Accept': '*/*',
+			'Content-Type': 'application/json',
+		  },
+		}
+	  );
+  
+	  if (response.data && response.data.status === 'Success') {
+
+		console.log(response.data.message);
+		setAlertMessage(response.data.message);
+		setAlertColor(TColors.Lime);
+		setAlertTitle('Success')
+        setShowAlert(true);
+		fetchContactData();
+		setEntityContactmodalStatus(false);
+		
+	  } else {
+		
+		console.error('Error inserting entity contact:', response.data.message);
+		setAlertColor(TColors.Red);
+		setAlertTitle('Fail')
+		setAlertMessage(response.data.message);
+        setShowAlert(true);
+	  }
+	} catch (error) {
+	  
+	  console.error('Error inserting entity contact:', error);
+		setAlertColor(TColors.Red);
+		setAlertTitle('Fail')
+		setAlertMessage('Error deleting address.');
+        setShowAlert(true);
+	}
+  };
+
  const [addresses, setAddresses] = useState<Address[]>([]);
  const [inputValue, setInputValue] = useState<string>('');
  const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
@@ -1033,7 +1178,14 @@ const [googleAddress, setGoogleAddress] = useState('');
 								)}
 								{activeTab === TAB.Contacts && (
 									<>
-										<div className='text-4xl font-semibold'>Contacts</div>
+									<div className='flex items-center justify-between mb-4'>
+        <div className='text-4xl font-semibold'>Facility Contacts</div>
+        {/* Add your button here */}
+        <Button variant='solid' onClick={() => setEntityContactmodalStatus(true)} icon='HeroPlus'>
+              New
+            </Button>
+      </div>
+									
 										<div style={{ height: 400, width: '100%' }}>
             <DataGrid
 			className={classes.root}
@@ -1045,6 +1197,66 @@ const [googleAddress, setGoogleAddress] = useState('');
             fontWeight: 'bold',
         },}}
             />
+
+<Modal isOpen={entityContactmodalStatus} setIsOpen={setEntityContactmodalStatus}>
+				<ModalHeader>Add Facility Contact</ModalHeader>
+				<ModalBody>
+				<div className='grid grid-cols-12 gap-4'>
+										
+				
+											<div className='col-span-12'>
+												<Label htmlFor='position'>Contact Type</Label>
+												<FieldWrap
+													lastSuffix={
+														<Icon
+															icon='HeroChevronDown'
+															className='mx-2'
+														/>
+													}>
+													 <Select
+        name='contactTypes'
+        onChange={handleContactTypeChange}
+        value={selectedContactType}
+        
+      >
+        {contactTypes.map((contactType) => (
+          <option key={contactType.id} value={contactType.value}>
+            {contactType.value}
+          </option>
+        ))}
+      </Select>
+												</FieldWrap>
+											</div>
+											
+											</div>
+											<div className='col-span-12'>
+												<Label htmlFor='position'>Contact Value</Label>
+
+												<FieldWrap
+													firstSuffix={
+														<Icon
+															icon='HeroBriefcase'
+															className='mx-2'
+														/>
+													}>
+													<Input
+														id='contactValue'
+														name='contactValue'
+														value={contactValue}
+                                                        onChange={(e) => setContactValue(e.target.value)}
+													/>
+												</FieldWrap>
+											</div>
+
+										
+				</ModalBody>
+				<ModalFooter>
+					<ModalFooterChild></ModalFooterChild>
+					<ModalFooterChild>
+						<Button variant='solid' onClick={handleSaveEntityContact}>Save</Button>
+					</ModalFooterChild>
+				</ModalFooter>
+			</Modal>
           </div>
 									</>
 								)}
