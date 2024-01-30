@@ -91,11 +91,8 @@ type TTab = {
 		| 'Edit Profile'
 		| 'Addresses'
 		| 'Contacts'
-		| '2FA'
-		| 'Newsletter'
-		| 'Sessions'
-		| 'Connected'
-		| 'Appearance';
+		| 'Sites'
+		| 'Providers';
 	icon: TIcons;
 };
 type TTabs = {
@@ -103,12 +100,10 @@ type TTabs = {
 		| 'EDIT'
 		| 'Addresses'
 		| 'Contacts'
-		| '2FA'
-		| 'NEWSLETTER'
-		| 'SESSIONS'
-		| 'CONNECTED'
-		| 'APPEARANCE']: TTab;
-};
+		| 'Sites'
+		| 'Providers']: TTab;
+	};
+		
 const TAB: TTabs = {
 	EDIT: {
 		text: 'Edit Profile',
@@ -122,26 +117,16 @@ const TAB: TTabs = {
 		text: 'Contacts',
 		icon: 'HeroPhoneArrowDownLeft',
 	},
-	'2FA': {
-		text: '2FA',
-		icon: 'HeroShieldExclamation',
+	
+	Sites: {
+		text: 'Sites',
+		icon: 'HeroBuildingOffice',
 	},
-	NEWSLETTER: {
-		text: 'Newsletter',
-		icon: 'HeroBell',
+	Providers: {
+		text: 'Providers',
+		icon: 'HeroUsers',
 	},
-	SESSIONS: {
-		text: 'Sessions',
-		icon: 'HeroQueueList',
-	},
-	CONNECTED: {
-		text: 'Connected',
-		icon: 'HeroLink',
-	},
-	APPEARANCE: {
-		text: 'Appearance',
-		icon: 'HeroSwatch',
-	},
+	
 };
 
 const FacilityProfile = () => {
@@ -1260,63 +1245,10 @@ const [googleAddress, setGoogleAddress] = useState('');
           </div>
 									</>
 								)}
-								{activeTab === TAB['2FA'] && (
+								
+								{activeTab === TAB.Sites && (
 									<>
-										<div className='text-4xl font-semibold'>2FA</div>
-										<div className='flex flex-wrap divide-y divide-dashed divide-zinc-500/50 [&>*]:py-4'>
-											<div className='flex basis-full gap-4'>
-												<div className='flex grow items-center'>
-													<div className='w-full text-xl font-semibold'>
-														Authenticator App
-													</div>
-												</div>
-												<div className='flex-shrink-0'>
-													<Button
-														variant='outline'
-														isDisable={!formik.values.twoFactorAuth}>
-														Set up
-													</Button>
-												</div>
-											</div>
-											<div className='flex basis-full gap-4'>
-												<div className='flex grow items-center'>
-													<div className='w-full text-xl font-semibold'>
-														Security Keys
-													</div>
-												</div>
-												<div className='flex-shrink-0'>
-													<Button
-														color='red'
-														className='!px-0'
-														isDisable={!formik.values.twoFactorAuth}>
-														Deactivate
-													</Button>
-												</div>
-											</div>
-											<div className='flex basis-full gap-4'>
-												<div className='flex grow items-center'>
-													<div className='w-full text-xl font-semibold'>
-														Telephone Number
-													</div>
-												</div>
-												<div className='flex flex-shrink-0 items-center gap-4'>
-													<span className='text-zinc-500'>
-														{userData?.phone}
-													</span>
-													<Button
-														variant='outline'
-														color='zinc'
-														isDisable={!formik.values.twoFactorAuth}>
-														Edit
-													</Button>
-												</div>
-											</div>
-										</div>
-									</>
-								)}
-								{activeTab === TAB.NEWSLETTER && (
-									<>
-										<div className='text-4xl font-semibold'>Newsletter</div>
+										<div className='text-4xl font-semibold'>Sites</div>
 										<div className='flex flex-wrap divide-y divide-dashed divide-zinc-500/50 [&>*]:py-4'>
 											<div className='flex basis-full gap-4'>
 												<div className='flex grow items-center'>
@@ -1418,9 +1350,9 @@ const [googleAddress, setGoogleAddress] = useState('');
 										</div>
 									</>
 								)}
-								{activeTab === TAB.SESSIONS && (
+								{activeTab === TAB.Providers && (
 									<>
-										<div className='text-4xl font-semibold'>Newsletter</div>
+										<div className='text-4xl font-semibold'>Providers</div>
 										<div className='flex flex-wrap divide-y divide-dashed divide-zinc-500/50 [&>*]:py-4'>
 											<div className='group flex basis-full gap-4'>
 												<div className='flex grow items-center'>
@@ -1530,93 +1462,7 @@ const [googleAddress, setGoogleAddress] = useState('');
 										</div>
 									</>
 								)}
-								{activeTab === TAB.CONNECTED && (
-									<>
-										<div className='text-4xl font-semibold'>Connected</div>
-										<div className='flex flex-wrap divide-y divide-dashed divide-zinc-500/50 [&>*]:py-4'>
-											{userData?.socialAuth &&
-												Object.keys(userData?.socialAuth).map((i) => {
-													// @ts-ignore
-													// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-													const status = userData?.socialAuth[i];
-													return (
-														<div
-															key={i}
-															className='flex basis-full gap-4'>
-															<div className='flex grow items-center'>
-																<div className='text-xl font-semibold capitalize'>
-																	{i}
-																</div>
-															</div>
-															<div className='flex flex-shrink-0 items-center gap-4'>
-																<Button
-																	icon={
-																		status
-																			? 'HeroTrash'
-																			: 'HeroCog8Tooth'
-																	}
-																	color={status ? 'red' : 'blue'}>
-																	{status ? 'Delete' : 'Set up'}
-																</Button>
-															</div>
-														</div>
-													);
-												})}
-										</div>
-									</>
-								)}
-								{activeTab === TAB.APPEARANCE && (
-									<>
-										<div className='text-4xl font-semibold'>Appearance</div>
-										<div className='grid grid-cols-12 gap-4'>
-											<div className='col-span-12'>
-												<Label htmlFor='theme'>Theme</Label>
-												<RadioGroup isInline>
-													<Radio
-														name='theme'
-														value='dark'
-														selectedValue={formik.values.theme}
-														onChange={formik.handleChange}>
-														<div className='relative'>
-															<div className='flex h-2 w-full items-center gap-1 bg-zinc-500 p-1'>
-																<div className='h-1 w-1 rounded-full bg-red-500' />
-																<div className='h-1 w-1 rounded-full bg-amber-500' />
-																<div className='h-1 w-1 rounded-full bg-emerald-500' />
-															</div>
-															<div className='flex aspect-video w-56 bg-zinc-950'>
-																<div className='h-full w-1/4 border-e border-zinc-800/50 bg-zinc-900/75' />
-																<div className='h-full w-3/4'>
-																	<div className='h-4 w-full border-b border-zinc-800/50 bg-zinc-900/75' />
-																	<div />
-																</div>
-															</div>
-														</div>
-													</Radio>
-													<Radio
-														name='theme'
-														value='light'
-														selectedValue={formik.values.theme}
-														onChange={formik.handleChange}>
-														<div className='relative'>
-															<div className='flex h-2 w-full items-center gap-1 bg-zinc-500 p-1'>
-																<div className='h-1 w-1 rounded-full bg-red-500' />
-																<div className='h-1 w-1 rounded-full bg-amber-500' />
-																<div className='h-1 w-1 rounded-full bg-emerald-500' />
-															</div>
-															<div className='flex aspect-video w-56 bg-zinc-100'>
-																<div className='h-full w-1/4 border-e border-zinc-300/25 bg-white' />
-																<div className='h-full w-3/4'>
-																	<div className='h-4 w-full border-b border-zinc-300/25 bg-white' />
-																	<div />
-																</div>
-															</div>
-														</div>
-													</Radio>
-												</RadioGroup>
-											</div>
-										</div>
-									</>
-								)}
+								
 							</div>
 						</div>
 					</CardBody>
