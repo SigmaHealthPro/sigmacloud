@@ -10,6 +10,7 @@ import FacilityProfile from '../pages/FacilityProfile.page';
 import FacilityPage from '../pages/Facility Management/Facilitypage.page';
 import PatientManagement from '../pages/Patient Management/PatientManagement';
 import AddPatient from '../pages/Patient Management/AddPatient';
+import PatientProfile from '../pages/Patient Management/PatientProfile';
 
 /**
  * UI
@@ -293,6 +294,10 @@ const contentRoutes: RouteProps[] = [
 	{
 		path: appPages.PatientManagement.subPages.AddPatient.to,
 		element:<AddPatient/>,
+	},
+	{
+		path: appPages.PatientManagement.subPages.PatientProfile.to,
+		element:<PatientProfile/>,
 	},
 	/**
 	 * MAIL::END

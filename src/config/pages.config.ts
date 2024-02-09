@@ -139,7 +139,13 @@ export const appPages = {
 				to:'/pages/patient-Management/addPatient',
 				text:'AddPatient',
 				icon:'HeroQueueList',
-			}
+			},
+			PatientProfile:{
+				id:'patientProfile',
+				to:'/patientProfile',
+				text:'atient Profile',
+				icon:'HeroClipboardDocumentCheck',
+			},
 		},
 	},
 	crmAppPages: {

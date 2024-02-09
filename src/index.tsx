@@ -9,7 +9,8 @@ import App from './App/App';
 
 import './i18n';
 import './styles/index.css';
-
+import { store } from './components/redux/store';
+import { Provider } from 'react-redux';
 import 'react-date-range/dist/styles.css'; // main style file
 import 'react-date-range/dist/theme/default.css';
 import './styles/vendors.css';
@@ -17,13 +18,15 @@ import './styles/vendors.css';
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
 	<React.StrictMode>
-		<ThemeContextProvider>
-			<BrowserRouter>
-				<AuthProvider>
-					<App />
-				</AuthProvider>
-			</BrowserRouter>
-		</ThemeContextProvider>
+		<Provider store={store}>
+			<ThemeContextProvider>
+				<BrowserRouter>
+					<AuthProvider>
+						<App />
+					</AuthProvider>
+				</BrowserRouter>
+			</ThemeContextProvider>
+		</Provider>
 	</React.StrictMode>,
 );
 

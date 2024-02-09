@@ -24,6 +24,8 @@ import {
 	Edit as EditIcon,
 	Delete as DeleteIcon,
 } from '@mui/icons-material';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+
 import { makeStyles } from '@mui/styles';
 import { Button as AntButton, Popconfirm, Space } from 'antd';
 import { EditOutlined, DeleteOutlined, MoreOutlined } from '@ant-design/icons';
@@ -37,9 +39,13 @@ import { useFormik } from 'formik';
 import Label from '../../components/form/Label';
 import { patientApi } from '../../Apis/patientsApi';
 import { v4 as uuidv4 } from 'uuid';
-
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../../components/redux/store';
+import { setUserProfile } from '../../components/redux/reducers/profileReducer';
 import toast, { Toaster } from 'react-hot-toast';
 import Select from '../../components/form/Select';
+import popUp from '../../components/popup/popup';
+import PatientProfile from './PatientProfile';
 
 const useStyles = makeStyles({
 	root: {
@@ -61,15 +67,17 @@ const PatientManagement = () => {
 	const [filteredState, setFilteredState] = useState([]);
 	const [filteredCity, setFilteredCity] = useState([]);
 	const navigate = useNavigate();
-	const [editTouched , setEditTouched] =useState(false) 
+	const [editTouched, setEditTouched] = useState(false);
 	const [editData, setEditData] = useState<any>([]);
+	const dispatch = useDispatch()
+  
 	let generatedGUID: string;
 	generatedGUID = uuidv4();
 	const handleEditData = async (params: any, event: any) => {
 		event.preventDefault();
 		// setEditData(params.row);
 		setNewPatientModal(true);
-		setEditTouched(true)
+		setEditTouched(true);
 		formik.setFieldValue('id', params.row.id);
 		formik.setFieldValue('personId', params.row.personId);
 		formik.setFieldValue('firstName', params.row.firstName);
@@ -82,7 +90,7 @@ const PatientManagement = () => {
 		formik.setFieldValue('motherMaidenLastName', params.row.motherMaidenLastName);
 		formik.setFieldValue('motherLastName', params.row.motherLastName);
 		formik.setFieldValue('patientStatus', params.row.patientStatus);
-		formik.setFieldValue('personType', params.row.personType);		
+		formik.setFieldValue('personType', params.row.personType);
 		// const data = stateData?.filter((item: any) => item.countryId === params.row.countryId);
 		formik.setFieldValue('country', params.row.countryId);
 		handleState(params.row.countryId);
@@ -102,7 +110,7 @@ const PatientManagement = () => {
 		{
 			field: 'actions',
 			headerName: 'Actions',
-			width: 100,
+			width: 140,
 			renderCell: (params: GridCellParams) => {
 				return (
 					<div className='group relative'>
@@ -112,7 +120,7 @@ const PatientManagement = () => {
 						<div
 							className='absolute left-10 top-full mt-1 hidden -translate-x-1/2 -translate-y-full 
                         transform flex-col items-center bg-white shadow-md group-hover:flex'>
-							<Space size='middle'>
+							<Space size={0}>
 								<AntButton
 									icon={
 										<EditOutlined
@@ -131,12 +139,39 @@ const PatientManagement = () => {
 										}
 									/>
 								</Popconfirm>
+								<div>
+						<Link to={`../${appPages.PatientManagement.subPages.PatientProfile.to}`}>
+							<AntButton 	icon={
+						<VisibilityIcon  />	}  onClick={()=>{dispatch(setUserProfile((params.row)))}}
+							/>
+													{/* <VisibilityIcon  />	}  onClick={()=>{debugger;dispatch(setUserProfile((params.row)))}} */}
+
+							</Link>
+					</div>
 							</Space>
 						</div>
 					</div>
 				);
 			},
 		},
+		// {
+		// 	field: 'view',
+		// 	headerName: 'View',
+		// 	width: 140,
+		// 	renderCell: (params: GridCellParams) => {
+		// 		return (
+		// 			<div>
+		// 				<Link to={`../${appPages.PatientManagement.subPages.PatientProfile.to}`}>
+		// 					<AntButton 	icon={
+		// 				<VisibilityIcon  />	}  onClick={()=>{dispatch(setUserProfile((params.row)))}}
+		// 					/>
+		// 											{/* <VisibilityIcon  />	}  onClick={()=>{debugger;dispatch(setUserProfile((params.row)))}} */}
+
+		// 					</Link>
+		// 			</div>
+		// 		);
+		// 	},
+		// },
 	];
 	const classes = useStyles();
 	const [patients, setPatients] = useState<any[]>([]);
@@ -176,7 +211,7 @@ const PatientManagement = () => {
 
 		try {
 			const response = await axios.put(
-				'https://dev-api-iis-sigmacloud.azurewebsites.net/api/Patients/deletepatient',
+				'https://localhost:7155/api/Patients/deletepatient',
 				formData, // Send the form data
 				{
 					headers: { 'Content-Type': 'multipart/form-data' }, // This matches the expected content type
@@ -219,28 +254,28 @@ const PatientManagement = () => {
 			pagenumber: paginationModel.page + 1,
 			pagesize: paginationModel.pageSize,
 			patient_name: '',
-		
+
 			date_of_history_vaccine: '',
 			patient_status: '',
-			gender:'',
-			motherFirstName:'',
-			motherMaidenLastName:'',
-			motherLastName:'',
-			personType:'',
+			gender: '',
+			motherFirstName: '',
+			motherMaidenLastName: '',
+			motherLastName: '',
+			personType: '',
 			address: '',
 			person: '',
 			city: '',
-			cityId:'',
+			cityId: '',
 			state: '',
 			country: '',
-			countryId:'',
-			stateId:'',
+			countryId: '',
+			stateId: '',
 			zip_code: '',
 			orderby: 'patient_name',
 		};
 
 		axios
-			.post('https://dev-api-iis-sigmacloud.azurewebsites.net/api/Patients/searchpatient', requestData)
+			.post('https://localhost:7155/api/Patients/searchpatient', requestData)
 			.then((response) => {
 				setLoading(true);
 				const { items, totalCount } = response.data;
@@ -288,7 +323,7 @@ const PatientManagement = () => {
 					setStateData(response?.data);
 				})
 				.catch((err) => console.log('Error has occured', err));
-				await patientApi('/api/MasterData/getlovmasterbylovtype?lovtype=Gender', 'GET')
+			await patientApi('/api/MasterData/getlovmasterbylovtype?lovtype=Gender', 'GET')
 				.then((response) => {
 					setGenderData(response?.data);
 				})
@@ -313,14 +348,22 @@ const PatientManagement = () => {
 		motherMaidenLastName: string;
 		motherLastName: string;
 		city: string;
-    	cityId: string;
-    	state: string;
+		cityId: string;
+		state: string;
 		stateId: string;
 		country: string;
 		countryId: string;
 		zipCode: string;
 		personId: string;
 		personType: string;
+	};
+
+	const openModal = () => {
+		setNewPatientModal(true);
+	};
+
+	const closeModal = () => {
+		setNewPatientModal(false);
 	};
 
 	const handleState = async (country: any) => {
@@ -330,32 +373,32 @@ const PatientManagement = () => {
 		setFilteredState(data);
 	};
 
-	const reset =()=>{
+	const reset = () => {
 		formik.setFieldValue('firstName', '');
-				formik.setFieldValue('middleName', '');
-				formik.setFieldValue('lastName', '');
-				formik.setFieldValue('gender', '');
-				formik.setFieldValue('dateOfBirth', '');
-				formik.setFieldValue('date_of_history_vaccine1', '');
-				formik.setFieldValue('motherFirstName', '');
-				formik.setFieldValue('motherMaidenLastName', '');
-				formik.setFieldValue('motherLastName', '');
-				formik.setFieldValue('patientStatus', '');
-				formik.setFieldValue('personType', '');
-				formik.setFieldValue('city', '');
-				formik.setFieldValue('state', '');
-				formik.setFieldValue('country', '');
-	}
+		formik.setFieldValue('middleName', '');
+		formik.setFieldValue('lastName', '');
+		formik.setFieldValue('gender', '');
+		formik.setFieldValue('dateOfBirth', '');
+		formik.setFieldValue('date_of_history_vaccine1', '');
+		formik.setFieldValue('motherFirstName', '');
+		formik.setFieldValue('motherMaidenLastName', '');
+		formik.setFieldValue('motherLastName', '');
+		formik.setFieldValue('patientStatus', '');
+		formik.setFieldValue('personType', '');
+		formik.setFieldValue('city', '');
+		formik.setFieldValue('state', '');
+		formik.setFieldValue('country', '');
+	};
 
 	const handleCity = async (state: any) => {
 		console.log('Selected State ID', state);
 		const response = await patientApi(
 			`/api/MasterData/getcitiesbystateid?stateid=${state}`,
 			'GET',
-		).then((resp)=>setFilteredCity(resp?.data)).catch(err=>console.log("err",err))
+		)
+			.then((resp) => setFilteredCity(resp?.data))
+			.catch((err) => console.log('err', err));
 	};
-
-
 
 	console.log('Patients Data:', patients); // Debugging: Log current state of patients data
 
@@ -380,13 +423,13 @@ const PatientManagement = () => {
 			patientStatus: '',
 			personType: '',
 			city: '',
-			cityId:generatedGUID,
+			cityId: generatedGUID,
 			state: '',
-		    stateId:generatedGUID,
+			stateId: generatedGUID,
 			country: '',
-			countryId:generatedGUID,
+			countryId: generatedGUID,
 			zipCode: 'string',
-			personId: generatedGUID
+			personId: generatedGUID,
 		},
 
 		validate: (values: Patient) => {
@@ -442,17 +485,15 @@ const PatientManagement = () => {
 			console.log('Request Payload: ', values);
 			try {
 				const postResponse = await axios.post(
-					'https://dev-api-iis-sigmacloud.azurewebsites.net/api/Patients/createpatient',
+					'https://localhost:7155/api/Patients/createpatient',
 					values,
 					{
 						headers: { 'Content-Type': 'application/json' },
 					},
 				);
 				setNewPatientModal(false);
-				setEditTouched(false)
-				setTimeout(() => {
-					toast.success(`Patient ${editTouched ? 'updated' :'added'} successfully!`);
-				}, 2000);
+				setEditTouched(false);
+				popUp(`Patient ${editTouched ? 'updated' : 'added'} successfully!`);
 				listPatients();
 				formik.setFieldValue('id', '');
 				formik.setFieldValue('firstName', '');
@@ -469,10 +510,6 @@ const PatientManagement = () => {
 				formik.setFieldValue('city', '');
 				formik.setFieldValue('state', '');
 				formik.setFieldValue('country', '');
-			
-
-
-
 			} catch (error) {
 				console.error('Error: ', error);
 			}
@@ -510,11 +547,18 @@ const PatientManagement = () => {
 					<Button
 						variant='solid'
 						icon='HeroPlus'
-						onClick={() => {setNewPatientModal(true); setEditTouched(false); reset()}}>
+						onClick={() => {
+							openModal();
+							setEditTouched(false);
+							reset();
+						}}>
 						New Patients
 					</Button>
 					<Modal isOpen={newPatientModal} setIsOpen={setNewPatientModal}>
-						<ModalHeader> {!editTouched ? "Add New Patient" : "Modification"}</ModalHeader>
+						<ModalHeader>
+							{' '}
+							{!editTouched ? 'Add New Patient' : 'Modification'}
+						</ModalHeader>
 						<ModalBody>
 							<div className='col-span-12 lg:col-span-9'>
 								<div className='grid grid-cols-12 gap-4'>
@@ -585,21 +629,30 @@ const PatientManagement = () => {
 															isTouched={formik.touched.gender}
 															invalidFeedback={formik.errors.gender}
 															validFeedback='Good'>
-															<FieldWrap style={{ color: 'black' }} lastSuffix={<Icon icon='HeroChevronDown' className='mx-2' />}>
-
-															<Select
-																id='gender'
-																name='gender'
+															<FieldWrap
 																style={{ color: 'black' }}
-																value={formik.values.gender}
-																onChange={(event) => {
-																	formik.handleChange(event);
-																	handleState(event.target.value);
-																}}
-															    onBlur={formik.handleBlur} 
-																placeholder='Select Gender'>
-																{/* <option value={''}> Select</option> */}
-																{genderData?.map((gender: any) => (																	 (
+																lastSuffix={
+																	<Icon
+																		icon='HeroChevronDown'
+																		className='mx-2'
+																	/>
+																}>
+																<Select
+																	id='gender'
+																	name='gender'
+																	style={{ color: 'black' }}
+																	value={formik.values.gender}
+																	onChange={(event) => {
+																		formik.handleChange(event);
+																		handleState(
+																			event.target.value,
+																		);
+																	}}
+																	onBlur={formik.handleBlur}
+																	placeholder='Select Gender'>
+																	{/* <option value={''}> Select</option> */}
+																	{genderData?.map(
+																		(gender: any) => (
 																			<option
 																				style={{
 																					color: 'black',
@@ -607,15 +660,12 @@ const PatientManagement = () => {
 																				id={gender?.id}
 																				key={gender?.id}
 																				value={gender?.id}>
-																				{
-																					gender?.value
-																				}
+																				{gender?.value}
 																			</option>
-																		)
-																	),
-																)}
-															</Select>
-														</FieldWrap>
+																		),
+																	)}
+																</Select>
+															</FieldWrap>
 														</Validation>
 													</div>
 													<div className='col-span-12 lg:col-span-6'>
@@ -785,21 +835,30 @@ const PatientManagement = () => {
 															isTouched={formik.touched.country}
 															invalidFeedback={formik.errors.country}
 															validFeedback='Good'>
-														<FieldWrap style={{ color: 'black' }} lastSuffix={<Icon icon='HeroChevronDown' className='mx-2' />}>
-
-															<Select
-																id='country'
-																name='country'
+															<FieldWrap
 																style={{ color: 'black' }}
-																value={formik.values.country}
-																onChange={(event) => {
-																	formik.handleChange(event);
-																	handleState(event.target.value);
-																}}
-															    onBlur={formik.handleBlur} 
-																placeholder='Select Country'>
-																{/* <option value={''}> Select</option> */}
-																{countryData?.map((country: any) => (																	 (
+																lastSuffix={
+																	<Icon
+																		icon='HeroChevronDown'
+																		className='mx-2'
+																	/>
+																}>
+																<Select
+																	id='country'
+																	name='country'
+																	style={{ color: 'black' }}
+																	value={formik.values.country}
+																	onChange={(event) => {
+																		formik.handleChange(event);
+																		handleState(
+																			event.target.value,
+																		);
+																	}}
+																	onBlur={formik.handleBlur}
+																	placeholder='Select Country'>
+																	{/* <option value={''}> Select</option> */}
+																	{countryData?.map(
+																		(country: any) => (
 																			<option
 																				style={{
 																					color: 'black',
@@ -811,11 +870,10 @@ const PatientManagement = () => {
 																					country?.countryName
 																				}
 																			</option>
-																		)
-																	),
-																)}
-															</Select>
-														</FieldWrap>
+																		),
+																	)}
+																</Select>
+															</FieldWrap>
 														</Validation>
 													</div>
 													<div className='col-span-12 lg:col-span-6'>
@@ -826,20 +884,30 @@ const PatientManagement = () => {
 															isTouched={formik.touched.state}
 															invalidFeedback={formik.errors.state}
 															validFeedback='Good'>
-														<FieldWrap style={{ color: 'black' }} lastSuffix={<Icon icon='HeroChevronDown' className='mx-2' />}>
-															<Select
-																id='state'
-																name='state'
+															<FieldWrap
 																style={{ color: 'black' }}
-																value={formik.values.state}
-																onChange={(event) => {
-																	formik.handleChange(event);
-																	handleCity(event.target.value);
-																}}
-																onBlur={formik.handleBlur}
-																placeholder='Select State'>
-																{/* <option value={''}> Select</option> */}
-																{filteredState?.map((state: any) => (
+																lastSuffix={
+																	<Icon
+																		icon='HeroChevronDown'
+																		className='mx-2'
+																	/>
+																}>
+																<Select
+																	id='state'
+																	name='state'
+																	style={{ color: 'black' }}
+																	value={formik.values.state}
+																	onChange={(event) => {
+																		formik.handleChange(event);
+																		handleCity(
+																			event.target.value,
+																		);
+																	}}
+																	onBlur={formik.handleBlur}
+																	placeholder='Select State'>
+																	{/* <option value={''}> Select</option> */}
+																	{filteredState?.map(
+																		(state: any) => (
 																			<option
 																				style={{
 																					color: 'black',
@@ -849,11 +917,10 @@ const PatientManagement = () => {
 																				value={state?.id}>
 																				{state?.stateName}
 																			</option>
-																		)
-																	
-																)}
-															</Select>
-														</FieldWrap>
+																		),
+																	)}
+																</Select>
+															</FieldWrap>
 														</Validation>
 													</div>
 													<div className='col-span-12 lg:col-span-6'>
@@ -864,30 +931,38 @@ const PatientManagement = () => {
 															isTouched={formik.touched.city}
 															invalidFeedback={formik.errors.city}
 															validFeedback='Good'>
-														<FieldWrap style={{ color: 'black' }} lastSuffix={<Icon icon='HeroChevronDown' className='mx-2' />}>
-															<Select
-																id='city'
-																name='city'
+															<FieldWrap
 																style={{ color: 'black' }}
-																value={formik.values.city}
-																onChange={formik.handleChange}
-																onBlur={formik.handleBlur}
-																placeholder='Select City' >
-																{/* <option value={''}> Select</option> */}
-																{filteredCity?.map((city: any) => (
-																		<option 
-																			style={{
-																				color: 'black',
-																			}}
-																			id={city?.id}
-																			key={city?.id}
-																			value={city?.id}>
-																			{city?.cityName}
-																		</option>
-																	)
-																)}
-															</Select>
-														</FieldWrap>
+																lastSuffix={
+																	<Icon
+																		icon='HeroChevronDown'
+																		className='mx-2'
+																	/>
+																}>
+																<Select
+																	id='city'
+																	name='city'
+																	style={{ color: 'black' }}
+																	value={formik.values.city}
+																	onChange={formik.handleChange}
+																	onBlur={formik.handleBlur}
+																	placeholder='Select City'>
+																	{/* <option value={''}> Select</option> */}
+																	{filteredCity?.map(
+																		(city: any) => (
+																			<option
+																				style={{
+																					color: 'black',
+																				}}
+																				id={city?.id}
+																				key={city?.id}
+																				value={city?.id}>
+																				{city?.cityName}
+																			</option>
+																		),
+																	)}
+																</Select>
+															</FieldWrap>
 														</Validation>
 													</div>
 												</div>
@@ -898,16 +973,19 @@ const PatientManagement = () => {
 							</div>
 						</ModalBody>
 						<ModalFooter>
-							<Button variant='solid' onClick={() => {setNewPatientModal(false); setEditTouched(false)}}>
+							<Button
+								variant='solid'
+								onClick={() => {
+									setNewPatientModal(false);
+									setEditTouched(false);
+								}}>
 								Cancel
 							</Button>
 							<Button variant='solid' onClick={() => formik.handleSubmit()}>
-								{!editTouched  ? 'Save' : 'Update'}
+								{!editTouched ? 'Save' : 'Update'}
 							</Button>
 						</ModalFooter>
 					</Modal>
-
-					{/* </Link> */}
 				</SubheaderRight>
 			</Subheader>
 			<Container>
