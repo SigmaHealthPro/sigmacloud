@@ -908,10 +908,10 @@
     "redux-thunk" "^3.1.0"
     "reselect" "^5.0.1"
 
-"@remix-run/router@1.13.1":
-  "integrity" "sha512-so+DHzZKsoOcoXrILB4rqDkMDy7NLMErRdOxvzvOKb507YINKUP4Di+shbTZDhSE/pBZ+vr7XGIpcOO0VLSA+Q=="
-  "resolved" "https://registry.npmjs.org/@remix-run/router/-/router-1.13.1.tgz"
-  "version" "1.13.1"
+"@remix-run/router@1.15.0":
+  "integrity" "sha512-HOil5aFtme37dVQTB6M34G95kPM3MMuqSmIRVCC52eKV+Y/tGSqw9P3rWhlAx6A+mz+MoX+XxsGsNJbaI5qCgQ=="
+  "resolved" "https://registry.npmjs.org/@remix-run/router/-/router-1.15.0.tgz"
+  "version" "1.15.0"
 
 "@rollup/pluginutils@^5.0.5":
   "integrity" "sha512-6aEYR910NyP73oHiJglti74iRyOwgFU4x3meH/H8OJx6Ry0j6cOVZ5X/wTvub7G7Ao6qaHBEaNsV3GLJkSsF+Q=="
@@ -5532,20 +5532,20 @@
     "@types/use-sync-external-store" "^0.0.3"
     "use-sync-external-store" "^1.0.0"
 
-"react-router-dom@^6.20.1":
-  "integrity" "sha512-npzfPWcxfQN35psS7rJgi/EW0Gx6EsNjfdJSAk73U/HqMEJZ2k/8puxfwHFgDQhBGmS3+sjnGbMdMSV45axPQw=="
-  "resolved" "https://registry.npmjs.org/react-router-dom/-/react-router-dom-6.20.1.tgz"
-  "version" "6.20.1"
+"react-router-dom@^6.22.0":
+  "integrity" "sha512-z2w+M4tH5wlcLmH3BMMOMdrtrJ9T3oJJNsAlBJbwk+8Syxd5WFJ7J5dxMEW0/GEXD1BBis4uXRrNIz3mORr0ag=="
+  "resolved" "https://registry.npmjs.org/react-router-dom/-/react-router-dom-6.22.0.tgz"
+  "version" "6.22.0"
   dependencies:
-    "@remix-run/router" "1.13.1"
-    "react-router" "6.20.1"
+    "@remix-run/router" "1.15.0"
+    "react-router" "6.22.0"
 
-"react-router@6.20.1":
-  "integrity" "sha512-ccvLrB4QeT5DlaxSFFYi/KR8UMQ4fcD8zBcR71Zp1kaYTC5oJKYAp1cbavzGrogwxca+ubjkd7XjFZKBW8CxPA=="
-  "resolved" "https://registry.npmjs.org/react-router/-/react-router-6.20.1.tgz"
-  "version" "6.20.1"
+"react-router@6.22.0":
+  "integrity" "sha512-q2yemJeg6gw/YixRlRnVx6IRJWZD6fonnfZhN1JIOhV2iJCPeRNSH3V1ISwHf+JWcESzLC3BOLD1T07tmO5dmg=="
+  "resolved" "https://registry.npmjs.org/react-router/-/react-router-6.22.0.tgz"
+  "version" "6.22.0"
   dependencies:
-    "@remix-run/router" "1.13.1"
+    "@remix-run/router" "1.15.0"
 
 "react-select@^5.7.2", "react-select@^5.8.0":
   "integrity" "sha512-TfjLDo58XrhP6VG5M/Mi56Us0Yt8X7xD6cDybC7yoRMUNm7BGO7qk8J0TLQOua/prb8vUOtsfnXZwfm30HGsAA=="

@@ -86,7 +86,7 @@
 		"react-places-autocomplete": "^7.3.0",
 		"react-popper": "^2.3.0",
 		"react-redux": "^9.0.4",
-		"react-router-dom": "^6.20.1",
+		"react-router-dom": "^6.22.0",
 		"react-select": "^5.8.0",
 		"react-simple-maps": "^3.0.0",
 		"react-syntax-highlighter": "^15.5.0",

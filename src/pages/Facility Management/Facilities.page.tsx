@@ -1,6 +1,6 @@
 import React, { useState, useEffect , useMemo} from 'react';
 import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate  } from 'react-router-dom';
 import PageWrapper from '../../components/layouts/PageWrapper/PageWrapper';
 import Container from '../../components/layouts/Container/Container';
 import Card, { CardBody, CardHeader, CardHeaderChild, CardTitle } from '../../components/ui/Card';
@@ -109,6 +109,9 @@ const FacilitiesPage = () => {
             // Handle error as needed...
         }
     };
+ 
+
+ 
     const handleRowClick = (params: GridRowParams) => {
       // Ensure to use backticks for template literals
       navigate(`${appPages.facilityAppPages.subPages.facilityPage.to}/${params.id}`);
@@ -245,11 +248,15 @@ const handlePaginationModelChange = (newModel: GridPaginationModel) => {
         onPaginationModelChange={handlePaginationModelChange}
         checkboxSelection
         onRowClick={handleRowClick}
-        getRowId={(row) => `${row.facilityName}-${row.organization}`}
+        getRowId={(row) => `${row.id}`}
         sx={{ '& .MuiDataGrid-columnHeaders': { backgroundColor: '#e5e7eb' },
         '& .MuiDataGrid-columnHeaderTitle': {
             fontWeight: 'bold', // Bolding the column headers
-        },}}
+        },
+        '& .MuiDataGrid-row:hover': {
+          cursor: 'pointer',
+        },
+      }}
         slots={{
             toolbar: CustomPagination, // 'toolbar' should be all lowercase
           }}

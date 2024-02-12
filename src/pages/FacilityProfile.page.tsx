@@ -1,4 +1,5 @@
 import React, { useEffect, useState ,FormEvent,useCallback } from 'react';
+import { useParams,useNavigate,NavigateFunction   } from 'react-router-dom';
 import { useFormik } from 'formik';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
@@ -27,7 +28,6 @@ import RichText from '../components/RichText';
 import Radio, { RadioGroup } from '../components/form/Radio';
 import useDarkMode from '../hooks/useDarkMode';
 import { TDarkMode } from '../types/darkMode.type';
-import { useNavigate } from 'react-router';
 import Box from '@mui/material/Box';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { makeStyles } from '@mui/styles';
@@ -141,7 +141,6 @@ const FacilityProfile = () => {
   const [alertTitle, setAlertTitle] = useState('');
   const [addressData, setAddressData] = useState([]);
   const addresscolumns: GridColDef[] = [
-    { field: 'addressId', headerName: 'Address ID', flex: 1 },
     { field: 'line1', headerName: 'Line 1', flex: 2 },
     { field: 'line2', headerName: 'Line 2', flex: 2 },
     { field: 'suite', headerName: 'Suite', flex: 1 },
@@ -172,6 +171,24 @@ const FacilityProfile = () => {
 		},
 	  },
   ];
+
+  const { id } = useParams();
+  const [facilityId, setFacilityId] = useState<string | null>(null); // Initialize facilityId state variable
+  const navigation = useNavigate();
+
+  useEffect(() => {
+    if (id) {
+      // If facilityId is not null, set the state
+      setFacilityId(id);
+    } else {
+      // If facilityId is null, redirect to the facilities page
+	  navigation('/facilities');
+    }
+  }, [facilityId, navigation]); // Run the effect whenever the facilityId or navigate changes
+
+  console.log(facilityId); // Log the facilityId to the conso
+ 
+
    useEffect(() => {
     // Auto-close the alert after 10 seconds
     const timeoutId = setTimeout(() => {
@@ -236,7 +253,7 @@ const FacilityProfile = () => {
   const fetchAddressData = async () => {
     try {
       const response = await axios.post('https://dev-api-iis-sigmacloud.azurewebsites.net/api/Addresses/get-entity-addresses', {
-        entityId: 'dbfb63ca-058c-4e96-b485-4652d8fa9776',
+        entityId: facilityId,
         identifier: null,
         recordCount: null,
       });
@@ -267,7 +284,7 @@ const FacilityProfile = () => {
   const fetchContactData = async () => {
 	try {
 	  const response = await axios.post('https://dev-api-iis-sigmacloud.azurewebsites.net/api/Contact/get-entity-contact', {
-		entityId: 'dbfb63ca-058c-4e96-b485-4652d8fa9776',
+		entityId: facilityId,
 		identifier: null,
 		recordCount: null,
 	  });
@@ -386,7 +403,7 @@ const FacilityProfile = () => {
 		  createdBy: 'quasif',
 		  isdelete: false,
 		  contactType: selectedContactType,
-		  entityId: 'dbfb63ca-058c-4e96-b485-4652d8fa9776',
+		  entityId: facilityId,
 		  entityType: 'facility',
 		},
 		{
@@ -591,7 +608,7 @@ const [googleAddress, setGoogleAddress] = useState('');
 		AddressType: selectedAddressType,
 		Addressid: SelectedAddressId,
 		CreatedBy: 'system',
-		EntityId: 'dbfb63ca-058c-4e96-b485-4652d8fa9776',
+		EntityId: facilityId,
 		Isprimary: false,
 	  });
   
@@ -620,6 +637,57 @@ const [googleAddress, setGoogleAddress] = useState('');
 	entityAddresssetModalStatus(false);
 	fetchAddressData();
   };
+  const [siteData, setSiteData] = useState([]);
+  useEffect(() => {
+    fetchSiteData();
+  }, []);
+  const fetchSiteData = async () => {
+    try {
+      const response = await fetch('https://dev-api-iis-sigmacloud.azurewebsites.net/api/Site/searchsite', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'accept': '*/*'
+        },
+        body: JSON.stringify({
+          "sitepinnumber": null,
+          "keyword": null,
+          "facilityid": facilityId,
+          "facility_name": null,
+          "pagenumber": 1,
+          "pagesize": 100,
+          "site_name": null,
+          "site_type": null,
+          "parent_site": null,
+          "address": null,
+          "city": null,
+          "state": null,
+          "userid": null,
+          "usertype": null,
+          "orderby": null
+        })
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      setSiteData(data);
+    } catch (error) {
+      console.error('There was a problem fetching the data: ', error);
+    }
+  };
+
+  const siteColumns = [
+    { field: 'siteName', headerName: 'Site Name', width: 200 },
+    { field: 'siteType', headerName: 'Site Type', width: 150 },
+    { field: 'parentSite', headerName: 'Parent Site', width: 200 },
+    { field: 'siteContactPerson', headerName: 'Contact Person', width: 200 },
+    { field: 'facilityName', headerName: 'Facility Name', width: 200 },
+    { field: 'cityName', headerName: 'City', width: 150 },
+    { field: 'stateName', headerName: 'State', width: 150 },
+    { field: 'zipCode', headerName: 'Zip Code', width: 130 },
+    // Add more columns as needed
+  ];
 
 	const { i18n } = useTranslation();
 
@@ -1248,106 +1316,26 @@ const [googleAddress, setGoogleAddress] = useState('');
 								
 								{activeTab === TAB.Sites && (
 									<>
-										<div className='text-4xl font-semibold'>Sites</div>
-										<div className='flex flex-wrap divide-y divide-dashed divide-zinc-500/50 [&>*]:py-4'>
-											<div className='flex basis-full gap-4'>
-												<div className='flex grow items-center'>
-													<Label
-														htmlFor='weeklyNewsletter'
-														className='!mb-0'>
-														<div className='text-xl font-semibold'>
-															Weekly newsletter
-														</div>
-														<div className='text-zinc-500'>
-															Get notified about articles, discounts
-															and new products.
-														</div>
-													</Label>
-												</div>
-												<div className='flex flex-shrink-0 items-center'>
-													<Checkbox
-														variant='switch'
-														id='weeklyNewsletter'
-														name='weeklyNewsletter'
-														onChange={formik.handleChange}
-														checked={formik.values.weeklyNewsletter}
-													/>
-												</div>
-											</div>
-											<div className='flex basis-full gap-4'>
-												<div className='flex grow items-center'>
-													<Label
-														htmlFor='lifecycleEmails'
-														className='!mb-0'>
-														<div className='text-xl font-semibold'>
-															Lifecycle emails
-														</div>
-														<div className='text-zinc-500'>
-															Get personalized offers and emails based
-															on your activity.
-														</div>
-													</Label>
-												</div>
-												<div className='flex flex-shrink-0 items-center'>
-													<Checkbox
-														variant='switch'
-														id='lifecycleEmails'
-														name='lifecycleEmails'
-														onChange={formik.handleChange}
-														checked={formik.values.lifecycleEmails}
-													/>
-												</div>
-											</div>
-											<div className='flex basis-full gap-4'>
-												<div className='flex grow items-center'>
-													<Label
-														htmlFor='promotionalEmails'
-														className='!mb-0'>
-														<div className='text-xl font-semibold'>
-															Promotional emails
-														</div>
-														<div className='text-zinc-500'>
-															Get personalized offers and emails based
-															on your orders & preferences.
-														</div>
-													</Label>
-												</div>
-												<div className='flex flex-shrink-0 items-center'>
-													<Checkbox
-														variant='switch'
-														id='promotionalEmails'
-														name='promotionalEmails'
-														onChange={formik.handleChange}
-														checked={formik.values.promotionalEmails}
-													/>
-												</div>
-											</div>
-											<div className='flex basis-full gap-4'>
-												<div className='flex grow items-center'>
-													<Label
-														htmlFor='productUpdates'
-														className='!mb-0'>
-														<div className='text-xl font-semibold'>
-															Product updates
-														</div>
-														<div className='text-zinc-500'>
-															Checking this will allow us to notify
-															you when we make updates to products you
-															have downloaded/purchased.
-														</div>
-													</Label>
-												</div>
-												<div className='flex flex-shrink-0 items-center'>
-													<Checkbox
-														variant='switch'
-														id='productUpdates'
-														name='productUpdates'
-														onChange={formik.handleChange}
-														checked={formik.values.productUpdates}
-													/>
-												</div>
-											</div>
-										</div>
+											<div className='flex items-center justify-between mb-4'>
+        <div className='text-4xl font-semibold'>Sites</div>
+        {/* Add your button here */}
+        <Button variant='solid' onClick={() => setEntityContactmodalStatus(true)} icon='HeroPlus'>
+              New
+            </Button>
+      </div>
+									
+										<div style={{ height: 400, width: '100%' }}>
+            <DataGrid
+			className={classes.root}
+              rows={siteData}
+              columns={siteColumns}
+              checkboxSelection
+			  sx={{ '& .MuiDataGrid-columnHeaders': { backgroundColor: '#e5e7eb' },
+        '& .MuiDataGrid-columnHeaderTitle': {
+            fontWeight: 'bold',
+        },}}
+            />
+			</div>
 									</>
 								)}
 								{activeTab === TAB.Providers && (
