@@ -1,4 +1,5 @@
 export interface Facility {
+    id: string; 
     jurisdiction: string;
     organization: string;
     facilityName: string;
