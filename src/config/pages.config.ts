@@ -134,12 +134,12 @@ export const appPages = {
 		text: 'Patient Management',
 		icon: 'HeroEnvelope',
 		subPages: {
-			AddPatient:{
-				id:'addPatient',
-				to:'/pages/patient-Management/addPatient',
-				text:'AddPatient',
-				icon:'HeroQueueList',
-			}
+			AddPatient: {
+				id: 'addPatient',
+				to: '/pages/patient-Management/addPatient',
+				text: 'AddPatient',
+				icon: 'HeroQueueList',
+			},
 		},
 	},
 	crmAppPages: {
@@ -153,6 +153,20 @@ export const appPages = {
 				to: '/crm/dashboard',
 				text: 'CRM Dashboard',
 				icon: 'HeroUserCircle',
+			},
+			OrdersPage: {
+				id: 'OrdersPage',
+				to: '/pages/Vaccine-Management/Orders',
+				text: 'Orders',
+				icon: 'HeroShoppingCart',
+				subPages: {
+					AddOrder: {
+						id: 'addOrder',
+						to: '/pages/Vaccine-Management/addOrder',
+						text: 'AddOrder',
+						icon: 'HeroQueueList',
+					},
+				},
 			},
 			customerPage: {
 				id: 'customerPage',

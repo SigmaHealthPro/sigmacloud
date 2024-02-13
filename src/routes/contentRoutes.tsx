@@ -4,12 +4,14 @@ import { appPages, authPages, componentsPages, examplePages } from '../config/pa
 import NotFoundPage from '../pages/NotFound.page';
 import LoginPage from '../pages/Login.page';
 import VaccineForecasting from '../pages/Vaccine \u2028Forecasting/VaccineForecasting';
-import FacilitiesPage from '../pages/Facility Management/Facilities.page'
+import FacilitiesPage from '../pages/Facility Management/Facilities.page';
 import Facilitypage from '../pages/Facility Management/Facilitypage.page';
 import FacilityProfile from '../pages/FacilityProfile.page';
 import FacilityPage from '../pages/Facility Management/Facilitypage.page';
 import PatientManagement from '../pages/Patient Management/PatientManagement';
+import OrderManagement from '../pages/Vaccine Management/Orders';
 import AddPatient from '../pages/Patient Management/AddPatient';
+import AddOrder from '../pages/Vaccine Management/AddOrder';
 
 /**
  * UI
@@ -122,7 +124,7 @@ const Facilities = lazy(() => import('../pages/Facility Management/Facilities.pa
 /**
  * CRM
  */
-
+const Orders = lazy(() => import('../pages/Vaccine Management/Orders'));
 const CustomerListPage = lazy(
 	() => import('../pages/crm/customer/CustomerListPage/CustomerList.page'),
 );
@@ -260,11 +262,11 @@ const contentRoutes: RouteProps[] = [
 	 */
 	{
 		path: `${appPages.facilityAppPages.subPages.newfacilityPage.to}`,
-		element: <FacilityPage/>,
+		element: <FacilityPage />,
 	},
 	{
 		path: `${appPages.facilityAppPages.subPages.facilityPage.to}/:id`,
-		element: <FacilityProfile/>,
+		element: <FacilityProfile />,
 	},
 	{
 		path: appPages.reservationAppPages.to,
@@ -283,17 +285,21 @@ const contentRoutes: RouteProps[] = [
 	},
 	{
 		path: appPages.facilityAppPages.to,
-		element: <FacilitiesPage/>,
+		element: <FacilitiesPage />,
 	},
 	{
 		path: appPages.PatientManagement.to,
-		element: <PatientManagement/>,
-		
+		element: <PatientManagement />,
 	},
 	{
 		path: appPages.PatientManagement.subPages.AddPatient.to,
-		element:<AddPatient/>,
+		element: <AddPatient />,
 	},
+	{
+		path: appPages.crmAppPages.subPages.OrdersPage.to,
+		element: <OrderManagement />,
+	},
+
 	/**
 	 * MAIL::END
 	 */

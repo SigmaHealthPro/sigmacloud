@@ -11,7 +11,7 @@ const useFakeUserAPI = (username: string) => {
 	const getCheckUser = (userNameOrMail: string, password: string) => {
 		username = userNameOrMail;
 		const apiUrl = apiconfig.apiHostUrl;
-		console.log('apiurl' + apiUrl);
+		//console.log('apiurl=' + apiUrl);
 		return new Promise((resolve, reject) => {
 			fetch(
 				apiUrl +

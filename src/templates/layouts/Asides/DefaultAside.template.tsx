@@ -12,6 +12,7 @@ import Nav, {
 } from '../../../components/layouts/Navigation/Nav';
 import Badge from '../../../components/ui/Badge';
 import UserTemplate from '../User/User.template';
+import Icon from '../../../components/icon/Icon';
 
 const DefaultAsideTemplate = () => {
 	return (
@@ -63,6 +64,12 @@ const DefaultAsideTemplate = () => {
 						to={appPages.crmAppPages.to}
 						icon={appPages.crmAppPages.icon}>
 						<NavItem {...appPages.crmAppPages.subPages.crmDashboardPage} />
+						{/*Vaccine Orders*/}
+						<NavItem
+							text={appPages.crmAppPages.subPages.OrdersPage.text}
+							to={appPages.crmAppPages.subPages.OrdersPage.to}
+							icon={appPages.crmAppPages.subPages.OrdersPage.icon}
+						/>
 						<NavCollapse
 							text={appPages.crmAppPages.subPages.customerPage.text}
 							to={appPages.crmAppPages.subPages.customerPage.to}
