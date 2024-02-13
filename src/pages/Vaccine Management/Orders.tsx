@@ -43,7 +43,7 @@ import { EditOutlined, DeleteOutlined, MoreOutlined, BoldOutlined } from '@ant-d
 import { GridCellParams, GridRowParams } from '@mui/x-data-grid';
 import { appPages } from '../../config/pages.config';
 import { Orders } from '../../interface/order.interface';
-import Modal, { ModalBody, ModalHeader, ModalFooter } from '../../components/ui/Modal';
+import Modal, { ModalBody, ModalHeader, ModalFooter, TModalSize } from '../../components/ui/Modal';
 import { UUID } from 'crypto';
 import Validation from '../../components/form/Validation';
 // import {
@@ -87,6 +87,7 @@ const useStyles = makeStyles({
 		},
 	},
 });
+type TModalStableSize = 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 
 const OrderManagement = () => {
 	const [filteredFacility, setFilteredFacility] = useState([]);
@@ -188,56 +189,56 @@ const OrderManagement = () => {
 			});
 	};
 	//const [data] = useState<TProduct[]>(() => [...productsDb]);
-	const [data] = useState<Vaccine[]>(() => [...filteredVaccine]);
+	//const [data] = useState<Vaccine[]>(() => [...filteredVaccine]);
 	//const data = [...filteredVaccine[5]];
 
-	// const [data] = useState<any>(() => [
-	// 	{
-	// 		product: 'ACTHIB',
-	// 		vaccine: 'Hib (PRP-T)',
-	// 		manufacturer: 'Sanofi Pasteur',
-	// 		productid: '287a213a-6594-4361-8afb-f1fc2f5957f4',
-	// 		vaccineid: 'c3d7063d-4e99-404f-84c2-aa647be0e43a',
-	// 		manufacturerid: 'b0ba11e5-178e-428c-931c-e5906456dc05',
-	// 		inventoryid: 'ba54a09f-fe1d-45d1-b613-f25e0d35fbc3',
-	// 	},
-	// 	{
-	// 		product: 'ACAM2000',
-	// 		vaccine: 'vaccinia (smallpox)',
-	// 		manufacturer: 'Emergent BioSolutions',
-	// 		productid: 'e672d84a-b162-487b-8009-b2c9f12c0ea5',
-	// 		vaccineid: '8b8b06f5-9fe3-443a-9fee-115b433f4d76',
-	// 		manufacturerid: '42181174-a7b4-4713-bef0-f0e2593cffcf',
-	// 		inventoryid: '1802e62f-1060-44ac-94ab-c2506ac1ef09',
-	// 	},
-	// 	{
-	// 		product: 'ACAM2000',
-	// 		vaccine: 'vaccinia (smallpox)',
-	// 		manufacturer: 'Acambis, Inc',
-	// 		productid: '62a9c0f0-e1fc-4d76-b660-befabae88471',
-	// 		vaccineid: '8b8b06f5-9fe3-443a-9fee-115b433f4d76',
-	// 		manufacturerid: 'a8b44416-6af1-4639-a859-c150c743c27e',
-	// 		inventoryid: '97d5ee45-1a75-4a50-9d2a-c66de1aa4b9a',
-	// 	},
-	// 	{
-	// 		product: 'ABRYSVO',
-	// 		vaccine: 'RSV, bivalent, protein subunit RSVpreF, diluent reconstituted, 0.5 mL, PF',
-	// 		manufacturer: 'Pfizer, Inc',
-	// 		productid: 'df6171d0-1914-4e1e-aec2-3b8f0633ccce',
-	// 		vaccineid: '1f4b6f95-c003-4f80-aace-e6d1fbb2b70d',
-	// 		manufacturerid: '18084f08-c5d9-4774-afe9-ed73a8267bf0',
-	// 		inventoryid: 'd20ace8a-fcb2-42ee-bd67-3f828010d442',
-	// 	},
-	// 	{
-	// 		product: 'ABRYSVO',
-	// 		vaccine: 'RSV, bivalent, protein subunit RSVpreF, diluent reconstituted, 0.5 mL, PF',
-	// 		manufacturer: 'Pfizer, Inc',
-	// 		productid: 'df6171d0-1914-4e1e-aec2-3b8f0633ccce',
-	// 		vaccineid: '1f4b6f95-c003-4f80-aace-e6d1fbb2b70d',
-	// 		manufacturerid: '18084f08-c5d9-4774-afe9-ed73a8267bf0',
-	// 		inventoryid: 'c58e5617-880a-4bb7-9ad1-1b26a8800ffe',
-	// 	},
-	// ]);
+	const [data] = useState<any>(() => [
+		{
+			product: 'ACTHIB',
+			vaccine: 'Hib (PRP-T)',
+			manufacturer: 'Sanofi Pasteur',
+			productid: '287a213a-6594-4361-8afb-f1fc2f5957f4',
+			vaccineid: 'c3d7063d-4e99-404f-84c2-aa647be0e43a',
+			manufacturerid: 'b0ba11e5-178e-428c-931c-e5906456dc05',
+			inventoryid: 'ba54a09f-fe1d-45d1-b613-f25e0d35fbc3',
+		},
+		{
+			product: 'ACAM2000',
+			vaccine: 'vaccinia (smallpox)',
+			manufacturer: 'Emergent BioSolutions',
+			productid: 'e672d84a-b162-487b-8009-b2c9f12c0ea5',
+			vaccineid: '8b8b06f5-9fe3-443a-9fee-115b433f4d76',
+			manufacturerid: '42181174-a7b4-4713-bef0-f0e2593cffcf',
+			inventoryid: '1802e62f-1060-44ac-94ab-c2506ac1ef09',
+		},
+		{
+			product: 'ACAM2000',
+			vaccine: 'vaccinia (smallpox)',
+			manufacturer: 'Acambis, Inc',
+			productid: '62a9c0f0-e1fc-4d76-b660-befabae88471',
+			vaccineid: '8b8b06f5-9fe3-443a-9fee-115b433f4d76',
+			manufacturerid: 'a8b44416-6af1-4639-a859-c150c743c27e',
+			inventoryid: '97d5ee45-1a75-4a50-9d2a-c66de1aa4b9a',
+		},
+		{
+			product: 'ABRYSVO',
+			vaccine: 'RSV, bivalent, protein subunit RSVpreF, diluent reconstituted, 0.5 mL, PF',
+			manufacturer: 'Pfizer, Inc',
+			productid: 'df6171d0-1914-4e1e-aec2-3b8f0633ccce',
+			vaccineid: '1f4b6f95-c003-4f80-aace-e6d1fbb2b70d',
+			manufacturerid: '18084f08-c5d9-4774-afe9-ed73a8267bf0',
+			inventoryid: 'd20ace8a-fcb2-42ee-bd67-3f828010d442',
+		},
+		{
+			product: 'ABRYSVO',
+			vaccine: 'RSV, bivalent, protein subunit RSVpreF, diluent reconstituted, 0.5 mL, PF',
+			manufacturer: 'Pfizer, Inc',
+			productid: 'df6171d0-1914-4e1e-aec2-3b8f0633ccce',
+			vaccineid: '1f4b6f95-c003-4f80-aace-e6d1fbb2b70d',
+			manufacturerid: '18084f08-c5d9-4774-afe9-ed73a8267bf0',
+			inventoryid: 'c58e5617-880a-4bb7-9ad1-1b26a8800ffe',
+		},
+	]);
 	//setData(filteredVaccine);
 	const table = useReactTable({
 		data,
@@ -604,7 +605,7 @@ const OrderManagement = () => {
 					<Modal
 						isOpen={newOrderModal}
 						setIsOpen={setNewOrderModal}
-						fullScreen={true}
+						size={'2xl'}
 						isCentered={true}
 						isAnimation={true}>
 						<ModalHeader>
