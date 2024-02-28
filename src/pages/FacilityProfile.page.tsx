@@ -688,6 +688,58 @@ const [googleAddress, setGoogleAddress] = useState('');
     { field: 'zipCode', headerName: 'Zip Code', width: 130 },
     // Add more columns as needed
   ];
+  const [providerData, setProviderData] = useState([]);
+  useEffect(() => {
+    fetchProviderData();
+  }, []);
+  const fetchProviderData = async () => {
+    try {
+      const response = await fetch('https://localhost:7155/api/Provider/searchprovider', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'accept': '*/*'
+        },
+        body: JSON.stringify({
+			"keyword": null,
+			"pagenumber": 1,
+			"pagesize": 10,
+			"providerName": null,
+			"providerType": null,
+			"email": null,
+			"speciality": null,
+			"facilityid": null,
+			"facility_name": null,
+			"city": null,
+			"contact_number": null,
+			"state": null,
+			"zipcode": null,
+			"orderby": null
+		})
+      });
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+		console.log('response');
+      }
+	  console.log('response',response);
+      const data = await response.json();
+      setProviderData(data);
+    } catch (error) {
+      console.error('There was a problem fetching the data: ', error);
+    }
+  };
+
+  const providerColumns = [
+	{ field: 'providerName', headerName: 'Provider Name', width: 200 },
+	{ field: 'providerType', headerName: 'Provider Type', width: 150 },
+	{ field: 'facilityName', headerName: 'Facility Name', width: 200 },
+	{ field: 'contactNumber', headerName: 'Contact Number', width: 200 },
+	{ field: 'email', headerName: 'Email', width: 200 },
+	{ field: 'cityName', headerName: 'City', width: 150 },
+	{ field: 'stateName', headerName: 'State', width: 150 },
+	{ field: 'zipCode', headerName: 'Zip Code', width: 130 },
+	// You can add more columns as needed
+  ];
 
 	const { i18n } = useTranslation();
 
@@ -1340,115 +1392,27 @@ const [googleAddress, setGoogleAddress] = useState('');
 								)}
 								{activeTab === TAB.Providers && (
 									<>
-										<div className='text-4xl font-semibold'>Providers</div>
-										<div className='flex flex-wrap divide-y divide-dashed divide-zinc-500/50 [&>*]:py-4'>
-											<div className='group flex basis-full gap-4'>
-												<div className='flex grow items-center'>
-													<div>
-														<div className='text-xl font-semibold'>
-															Chrome
-														</div>
-														<div className='text-zinc-500'>
-															MacOS 13.4.1
-														</div>
-													</div>
-													<Button
-														className='invisible group-hover:visible'
-														color='red'>
-														Delete
-													</Button>
-												</div>
-												<div className='flex flex-shrink-0 items-center gap-4'>
-													<Icon icon='CustomUSA' size='text-3xl' />
-													<Badge
-														variant='outline'
-														rounded='rounded-full'
-														className='border-transparent'>
-														3 hours ago
-													</Badge>
-												</div>
-											</div>
-											<div className='group flex basis-full gap-4'>
-												<div className='flex grow items-center'>
-													<div>
-														<div className='text-xl font-semibold'>
-															Safari
-														</div>
-														<div className='text-zinc-500'>
-															MacOS 13.4.1
-														</div>
-													</div>
-													<Button
-														className='invisible group-hover:visible'
-														color='red'>
-														Delete
-													</Button>
-												</div>
-												<div className='flex flex-shrink-0 items-center gap-4'>
-													<Icon icon='CustomUSA' size='text-3xl' />
-													<Badge
-														variant='outline'
-														rounded='rounded-full'
-														className='border-transparent'>
-														1 day ago
-													</Badge>
-												</div>
-											</div>
-											<div className='group flex basis-full gap-4'>
-												<div className='flex grow items-center'>
-													<div>
-														<div className='text-xl font-semibold'>
-															App
-														</div>
-														<div className='text-zinc-500'>
-															iOS 16.5.1
-														</div>
-													</div>
-													<Button
-														className='invisible group-hover:visible'
-														color='red'>
-														Delete
-													</Button>
-												</div>
-												<div className='flex flex-shrink-0 items-center gap-4'>
-													<Icon icon='CustomUSA' size='text-3xl' />
-													<Badge
-														variant='outline'
-														rounded='rounded-full'
-														className='border-transparent'>
-														3 days ago
-													</Badge>
-												</div>
-											</div>
-											<div className='group flex basis-full gap-4'>
-												<div className='flex grow items-center'>
-													<div>
-														<div className='text-xl font-semibold'>
-															Safari
-														</div>
-														<div className='text-zinc-500'>
-															iPadOS 16.5.1
-														</div>
-													</div>
-													<Button
-														className='invisible group-hover:visible'
-														color='red'>
-														Delete
-													</Button>
-												</div>
-												<div className='flex flex-shrink-0 items-center gap-4'>
-													<Icon icon='CustomUSA' size='text-3xl' />
-													<Badge
-														variant='outline'
-														rounded='rounded-full'
-														color='red'
-														className='border-transparent'>
-														Expired
-													</Badge>
-												</div>
-											</div>
-										</div>
-									</>
+									<div className='flex items-center justify-between mb-4'>
+<div className='text-4xl font-semibold'>Providers</div>
+{/* Add your button here */}
+<Button variant='solid' onClick={() => setEntityContactmodalStatus(true)} icon='HeroPlus'>
+	  New
+	</Button>
+</div>
+							
+								<div style={{ height: 400, width: '100%' }}>
+	<DataGrid
+	className={classes.root}
+	  rows={providerData}
+	  columns={providerColumns}
+	  checkboxSelection
+	  sx={{ '& .MuiDataGrid-columnHeaders': { backgroundColor: '#e5e7eb' },
+'& .MuiDataGrid-columnHeaderTitle': {
+	fontWeight: 'bold',
+},}}
+	/>
+	</div>
+							</>
 								)}
 								
 							</div>
