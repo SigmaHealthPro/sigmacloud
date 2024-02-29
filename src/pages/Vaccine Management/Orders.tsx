@@ -63,6 +63,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import Select from '../../components/form/Select';
 import { number } from 'prop-types';
 import { fontFamily, width } from '@mui/system';
+import { DataContextProvider, useDataContext } from '../../context/dataContext';
 import Dropdown, {
 	DropdownItem,
 	DropdownMenu,
@@ -120,6 +121,7 @@ const OrderManagement: React.FC = () => {
 	const [sorting, setSorting] = useState<SortingState>([]);
 	const [selectedQuantity, setSelectedQuantity] = useState<number>(1);
 	const [cartItems, setCartItems] = useState<Cart[]>([]);
+	const { setData } = useDataContext();
 
 	const handleQuantityChange = (quantity: number) => {
 		setSelectedQuantity(quantity);
@@ -127,6 +129,7 @@ const OrderManagement: React.FC = () => {
 
 	const addItemToCart = (item: Cart) => {
 		setCartItems([...cartItems, item]);
+		setData([item]);
 		localStorage.setItem('itemcount', Itemadded.toString());
 	};
 
@@ -181,9 +184,10 @@ const OrderManagement: React.FC = () => {
 							quantity: '1',
 							price: '100$',
 						});
-						<DefaultHeaderRightCommon
-							cartItems={cartItems}
-							addToCart={addItemToCart}></DefaultHeaderRightCommon>;
+						<DataContextProvider>
+							<DefaultHeaderRightCommon />
+							<CartPartial />
+						</DataContextProvider>;
 						setNewOrderModal(false);
 						setEditTouched(false);
 					}}>

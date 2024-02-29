@@ -21,12 +21,17 @@ import Card, {
 	CardTitle,
 } from '../../../../components/ui/Card';
 import { Cart } from '../../../../interface/cart.interface';
-export interface ChildProps {
-	cartItems: Cart[];
-	addToCart: (item: Cart) => void;
-}
+import { useDataContext } from '../../../../context/dataContext';
 
-export const CartPartial: React.FC<ChildProps> = ({ cartItems }) => {
+const CartPartial: React.FC = () => {
+	const { data } = useDataContext();
+	if (!data) {
+		return (
+			<div>
+				<Button icon='HeroShoppingCart' aria-label='Messages' />
+			</div>
+		);
+	}
 	const [newCartItem, setNewCart] = useState(false);
 	const productName = localStorage.getItem('productname');
 	console.log('in cart page itemcount=', localStorage.getItem('itemcount'));
@@ -44,16 +49,15 @@ export const CartPartial: React.FC<ChildProps> = ({ cartItems }) => {
 					placement='bottom-end'
 					className='flex flex-col flex-wrap divide-y divide-dashed divide-zinc-500/50 p-4 [&>*]:py-4'>
 					<div className='flex min-w-[24rem] gap-2'>
-						{cartItems &&
-							cartItems.map((item) => (
-								<div className='grow-0'>
-									<div className='flex gap-2 font-bold'>{item.product}</div>
-									<div className='flex w-[18rem] gap-2 text-zinc-500'>
-										<span className='truncate'>{item.vaccine}</span>
-										<span className='truncate'>{item.manufacturer}</span>
-									</div>
+						{data.map((item) => (
+							<div className='grow-0'>
+								<div className='flex gap-2 font-bold'>{item.product}</div>
+								<div className='flex w-[18rem] gap-2 text-zinc-500'>
+									<span className='truncate'>{item.vaccine}</span>
+									<span className='truncate'>{item.manufacturer}</span>
 								</div>
-							))}
+							</div>
+						))}
 					</div>
 				</DropdownMenu>
 			</Dropdown>

@@ -3,13 +3,13 @@ import NotificationPartial from '../_partial/Notification.partial';
 import SettingsPartial from '../_partial/Settings.partial';
 import LanguageSelectorPartial from '../_partial/LanguageSelector.partial';
 import MessagesPartial from '../_partial/Messages.partial';
-import { ChildProps, CartPartial } from '../_partial/Cart.partial';
+import CartPartial from '../_partial/Cart.partial';
 import { Cart } from '../../../../interface/cart.interface';
 
-const DefaultHeaderRightCommon: React.FC<ChildProps> = ({ cartItems, addToCart }) => {
+const DefaultHeaderRightCommon: React.FC = () => {
 	return (
 		<>
-			<CartPartial cartItems={cartItems} addToCart={addToCart} />
+			<CartPartial />
 			<MessagesPartial />
 			<NotificationPartial />
 			<SettingsPartial />
