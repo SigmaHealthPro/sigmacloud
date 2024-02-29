@@ -6,7 +6,7 @@ import MessagesPartial from '../_partial/Messages.partial';
 import { ChildProps, CartPartial } from '../_partial/Cart.partial';
 import { Cart } from '../../../../interface/cart.interface';
 
-const DefaultHeaderRightCommon: React.FC<ChildProps> = ({ cartItems, addToCart, children }) => {
+const DefaultHeaderRightCommon: React.FC<ChildProps> = ({ cartItems, addToCart }) => {
 	return (
 		<>
 			<CartPartial cartItems={cartItems} addToCart={addToCart} />
