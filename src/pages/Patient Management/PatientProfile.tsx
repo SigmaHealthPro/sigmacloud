@@ -112,11 +112,11 @@ console.log("Patient Data:", patientData);
 										<Paper
 											elevation={4}
 											style={{
-												padding: '80px',
+												padding: '65px',
 												backgroundImage:`url(${User1Thumb})`,
 												backgroundRepeat: 'no-repeat',
 												backgroundSize: 'cover',
-												width: '80%',
+												width: '75%',
 												height: '25vh',
 											}}></Paper>
 									</Grid>
@@ -273,15 +273,15 @@ console.log("Patient Data:", patientData);
 								<CallIcon
 									style={{ color: 'gray', fontSize: '16px', marginRight: '7px' }}
 								/>
-								(754) 754-75677 <br></br>
+								{profileData?.contactValue}<br></br>
 								<MailIcon
 									style={{ color: 'gray', fontSize: '16px', marginRight: '7px' }}
 								/>
-								stacey.web@yopmail.com <br></br>
+								{profileData?.contactType}<br></br>
 								<LocationOnIcon
 									style={{ fontSize: '16px', color: 'gray', marginRight: '7px' }}
 								/>{' '}
-								3759 Mandan Road,Chamois,Missouri <br></br>
+								{profileData?.address}<br></br>
 							</Paper>
 						</Grid>
 					</Grid>

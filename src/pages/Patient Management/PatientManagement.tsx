@@ -46,7 +46,29 @@ import toast, { Toaster } from 'react-hot-toast';
 import Select from '../../components/form/Select';
 import popUp from '../../components/popup/popup';
 import PatientProfile from './PatientProfile';
+import { Autocomplete, TextField } from '@mui/material';
 
+
+interface LovMasterType {
+	id: string;
+	key: string;
+	value: string;
+	lovType: string;
+	longDescription: string;
+  }
+  interface Address {
+	id: string;
+	addressId: string;
+	line1: string;
+	line2: string;
+	suite: string;
+	countyName: string;
+	countryName: string;
+	stateName: string;
+	cityName: string;
+	zipCode: string;
+	fullAddress: string;
+  }
 const useStyles = makeStyles({
 	root: {
 		// Increase specificity by repeating the class
@@ -66,6 +88,14 @@ const PatientManagement = () => {
 	const [genderData, setGenderData] = useState([]);
 	const [filteredState, setFilteredState] = useState([]);
 	const [filteredCity, setFilteredCity] = useState([]);
+
+	const [addresses, setAddresses] = useState<Address[]>([]);
+	const [inputValue, setInputValue] = useState<string>('');
+	const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
+	const [SelectedAddressId, setSelectedAddressId] = useState<string>('');
+	const [addressmodalStatus, addresssetModalStatus] = useState<boolean>(false);
+
+
 	const navigate = useNavigate();
 	const [editTouched, setEditTouched] = useState(false);
 	const [editData, setEditData] = useState<any>([]);
@@ -97,6 +127,11 @@ const PatientManagement = () => {
 		formik.setFieldValue('state', params.row.stateId);
 		handleCity(params.row.stateId);
 		formik.setFieldValue('city', params.row.cityId);
+		formik.setFieldValue('contactValue', params.row.contactType);
+		formik.setFieldValue('contactType', params.row.contactValue);
+		formik.setFieldValue('address', params.row.address);
+		formik.setFieldValue('addressType', params.row.addressType);
+		
 	};
 
 	const columns = [
@@ -331,6 +366,86 @@ const PatientManagement = () => {
 		}
 		callInitial();
 	}, []);
+
+	
+	const [addressTypes, setAddressTypes] = useState<LovMasterType[]>([]);
+	//const [selectedAddressType, setSelectedAddressType] = useState<string>('');
+
+	useEffect(() => {
+		const fetchAddressTypes = async () => {
+		  try {
+			const response = await axios.get(
+			  'https://dev-api-iis-sigmacloud.azurewebsites.net/api/MasterData/getlovmasterbylovtype?lovtype=AddressType'
+			);
+	
+			console.log('Address Types API Response:', response);
+	
+			if (response.data && Array.isArray(response.data)) {
+			  // Adding a default item at the beginning
+			  const defaultItem = {
+				id: 'default',
+				key: 'default',
+				value: 'Select an Address Type',
+				lovType: 'AddressType',
+				longDescription: 'Select an Address Type',
+			  };
+	
+			  setAddressTypes([defaultItem, ...response.data]);
+			} else {
+			  console.error('Error fetching address type data');
+			}
+		  } catch (error) {
+			console.error('Error fetching address type data', error);
+		  }
+		};
+	
+		fetchAddressTypes();
+	  }, []);
+
+	  useEffect(() => {
+		const fetchAddresses = async () => {
+		  try {
+			const response = await axios.post(
+			  'https://dev-api-iis-sigmacloud.azurewebsites.net/api/Addresses/get-addresses',
+			  {
+				identifier: inputValue,
+				recordCount: 1000,
+			  }
+			);
+	
+			if (response.data && response.data.status === 'Success') {
+			  setAddresses(response.data.dataList || []);
+			} else {
+			  console.error('Error fetching addresses data');
+			}
+		  } catch (error) {
+			console.error('Error fetching addresses data', error);
+		  }
+		};
+	
+		if (inputValue !== '') {
+		  fetchAddresses();
+		} else {
+		  setAddresses([]); 
+		}
+	  }, [inputValue]);
+	
+
+	  
+	  
+  const handleAddressChange = (_event: React.ChangeEvent<{}>, value: Address | null) => {
+debugger;
+	setInputValue(value ? value.fullAddress : '');
+	setSelectedAddress(value ? { ...value, id: value.id } : null);
+	setSelectedAddressId(value ? value.id : '');
+	setNewPatientModal(true);
+	
+  };
+ 
+  
+
+	
+
 	type Patient = {
 		id: string;
 		createdDate: string;
@@ -356,6 +471,12 @@ const PatientManagement = () => {
 		zipCode: string;
 		personId: string;
 		personType: string;
+		addressId: any;
+		addressType: string;
+		entityType: string;
+		contactValue:string;
+		contactType:string;
+		
 	};
 
 	const openModal = () => {
@@ -388,6 +509,10 @@ const PatientManagement = () => {
 		formik.setFieldValue('city', '');
 		formik.setFieldValue('state', '');
 		formik.setFieldValue('country', '');
+		formik.setFieldValue('address', '');
+		formik.setFieldValue('addressType', '');
+		formik.setFieldValue('contactValue', '');
+		formik.setFieldValue('contactType', '');
 	};
 
 	const handleCity = async (state: any) => {
@@ -399,6 +524,11 @@ const PatientManagement = () => {
 			.then((resp) => setFilteredCity(resp?.data))
 			.catch((err) => console.log('err', err));
 	};
+
+	
+	// const handleAddressTypeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+	// 	setSelectedAddressType(event.target.value);
+	//   };
 
 	console.log('Patients Data:', patients); // Debugging: Log current state of patients data
 
@@ -430,7 +560,12 @@ const PatientManagement = () => {
 			countryId: generatedGUID,
 			zipCode: 'string',
 			personId: generatedGUID,
-		},
+			addressId: generatedGUID,
+			addressType: '',
+			entityType: "Patient",
+			contactValue:'',
+			contactType:'',
+			},
 
 		validate: (values: Patient) => {
 			const errors: any = {};
@@ -482,11 +617,13 @@ const PatientManagement = () => {
 		},
 
 		onSubmit: async (values: Patient) => {
+			debugger
 			console.log('Request Payload: ', values);
 			try {
 				const postResponse = await axios.post(
 					'https://localhost:7155/api/Patients/createpatient',
-					values,
+					  { ...values, address: SelectedAddressId },
+					
 					{
 						headers: { 'Content-Type': 'application/json' },
 					},
@@ -510,6 +647,10 @@ const PatientManagement = () => {
 				formik.setFieldValue('city', '');
 				formik.setFieldValue('state', '');
 				formik.setFieldValue('country', '');
+				formik.setFieldValue('address', '');
+				formik.setFieldValue('addressType', '');
+				formik.setFieldValue('contactValue', '');
+				formik.setFieldValue('contactType', '');
 			} catch (error) {
 				console.error('Error: ', error);
 			}
@@ -789,6 +930,48 @@ const PatientManagement = () => {
 														</Validation>
 													</div>
 													<div className='col-span-12 lg:col-span-6'>
+														<Label htmlFor='contactValue'>
+														Contact Number														</Label>
+														<Validation
+															isValid={formik.isValid}
+															isTouched={
+																formik.touched.contactValue
+															}
+															invalidFeedback={
+																formik.errors.contactValue
+															}
+															validFeedback='Good'>
+															<Input
+																id='contactValue'
+																name='contactValue'
+																onChange={formik.handleChange}
+																value={formik.values.contactValue}
+																onBlur={formik.handleBlur}
+															/>
+														</Validation>
+													</div>
+													<div className='col-span-12 lg:col-span-6'>
+														<Label htmlFor='contactType'>
+														Email														</Label>
+														<Validation
+															isValid={formik.isValid}
+															isTouched={
+																formik.touched.contactType
+															}
+															invalidFeedback={
+																formik.errors.contactType
+															}
+															validFeedback='Good'>
+															<Input
+																id='contactType'
+																name='contactType'
+																onChange={formik.handleChange}
+																value={formik.values.contactType}
+																onBlur={formik.handleBlur}
+															/>
+														</Validation>
+													</div>
+													<div className='col-span-12 lg:col-span-6'>
 														<Label htmlFor='patientStatus'>
 															Patient Status
 														</Label>
@@ -965,6 +1148,73 @@ const PatientManagement = () => {
 															</FieldWrap>
 														</Validation>
 													</div>
+													<div className='col-span-12'>
+														<Label htmlFor='entityType'>
+														Entity Type
+														</Label>
+														<Validation
+															isValid={formik.isValid}
+															isTouched={
+																formik.touched.entityType
+															}
+															invalidFeedback={
+																formik.errors.entityType
+															}
+															validFeedback='Good'>
+															<Input
+																id='entityType'
+																name='entityType'
+																onChange={formik.handleChange}
+																value={
+																	formik.values.entityType
+																}
+																onBlur={formik.handleBlur}
+															/>
+														</Validation>
+													</div>
+													
+											<div className='col-span-12 lg:col-span-6'>
+												<Label htmlFor='addressType'>Address Type</Label>
+												<FieldWrap
+													lastSuffix={
+														<Icon
+															icon='HeroChevronDown'
+															className='mx-2'
+														/>
+													}>
+													 <Select
+													 id='addressType'
+        name='addressType'
+		onChange={formik.handleChange}
+
+        value={formik.values.addressType}
+        
+      >
+        {addressTypes.map((addressType) => (
+          <option key={addressType.id} value={addressType.value}>
+            {addressType.value}
+          </option>
+        ))}
+      </Select>
+												</FieldWrap>
+											</div>
+											<div className='col-span-12 lg:col-span-6'>
+												<Label htmlFor='position'>Address</Label>
+												<FieldWrap>
+												<Autocomplete
+												 options={addresses}
+										         getOptionLabel={(option) => option.fullAddress}
+										         value={selectedAddress} 
+												 onChange={handleAddressChange} 
+												 inputValue={inputValue}
+				                                 onInputChange={(_event, newInputValue) => setInputValue(newInputValue)}
+										  renderInput={(params) => (
+          <TextField {...params} label="Select Address"   size="small" className='w-full appearance-none outline-0 text-black dark:text-white transition-all duration-300 ease-in-out border-2 border-zinc-100 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-800 hover:border-blue-500 dark:hover:border-blue-500 focus:border-zinc-300 dark:focus:border-zinc-800 focus:bg-transparent dark:focus:bg-transparent px-1.5 py-1.5 text-base rounded-lg' />
+        )}
+     
+      />
+</FieldWrap>
+											</div>
 												</div>
 											</CardBody>
 										</Card>
