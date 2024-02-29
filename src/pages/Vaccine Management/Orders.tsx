@@ -1,12 +1,15 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, ReactNode, FC } from 'react';
 import axios from 'axios';
+import { PublicBaseSelectProps } from 'react-select/base';
 import { Link, useNavigate } from 'react-router-dom';
 import PageWrapper from '../../components/layouts/PageWrapper/PageWrapper';
 import Container from '../../components/layouts/Container/Container';
 import Card, { CardBody, CardHeader, CardHeaderChild, CardTitle } from '../../components/ui/Card';
-import Button from '../../components/ui/Button';
+import Button, { IButtonProps } from '../../components/ui/Button';
 import Icon from '../../components/icon/Icon';
 import Input from '../../components/form/Input';
+import CartPartial from '../../templates/layouts/Headers/_partial/Cart.partial';
+import DefaultHeaderRightCommon from '../../templates/layouts/Headers/_common/DefaultHeaderRight.common';
 import {
 	createColumnHelper,
 	getCoreRowModel,
@@ -15,6 +18,7 @@ import {
 	getSortedRowModel,
 	SortingState,
 	useReactTable,
+	createTable,
 } from '@tanstack/react-table';
 import Badge from '../../components/ui/Badge';
 import priceFormat from '../../Services/utils/priceFormat.util';
@@ -37,24 +41,17 @@ import {
 	Edit as EditIcon,
 	Delete as DeleteIcon,
 } from '@mui/icons-material';
+import QuantityUpdater from './QuantityUpdater';
 import { makeStyles } from '@mui/styles';
-import { Button as AntButton, Popconfirm, Space } from 'antd';
+import { Button as AntButton, Popconfirm, Space, Table } from 'antd';
 import { EditOutlined, DeleteOutlined, MoreOutlined, BoldOutlined } from '@ant-design/icons';
 import { GridCellParams, GridRowParams } from '@mui/x-data-grid';
 import { appPages } from '../../config/pages.config';
 import { Orders } from '../../interface/order.interface';
+import { Cart } from '../../interface/cart.interface';
 import Modal, { ModalBody, ModalHeader, ModalFooter, TModalSize } from '../../components/ui/Modal';
 import { UUID } from 'crypto';
 import Validation from '../../components/form/Validation';
-// import {
-// 	handlevaccines,
-// 	handleFacility,
-// 	handleProduct,
-// 	table,
-// 	columnHelper,
-// 	columns,
-// 	Vaccine,
-// } from '../../pages/Vaccine Management/AddOrder';
 import { useFormik } from 'formik';
 import Label from '../../components/form/Label';
 import { orderApi } from '../../Apis/orderApi';
@@ -74,6 +71,7 @@ import Dropdown, {
 } from '../../components/ui/Dropdown';
 import TableTemplate, { TableCardFooterTemplate } from '../../templates/common/TableParts.template';
 import { indexOf } from 'lodash';
+import themeConfig from '../../config/theme.config';
 
 const useStyles = makeStyles({
 	root: {
@@ -89,7 +87,10 @@ const useStyles = makeStyles({
 });
 type TModalStableSize = 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 
-const OrderManagement = () => {
+const OrderManagement: React.FC = () => {
+	var productname = '';
+	var vaccinename = '';
+	var manufacturername = '';
 	const [filteredFacility, setFilteredFacility] = useState([]);
 	const [filteredProduct, setFilteredProduct] = useState([]);
 	const navigate = useNavigate();
@@ -104,9 +105,11 @@ const OrderManagement = () => {
 		page: 0,
 		pageSize: 5,
 	});
+	var Itemadded = 0;
 	const [openModal, setOpenModal] = useState(false);
 	const [searchTouched, setSearchTouched] = useState(false);
 	const [newOrderModal, setNewOrderModal] = useState(false);
+	const [newCartItem, setNewCart] = useState(false);
 	let generatedGUID: string;
 	generatedGUID = uuidv4();
 	const [value, setValue] = useState(localStorage.getItem('token'));
@@ -115,16 +118,16 @@ const OrderManagement = () => {
 	const [vaccineloading, setVaccineLoading] = useState<boolean>(false);
 	const [rowcountstates, setRowCountstates] = useState<number>(0);
 	const [sorting, setSorting] = useState<SortingState>([]);
+	const [selectedQuantity, setSelectedQuantity] = useState<number>(1);
+	const [cartItems, setCartItems] = useState<Cart[]>([]);
 
-	const handleFacility = async () => {
-		const response = await orderApi(`/api/Vaccination/getallfacilities`, 'GET')
-			.then((resp) => setFilteredFacility(resp?.data))
-			.catch((err) => console.log('err', err));
+	const handleQuantityChange = (quantity: number) => {
+		setSelectedQuantity(quantity);
 	};
-	const handleProduct = async () => {
-		const response = await orderApi(`/api/Vaccination/getallproducts`, 'GET')
-			.then((resp) => setFilteredProduct(resp?.data))
-			.catch((err) => console.log('err', err));
+
+	const addItemToCart = (item: Cart) => {
+		setCartItems([...cartItems, item]);
+		localStorage.setItem('itemcount', Itemadded.toString());
 	};
 
 	type Vaccine = {
@@ -135,6 +138,7 @@ const OrderManagement = () => {
 		vaccineid: string;
 		manufacturerid: string;
 		inventoryid: string;
+		quantity: string;
 	};
 	const columnHelper = createColumnHelper<Vaccine>();
 	const columns = [
@@ -150,8 +154,42 @@ const OrderManagement = () => {
 			cell: (info) => <div className='font-bold'>{info.getValue()}</div>,
 			header: 'manufacturer',
 		}),
+		columnHelper.accessor('quantity', {
+			cell: () => (
+				<div>
+					<QuantityUpdater defaultValue={1} step={1} min={0} max={999} />
+				</div>
+			),
+
+			header: 'quantity',
+		}),
 		columnHelper.display({
-			cell: () => <Button>ADD TO CART</Button>,
+			cell: (info) => (
+				<Button
+					variant='solid'
+					icon='HeroShoppingCart'
+					onClick={() => {
+						localStorage.setItem('productname', info.row.original.product);
+						localStorage.setItem('vaccinename', info.row.original.vaccine);
+						localStorage.setItem('manufacturername', info.row.original.manufacturer);
+						Itemadded = Itemadded + 1;
+						console.log('Itemadded=', Itemadded);
+						addItemToCart({
+							product: info.row.original.product,
+							vaccine: info.row.original.vaccine,
+							manufacturer: info.row.original.manufacturer,
+							quantity: '1',
+							price: '100$',
+						});
+						<DefaultHeaderRightCommon
+							cartItems={cartItems}
+							addToCart={addItemToCart}></DefaultHeaderRightCommon>;
+						setNewOrderModal(false);
+						setEditTouched(false);
+					}}>
+					ADD TO CART
+				</Button>
+			),
 			header: 'Actions',
 		}),
 	];
@@ -171,7 +209,7 @@ const OrderManagement = () => {
 			.then((response) => {
 				setVaccineLoading(true);
 				const { items, totalCount } = response.data;
-				setFilteredVaccine(response.data);
+				setFilteredVaccine(response.data?.items);
 
 				if (items.length > paginationModel.pageSize) {
 					console.warn('API returned more items than the requested page size.');
@@ -188,58 +226,10 @@ const OrderManagement = () => {
 				setVaccineLoading(false); // End loading
 			});
 	};
-	//const [data] = useState<TProduct[]>(() => [...productsDb]);
-	//const [data] = useState<Vaccine[]>(() => [...filteredVaccine]);
-	//const data = [...filteredVaccine[5]];
-
-	const [data] = useState<any>(() => [
-		{
-			product: 'ACTHIB',
-			vaccine: 'Hib (PRP-T)',
-			manufacturer: 'Sanofi Pasteur',
-			productid: '287a213a-6594-4361-8afb-f1fc2f5957f4',
-			vaccineid: 'c3d7063d-4e99-404f-84c2-aa647be0e43a',
-			manufacturerid: 'b0ba11e5-178e-428c-931c-e5906456dc05',
-			inventoryid: 'ba54a09f-fe1d-45d1-b613-f25e0d35fbc3',
-		},
-		{
-			product: 'ACAM2000',
-			vaccine: 'vaccinia (smallpox)',
-			manufacturer: 'Emergent BioSolutions',
-			productid: 'e672d84a-b162-487b-8009-b2c9f12c0ea5',
-			vaccineid: '8b8b06f5-9fe3-443a-9fee-115b433f4d76',
-			manufacturerid: '42181174-a7b4-4713-bef0-f0e2593cffcf',
-			inventoryid: '1802e62f-1060-44ac-94ab-c2506ac1ef09',
-		},
-		{
-			product: 'ACAM2000',
-			vaccine: 'vaccinia (smallpox)',
-			manufacturer: 'Acambis, Inc',
-			productid: '62a9c0f0-e1fc-4d76-b660-befabae88471',
-			vaccineid: '8b8b06f5-9fe3-443a-9fee-115b433f4d76',
-			manufacturerid: 'a8b44416-6af1-4639-a859-c150c743c27e',
-			inventoryid: '97d5ee45-1a75-4a50-9d2a-c66de1aa4b9a',
-		},
-		{
-			product: 'ABRYSVO',
-			vaccine: 'RSV, bivalent, protein subunit RSVpreF, diluent reconstituted, 0.5 mL, PF',
-			manufacturer: 'Pfizer, Inc',
-			productid: 'df6171d0-1914-4e1e-aec2-3b8f0633ccce',
-			vaccineid: '1f4b6f95-c003-4f80-aace-e6d1fbb2b70d',
-			manufacturerid: '18084f08-c5d9-4774-afe9-ed73a8267bf0',
-			inventoryid: 'd20ace8a-fcb2-42ee-bd67-3f828010d442',
-		},
-		{
-			product: 'ABRYSVO',
-			vaccine: 'RSV, bivalent, protein subunit RSVpreF, diluent reconstituted, 0.5 mL, PF',
-			manufacturer: 'Pfizer, Inc',
-			productid: 'df6171d0-1914-4e1e-aec2-3b8f0633ccce',
-			vaccineid: '1f4b6f95-c003-4f80-aace-e6d1fbb2b70d',
-			manufacturerid: '18084f08-c5d9-4774-afe9-ed73a8267bf0',
-			inventoryid: 'c58e5617-880a-4bb7-9ad1-1b26a8800ffe',
-		},
-	]);
-	//setData(filteredVaccine);
+	const data = useMemo(() => {
+		// Create a copy of the source array
+		return [...filteredVaccine];
+	}, [filteredVaccine]);
 	const table = useReactTable({
 		data,
 		columns,
@@ -263,10 +253,9 @@ const OrderManagement = () => {
 
 	const handleEditData = async (params: any, event: any) => {
 		event.preventDefault();
-		setNewOrderModal(true);
+		//setNewOrderModal(true);
 		setEditTouched(true);
 		formik.setFieldValue('Facility', params.row.Facility);
-		handleFacility();
 		formik.setFieldValue('Product', params.row.Product);
 		formik.setFieldValue('OrderDate', params.row.OrderDate);
 		formik.setFieldValue('Quantity', params.row.Quantity);
@@ -409,8 +398,7 @@ const OrderManagement = () => {
 
 	useEffect(() => {
 		listOrders();
-		listData();
-	}, []);
+	}, [globalFilter, paginationModel]);
 
 	const listData = () => {
 		async function callInitial() {
@@ -465,7 +453,6 @@ const OrderManagement = () => {
 		formik.setFieldValue('TaxAmount', '');
 	};
 
-	const [modalStatus, setModalStatus] = useState<boolean>(false);
 	const formik = useFormik({
 		initialValues: {
 			id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
@@ -538,6 +525,7 @@ const OrderManagement = () => {
 					},
 				);
 				setNewOrderModal(false);
+				setNewCart(false);
 				setEditTouched(false);
 				setTimeout(() => {
 					toast.success(`Order ${editTouched ? 'updated' : 'added'} successfully!`);
@@ -596,9 +584,11 @@ const OrderManagement = () => {
 						variant='solid'
 						icon='HeroPlus'
 						onClick={() => {
+							localStorage.removeItem('itemcount');
+							setNewCart(false);
 							setNewOrderModal(true);
-							setEditTouched(false);
 							reset();
+							listData();
 						}}>
 						Order Vaccine
 					</Button>
@@ -642,7 +632,6 @@ const OrderManagement = () => {
 																value={formik.values.Facility}
 																onChange={(event) => {
 																	formik.handleChange(event);
-																	handleFacility();
 																	handlevaccines(
 																		event.target.value,
 																	);
@@ -684,10 +673,83 @@ const OrderManagement = () => {
 							<Button
 								variant='solid'
 								onClick={() => {
+									setNewCart(false);
 									setNewOrderModal(false);
 									setEditTouched(false);
 								}}>
 								Back to Orders
+							</Button>
+						</ModalFooter>
+					</Modal>
+					<Modal
+						isOpen={newCartItem}
+						setIsOpen={setNewCart}
+						size={'2xl'}
+						isCentered={true}
+						isAnimation={true}>
+						<ModalHeader>Add Item to Cart</ModalHeader>
+						<ModalBody>
+							<PageWrapper name='Vaccine List'>
+								<Container>
+									<Card className='h-full'>
+										<CardHeader>
+											<CardHeaderChild>
+												<div></div>
+											</CardHeaderChild>
+											<CardBody className='overflow-auto'>
+												<div className='grid grid-cols-12 gap-4'>
+													<div className='col-span-12 lg:col-span-6'>
+														<Label htmlFor='ProductName'>
+															Product Name
+															{' :         ' +
+																localStorage.getItem('productname')}
+														</Label>
+													</div>
+													<div className='col-span-12 lg:col-span-6'></div>
+													<div className='col-span-12 lg:col-span-6'>
+														<Label htmlFor='VaccineName'>
+															Vaccine Name
+															{' :         ' +
+																localStorage.getItem('vaccinename')}
+														</Label>
+													</div>
+													<div className='col-span-12 lg:col-span-6'></div>
+													<div className='col-span-12 lg:col-span-6'>
+														<Label htmlFor='ManufacturerName'>
+															Manufacturer
+															{' :         ' +
+																localStorage.getItem(
+																	'manufacturername',
+																)}
+														</Label>
+													</div>
+													<div className='col-span-12 lg:col-span-6'></div>
+												</div>
+											</CardBody>
+										</CardHeader>
+									</Card>
+								</Container>
+							</PageWrapper>
+						</ModalBody>
+						<ModalFooter>
+							<Button
+								variant='solid'
+								onClick={() => {
+									setNewCart(false);
+									setNewOrderModal(false);
+									setEditTouched(false);
+								}}>
+								Back to Orders
+							</Button>
+							<Button
+								variant='solid'
+								onClick={() => {
+									setNewCart(false);
+									setNewOrderModal(false);
+									localStorage.removeItem('itemcount');
+									setEditTouched(false);
+								}}>
+								Shippment
 							</Button>
 						</ModalFooter>
 					</Modal>
