@@ -10,9 +10,7 @@ import { Cart } from '../../../../interface/cart.interface';
 const DefaultHeaderRightCommon: React.FC = () => {
 	return (
 		<>
-			<DataContextProvider>
-				<CartPartial />
-			</DataContextProvider>
+			<CartPartial />
 			<MessagesPartial />
 			<NotificationPartial />
 			<SettingsPartial />

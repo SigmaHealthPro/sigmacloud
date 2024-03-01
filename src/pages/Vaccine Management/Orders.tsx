@@ -185,9 +185,9 @@ const OrderManagement: React.FC = () => {
 							quantity: '1',
 							price: '100$',
 						});
-						<DataContextProvider>
-							<CartPartial />
-						</DataContextProvider>;
+						// <DataContextProvider>
+						<CartPartial />;
+						// </DataContextProvider>;
 						setNewOrderModal(false);
 						setEditTouched(false);
 					}}>

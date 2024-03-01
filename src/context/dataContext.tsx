@@ -8,7 +8,7 @@ import { Cart } from '../interface/cart.interface';
 // 	//data: Cart[] | null;
 // 	//setData: React.Dispatch<React.SetStateAction<any[] | null>>;
 // }
-interface DataContextValue {
+export interface DataContextValue {
 	data: Cart[];
 	setData: React.Dispatch<React.SetStateAction<Cart[]>>;
 	addItemToCart: (item: Cart) => void; // Add addItemToCart function

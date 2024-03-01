@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useState } from 'react';
+import React, { FC, ReactNode, useState, useContext } from 'react';
 import classNames from 'classnames';
 import Dropdown, { DropdownMenu, DropdownToggle } from '../../../../components/ui/Dropdown';
 import Button from '../../../../components/ui/Button';
@@ -21,17 +21,12 @@ import Card, {
 	CardTitle,
 } from '../../../../components/ui/Card';
 import { Cart } from '../../../../interface/cart.interface';
-import { useDataContext } from '../../../../context/dataContext';
+import { DataContext, useDataContext, DataContextValue } from '../../../../context/dataContext';
+import { DisplaySettings } from '@mui/icons-material';
 
 const CartPartial: React.FC = () => {
-	const { data } = useDataContext();
-	if (!data) {
-		return (
-			<div>
-				<Button icon='HeroShoppingCart' aria-label='Messages' />
-			</div>
-		);
-	}
+	const contextValue = useContext(DataContext);
+	const data = (contextValue as DataContextValue).data;
 	const [newCartItem, setNewCart] = useState(false);
 	const productName = localStorage.getItem('productname');
 	console.log('in cart page itemcount=', localStorage.getItem('itemcount'));
@@ -65,7 +60,7 @@ const CartPartial: React.FC = () => {
 			<span className='absolute end-0 top-0 flex h-3 w-3'>
 				<span className='relative inline-flex h-3 w-0 rounded-full'></span>
 				<span className='absolute inline-flex h-full w-full' />
-				{localStorage.getItem('itemcount')}
+				{data.length}
 				<span className='relative inline-flex h-3 w-3'></span>
 			</span>
 			<Modal
