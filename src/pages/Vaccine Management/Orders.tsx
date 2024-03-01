@@ -185,7 +185,6 @@ const OrderManagement: React.FC = () => {
 							price: '100$',
 						});
 						<DataContextProvider>
-							<DefaultHeaderRightCommon />
 							<CartPartial />
 						</DataContextProvider>;
 						setNewOrderModal(false);
@@ -255,23 +254,6 @@ const OrderManagement: React.FC = () => {
 		// debugTable: true,
 	});
 
-	const handleEditData = async (params: any, event: any) => {
-		event.preventDefault();
-		//setNewOrderModal(true);
-		setEditTouched(true);
-		formik.setFieldValue('Facility', params.row.Facility);
-		formik.setFieldValue('Product', params.row.Product);
-		formik.setFieldValue('OrderDate', params.row.OrderDate);
-		formik.setFieldValue('Quantity', params.row.Quantity);
-		formik.setFieldValue('UnitPrice', params.row.UnitPrice);
-		formik.setFieldValue('OrderTotal', params.row.OrderTotal);
-		formik.setFieldValue('OrderStatus', params.row.OrderStatus);
-		formik.setFieldValue('TaxAmount', params.row.TaxAmount);
-		formik.setFieldValue('DiscountAmount', params.row.DiscountAmount);
-		formik.setFieldValue('FacilityId', params.row.FacilityId);
-		formik.setFieldValue('ProductId', params.row.ProductId);
-		formik.setFieldValue('personType', params.row.personType);
-	};
 	const ordercolumns = [
 		{ field: 'product', headerName: 'Product', width: 140 },
 		{ field: 'orderItemDesc', headerName: 'OrderItem Desc', width: 140 },
@@ -297,22 +279,11 @@ const OrderManagement: React.FC = () => {
 							<Space size='middle'>
 								<AntButton
 									icon={
-										<EditOutlined
-											onClick={(event) => handleEditData(params, event)}
+										<view
+										// onClick={(event) => handleEditData(params, event)}
 										/>
 									}
 								/>
-								<Popconfirm title='Sure to delete?'>
-									<AntButton
-										icon={
-											<DeleteOutlined
-												onClick={(event) =>
-													handleDelete(params.row.id, event)
-												}
-											/>
-										}
-									/>
-								</Popconfirm>
 							</Space>
 						</div>
 					</div>
@@ -326,29 +297,7 @@ const OrderManagement: React.FC = () => {
 		navigate(`${appPages.crmAppPages.subPages.OrdersPage.to}/${params.id}`);
 	};
 	const apiUrl = apiconfig.apiHostUrl;
-	const handleDelete = async (orderId: string, event: any) => {
-		event.preventDefault();
-		//console.log('this is orderId id ' + orderId);
-		const formData = new FormData();
-		formData.append('orderId', orderId); // Add the facility ID to the form data
 
-		try {
-			const response = await axios.put(
-				apiUrl + 'api/Vaccination/deleteorder',
-				formData, // Send the form data
-				{
-					headers: { 'Content-Type': 'multipart/form-data' }, // This matches the expected content type
-				},
-			);
-			//console.log(response.data); // Handle the response as needed
-
-			if (response.data.status === 'Success') {
-				listOrders();
-			}
-		} catch (error) {
-			console.error('Error deleting orders:', error);
-		}
-	};
 	function CustomPagination() {
 		return (
 			<GridToolbarContainer className='flex w-full items-center justify-between'>
@@ -682,78 +631,6 @@ const OrderManagement: React.FC = () => {
 									setEditTouched(false);
 								}}>
 								Back to Orders
-							</Button>
-						</ModalFooter>
-					</Modal>
-					<Modal
-						isOpen={newCartItem}
-						setIsOpen={setNewCart}
-						size={'2xl'}
-						isCentered={true}
-						isAnimation={true}>
-						<ModalHeader>Add Item to Cart</ModalHeader>
-						<ModalBody>
-							<PageWrapper name='Vaccine List'>
-								<Container>
-									<Card className='h-full'>
-										<CardHeader>
-											<CardHeaderChild>
-												<div></div>
-											</CardHeaderChild>
-											<CardBody className='overflow-auto'>
-												<div className='grid grid-cols-12 gap-4'>
-													<div className='col-span-12 lg:col-span-6'>
-														<Label htmlFor='ProductName'>
-															Product Name
-															{' :         ' +
-																localStorage.getItem('productname')}
-														</Label>
-													</div>
-													<div className='col-span-12 lg:col-span-6'></div>
-													<div className='col-span-12 lg:col-span-6'>
-														<Label htmlFor='VaccineName'>
-															Vaccine Name
-															{' :         ' +
-																localStorage.getItem('vaccinename')}
-														</Label>
-													</div>
-													<div className='col-span-12 lg:col-span-6'></div>
-													<div className='col-span-12 lg:col-span-6'>
-														<Label htmlFor='ManufacturerName'>
-															Manufacturer
-															{' :         ' +
-																localStorage.getItem(
-																	'manufacturername',
-																)}
-														</Label>
-													</div>
-													<div className='col-span-12 lg:col-span-6'></div>
-												</div>
-											</CardBody>
-										</CardHeader>
-									</Card>
-								</Container>
-							</PageWrapper>
-						</ModalBody>
-						<ModalFooter>
-							<Button
-								variant='solid'
-								onClick={() => {
-									setNewCart(false);
-									setNewOrderModal(false);
-									setEditTouched(false);
-								}}>
-								Back to Orders
-							</Button>
-							<Button
-								variant='solid'
-								onClick={() => {
-									setNewCart(false);
-									setNewOrderModal(false);
-									localStorage.removeItem('itemcount');
-									setEditTouched(false);
-								}}>
-								Shippment
 							</Button>
 						</ModalFooter>
 					</Modal>

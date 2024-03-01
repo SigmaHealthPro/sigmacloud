@@ -4,12 +4,15 @@ import SettingsPartial from '../_partial/Settings.partial';
 import LanguageSelectorPartial from '../_partial/LanguageSelector.partial';
 import MessagesPartial from '../_partial/Messages.partial';
 import CartPartial from '../_partial/Cart.partial';
+import { DataContextProvider } from '../../../../context/dataContext';
 import { Cart } from '../../../../interface/cart.interface';
 
 const DefaultHeaderRightCommon: React.FC = () => {
 	return (
 		<>
-			<CartPartial />
+			<DataContextProvider>
+				<CartPartial />
+			</DataContextProvider>
 			<MessagesPartial />
 			<NotificationPartial />
 			<SettingsPartial />
