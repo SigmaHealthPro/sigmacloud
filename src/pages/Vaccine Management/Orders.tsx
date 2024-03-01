@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, ReactNode, FC } from 'react';
+import React, { useState, useEffect, useMemo, ReactNode, useContext, FC } from 'react';
 import axios from 'axios';
 import { PublicBaseSelectProps } from 'react-select/base';
 import { Link, useNavigate } from 'react-router-dom';
@@ -63,7 +63,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import Select from '../../components/form/Select';
 import { number } from 'prop-types';
 import { fontFamily, width } from '@mui/system';
-import { DataContextProvider, useDataContext } from '../../context/dataContext';
+import { DataContextProvider, useDataContext, DataContext } from '../../context/dataContext';
 import Dropdown, {
 	DropdownItem,
 	DropdownMenu,
@@ -126,12 +126,12 @@ const OrderManagement: React.FC = () => {
 	const handleQuantityChange = (quantity: number) => {
 		setSelectedQuantity(quantity);
 	};
-
-	const addItemToCart = (item: Cart) => {
-		setCartItems([...cartItems, item]);
-		setData([item]);
-		localStorage.setItem('itemcount', Itemadded.toString());
-	};
+	const { addItemToCart } = useContext(DataContext);
+	// const addItemToCart = (item: Cart) => {
+	// 	setCartItems([...cartItems, item]);
+	// 	setData((prevData) => [...prevData, item]);
+	// 	localStorage.setItem('itemcount', Itemadded.toString());
+	// };
 
 	type Vaccine = {
 		product: string;
@@ -177,6 +177,7 @@ const OrderManagement: React.FC = () => {
 						localStorage.setItem('manufacturername', info.row.original.manufacturer);
 						Itemadded = Itemadded + 1;
 						console.log('Itemadded=', Itemadded);
+
 						addItemToCart({
 							product: info.row.original.product,
 							vaccine: info.row.original.vaccine,
