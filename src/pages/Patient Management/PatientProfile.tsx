@@ -52,7 +52,7 @@ useEffect(() => {
 	
 	// 	try {
 	// 		const response = await patientApi(`/api/Patients/patientDetailsById?patientId=${id}`, 'GET');
-	// 		debugger;
+	// 		
 	// 		console.log("Response from API:", response); // Debugging: Log the response
 	// 		setPatientData(response.data.data);
 	// 	} catch (error) {
@@ -151,7 +151,7 @@ console.log("Patient Data:", patientData);
 												marginRight: '5px',
 											}}
 										/>{' '}
-										SSN : 1234534532344<br></br>
+										ID : 12345678<br></br>
 										<MedicalServicesIcon
 											style={{
 												color: 'gray',

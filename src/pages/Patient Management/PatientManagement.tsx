@@ -113,9 +113,9 @@ const PatientManagement = () => {
 		formik.setFieldValue('firstName', params.row.firstName);
 		formik.setFieldValue('middleName', params.row.middleName);
 		formik.setFieldValue('lastName', params.row.lastName);
-		formik.setFieldValue('gender', params.row.gender);
+		formik.setFieldValue('gender', params.row.genderId);
 		formik.setFieldValue('dateOfBirth', params.row.dateOfBirth);
-		formik.setFieldValue('date_of_history_vaccine', params.row.date_of_history_vaccine);
+		formik.setFieldValue('dateOfHistoryVaccine1', params.row.dateOfHistoryVaccine1);
 		formik.setFieldValue('motherFirstName', params.row.motherFirstName);
 		formik.setFieldValue('motherMaidenLastName', params.row.motherMaidenLastName);
 		formik.setFieldValue('motherLastName', params.row.motherLastName);
@@ -131,7 +131,7 @@ const PatientManagement = () => {
 		formik.setFieldValue('contactType', params.row.contactValue);
 		formik.setFieldValue('address', params.row.address);
 		formik.setFieldValue('addressType', params.row.addressType);
-		
+		formik.setFieldValue('isEdit', true);
 	};
 
 	const columns = [
@@ -289,10 +289,12 @@ const PatientManagement = () => {
 			pagenumber: paginationModel.page + 1,
 			pagesize: paginationModel.pageSize,
 			patient_name: '',
-
+			dateOfHistoryVaccine1: '',
 			date_of_history_vaccine: '',
+			dateOfBirth:'',
 			patient_status: '',
 			gender: '',
+			genderId:'',
 			motherFirstName: '',
 			motherMaidenLastName: '',
 			motherLastName: '',
@@ -307,6 +309,7 @@ const PatientManagement = () => {
 			stateId: '',
 			zip_code: '',
 			orderby: 'patient_name',
+			isEdit: false
 		};
 
 		axios
@@ -434,7 +437,7 @@ const PatientManagement = () => {
 	  
 	  
   const handleAddressChange = (_event: React.ChangeEvent<{}>, value: Address | null) => {
-debugger;
+
 	setInputValue(value ? value.fullAddress : '');
 	setSelectedAddress(value ? { ...value, id: value.id } : null);
 	setSelectedAddressId(value ? value.id : '');
@@ -456,7 +459,9 @@ debugger;
 		firstName: string;
 		middleName: string;
 		lastName: string;
+		
 		gender: string;
+		genderId: string;
 		dateOfBirth: string;
 		dateOfHistoryVaccine1: string;
 		motherFirstName: string;
@@ -476,6 +481,7 @@ debugger;
 		entityType: string;
 		contactValue:string;
 		contactType:string;
+		isEdit:boolean;
 		
 	};
 
@@ -530,7 +536,7 @@ debugger;
 	// 	setSelectedAddressType(event.target.value);
 	//   };
 
-	console.log('Patients Data:', patients); // Debugging: Log current state of patients data
+	console.log('Patients Data:', patients); 
 
 	const [modalStatus, setModalStatus] = useState<boolean>(false);
 
@@ -544,7 +550,7 @@ debugger;
 			firstName: '',
 			middleName: '',
 			lastName: '',
-			gender: '',
+		
 			dateOfBirth: '',
 			dateOfHistoryVaccine1: '',
 			motherFirstName: '',
@@ -565,7 +571,10 @@ debugger;
 			entityType: "Patient",
 			contactValue:'',
 			contactType:'',
-			},
+			isEdit: false,
+			gender: '',
+			genderId: Math.random().toString(36).slice(2, 7)
+		},
 
 		validate: (values: Patient) => {
 			const errors: any = {};
@@ -617,7 +626,7 @@ debugger;
 		},
 
 		onSubmit: async (values: Patient) => {
-			debugger
+			
 			console.log('Request Payload: ', values);
 			try {
 				const postResponse = await axios.post(
@@ -765,11 +774,7 @@ debugger;
 													</div>
 													<div className='col-span-12 lg:col-span-6'>
 														<Label htmlFor='gender'>Gender</Label>
-														<Validation
-															isValid={formik.isValid}
-															isTouched={formik.touched.gender}
-															invalidFeedback={formik.errors.gender}
-															validFeedback='Good'>
+														
 															<FieldWrap
 																style={{ color: 'black' }}
 																lastSuffix={
@@ -785,9 +790,7 @@ debugger;
 																	value={formik.values.gender}
 																	onChange={(event) => {
 																		formik.handleChange(event);
-																		handleState(
-																			event.target.value,
-																		);
+																	
 																	}}
 																	onBlur={formik.handleBlur}
 																	placeholder='Select Gender'>
@@ -807,7 +810,7 @@ debugger;
 																	)}
 																</Select>
 															</FieldWrap>
-														</Validation>
+														
 													</div>
 													<div className='col-span-12 lg:col-span-6'>
 														<Label htmlFor='dateOfBirth'>
