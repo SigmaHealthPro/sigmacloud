@@ -142,6 +142,7 @@ const OrderManagement: React.FC = () => {
 		manufacturerid: string;
 		inventoryid: string;
 		quantity: string;
+		price: string;
 	};
 	const columnHelper = createColumnHelper<Vaccine>();
 	const columns = [
@@ -158,9 +159,15 @@ const OrderManagement: React.FC = () => {
 			header: 'manufacturer',
 		}),
 		columnHelper.accessor('quantity', {
-			cell: () => (
+			cell: (row) => (
 				<div>
-					<QuantityUpdater defaultValue={1} step={1} min={0} max={999} />
+					<QuantityUpdater
+						rowId={row.row.id}
+						defaultValue={1}
+						step={1}
+						min={0}
+						max={999}
+					/>
 				</div>
 			),
 
@@ -175,21 +182,19 @@ const OrderManagement: React.FC = () => {
 						localStorage.setItem('productname', info.row.original.product);
 						localStorage.setItem('vaccinename', info.row.original.vaccine);
 						localStorage.setItem('manufacturername', info.row.original.manufacturer);
-						Itemadded = Itemadded + 1;
-						console.log('Itemadded=', Itemadded);
-
 						addItemToCart({
 							product: info.row.original.product,
 							vaccine: info.row.original.vaccine,
 							manufacturer: info.row.original.manufacturer,
-							quantity: '1',
-							price: '100$',
+							quantity: localStorage.getItem('quantityselected:${rowId}:'),
+							price: info.row.original.price,
 						});
-						// <DataContextProvider>
+						console.log(
+							'selectedqty:',
+							localStorage.getItem('quantityselected:${rowId}:'),
+						);
+
 						<CartPartial />;
-						// </DataContextProvider>;
-						setNewOrderModal(false);
-						setEditTouched(false);
 					}}>
 					ADD TO CART
 				</Button>
@@ -232,6 +237,9 @@ const OrderManagement: React.FC = () => {
 	};
 	const data = useMemo(() => {
 		// Create a copy of the source array
+		if (filteredVaccine == null) {
+			return []; // Return an empty array
+		}
 		return [...filteredVaccine];
 	}, [filteredVaccine]);
 	const table = useReactTable({
