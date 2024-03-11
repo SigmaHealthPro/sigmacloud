@@ -405,3 +405,7 @@ gh-info__row {
 	overflow: scroll;
 	height: 500px;
 }
+.shipments {
+	overflow: scroll;
+	height: 500px;
+}

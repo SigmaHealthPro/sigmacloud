@@ -52,6 +52,7 @@ const CartPartial: React.FC = () => {
 	const data = (contextValue as DataContextValue).data;
 	const [newCartItem, setNewCart] = useState(false);
 	const [checkout, proceedtocheckout] = useState(false);
+	const [shippment, addShippment] = useState(false);
 	const productName = localStorage.getItem('productname');
 	const [selectedItem, setSelectedItem] = useState<Cart | null>(null);
 	const [countryData, setCountryData] = useState([]);
@@ -96,6 +97,7 @@ const CartPartial: React.FC = () => {
 		line1: string;
 		line2: string;
 		suite: string;
+		packagesize: string;
 	};
 	const formik = useFormik({
 		initialValues: {
@@ -113,6 +115,7 @@ const CartPartial: React.FC = () => {
 			line1: '',
 			line2: '',
 			suite: '',
+			packagesize: '',
 		},
 		validate: (values: checkoutitems) => {
 			const errors: any = {};
@@ -625,26 +628,156 @@ const CartPartial: React.FC = () => {
 						variant='solid'
 						onClick={() => {
 							proceedtocheckout(false);
+							addShippment(true);
 						}}>
 						Shippment
 					</Button>
 				</ModalFooter>
 			</Modal>
 			<Modal
-				isOpen={checkout}
-				setIsOpen={proceedtocheckout}
+				isOpen={shippment}
+				setIsOpen={addShippment}
 				size={'lg'}
 				isCentered={true}
 				isAnimation={true}>
 				<ModalHeader>Items and Shippment</ModalHeader>
-				<ModalBody>
+				<ModalBody className='shipments'>
 					<div className='col-span-12 lg:col-span-9'>
 						<div className='grid grid-cols-12 gap-4'>
-							<div className='col-span-12'></div>
+							<div className='col-span-12'>
+								<Card>
+									<CardBody>
+										<div className='grid grid-cols-12 gap-4'>
+											<div className='col-span-12 lg:col-span-6'>
+												<Label htmlFor={`shipment_date`}>
+													Shipment Date:
+												</Label>
+												<Input
+													type='date'
+													id={`shipment_date`}
+													name={`shipment_date`}
+												/>
+											</div>
+											<div className='col-span-12 lg:col-span-6'>
+												<Label htmlFor='packagesize'>Package Size</Label>
+												<Validation
+													isValid={formik.isValid}
+													isTouched={formik.touched.packagesize}
+													invalidFeedback={formik.errors.packagesize}
+													validFeedback='Good'>
+													<Input
+														id='packagesize'
+														name='packagesize'
+														onChange={formik.handleChange}
+														value={formik.values.packagesize}
+														onBlur={formik.handleBlur}
+													/>
+												</Validation>
+											</div>
+											<div className='col-span-12 lg:col-span-6'>
+												<Label htmlFor='packagelength'>
+													Package length
+												</Label>
+												<Input id='packagelength' name='packagelength' />
+											</div>
+											<div className='col-span-12 lg:col-span-6'>
+												<Label htmlFor='packagewidth'>Package width</Label>
+												<Input id='packagewidth' name='packagewidth' />
+											</div>
+											<div className='col-span-12 lg:col-span-6'>
+												<Label htmlFor='packageheight'>
+													Package height
+												</Label>
+												<Input id='packageheight' name='packageheight' />
+											</div>
+											<div className='col-span-12 lg:col-span-6'>
+												<Label htmlFor='type of package'>
+													Type of package
+												</Label>
+												<Input id='packagetype' name='packagetype' />
+											</div>
+											<div className='col-span-12 lg:col-span-6'>
+												<Label htmlFor='packagematerial'>
+													Type of Package Material
+												</Label>
+												<Input
+													id='packagematerial'
+													name='packagematerial'
+												/>
+											</div>
+											<div className='col-span-12 lg:col-span-6'>
+												<Label htmlFor='storingtemperature'>
+													Storing Temperaure
+												</Label>
+												<Input id='tempstored' name='tempstored' />
+											</div>
+											<div className='col-span-12 lg:col-span-6'>
+												<Label htmlFor='temperatureuom'>
+													Temperaure Unit of Measure
+												</Label>
+												<Input id='tempuom' name='tempuom' />
+											</div>
+											<div className='col-span-12 lg:col-span-6'>
+												<Label htmlFor='sizeuom'>
+													Size Unit of Measure
+												</Label>
+												<Input id='sizeuom' name='sizeuom' />
+											</div>
+											<div className='col-span-12 lg:col-span-6'>
+												<Label htmlFor='weightuom'>
+													Weight Unit of Measure
+												</Label>
+												<Input id='weightuom' name='weightuom' />
+											</div>
+											<div className='col-span-12 lg:col-span-6'>
+												<Label htmlFor='noofpackages'>No of Packages</Label>
+												<Input id='noofpkgs' name='noofpkgs' />
+											</div>
+											<div className='col-span-12 lg:col-span-6'>
+												<Label htmlFor='Tracking Number'>
+													Tracking Number
+												</Label>
+												<Input id='trackingno' name='trackingno' />
+											</div>
+											<div className='col-span-12 lg:col-span-6'>
+												<Label htmlFor='delivery_date'>
+													Expected Delivery Date:
+												</Label>
+												<Input
+													type='date'
+													id='delivery_date'
+													name='delivery_date'
+												/>
+											</div>
+											<div className='col-span-12 lg:col-span-6'>
+												<Label htmlFor='recieving hours'>
+													Recieving Hours
+												</Label>
+												<Input id='recievinghrs' name='recievinghrs' />
+											</div>
+										</div>
+									</CardBody>
+								</Card>
+							</div>
 						</div>
 					</div>
 				</ModalBody>
-				<ModalFooter></ModalFooter>
+				<ModalFooter>
+					<Button
+						variant='solid'
+						onClick={() => {
+							addShippment(false);
+						}}>
+						Back to Orders
+					</Button>
+					<Button
+						variant='solid'
+						onClick={() => {
+							addShippment(false);
+						}}>
+						Submit Order
+					</Button>
+				</ModalFooter>
 			</Modal>
 		</div>
 	);
