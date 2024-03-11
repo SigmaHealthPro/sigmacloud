@@ -1,7 +1,10 @@
 import React, { FC, ReactNode, useState, useContext, useEffect } from 'react';
+import { DateRangePicker, Range } from 'react-date-range';
 import { Link, useParams } from 'react-router-dom';
 import classNames from 'classnames';
 import { appPages } from '../../../../config/pages.config';
+import MonthPicker from './MonthPicker';
+import YearPicker from './YearPicker';
 import Dropdown, { DropdownMenu, DropdownToggle } from '../../../../components/ui/Dropdown';
 import Button from '../../../../components/ui/Button';
 import QuantityUpdater from '../../../../pages/Vaccine Management/QuantityUpdater';
@@ -18,6 +21,8 @@ import { v4 as uuidv4 } from 'uuid';
 import Input from '../../../../components/form/Input';
 import FieldWrap from '../../../../components/form/FieldWrap';
 import { useFormik } from 'formik';
+import PeriodButtonsPartial from '../../../../pages/sales/SalesDashboardPage/_partial/PeriodButtons.partial';
+import PERIOD, { TPeriod } from '../../../../constants/periods.constant';
 import Modal, {
 	ModalBody,
 	ModalHeader,
@@ -52,6 +57,7 @@ const CartPartial: React.FC = () => {
 	const data = (contextValue as DataContextValue).data;
 	const [newCartItem, setNewCart] = useState(false);
 	const [checkout, proceedtocheckout] = useState(false);
+	const [payment, proceedtopayment] = useState(false);
 	const [shippment, addShippment] = useState(false);
 	const productName = localStorage.getItem('productname');
 	const [selectedItem, setSelectedItem] = useState<Cart | null>(null);
@@ -67,6 +73,14 @@ const CartPartial: React.FC = () => {
 		page: 0,
 		pageSize: 5,
 	});
+	const [selectedYear, setSelectedYear] = useState<number | undefined>(undefined);
+
+	// Handler function to handle year change
+	const handleYearChange = (year: number) => {
+		setSelectedYear(year);
+		// Do whatever you need to do with the selected year
+	};
+
 	let generatedGUID: string;
 	generatedGUID = uuidv4();
 	console.log('in cart page itemcount=', localStorage.getItem('itemcount'));
@@ -339,9 +353,9 @@ const CartPartial: React.FC = () => {
 						onClick={() => {
 							setNewCart(false);
 							listData();
-							proceedtocheckout(true);
+							proceedtopayment(true);
 						}}>
-						Proceed to Checkout
+						Proceed to Payment
 					</Button>
 				</ModalFooter>
 			</Modal>
@@ -351,7 +365,7 @@ const CartPartial: React.FC = () => {
 				size={'lg'}
 				isCentered={true}
 				isAnimation={true}>
-				<ModalHeader>Checkout</ModalHeader>
+				<ModalHeader>Billing Address</ModalHeader>
 				<ModalBody>
 					<div className='col-span-12 lg:col-span-9'>
 						<div className='grid grid-cols-12 gap-4'>
@@ -621,6 +635,7 @@ const CartPartial: React.FC = () => {
 						variant='solid'
 						onClick={() => {
 							proceedtocheckout(false);
+							proceedtopayment(false);
 						}}>
 						Back to Orders
 					</Button>
@@ -628,9 +643,77 @@ const CartPartial: React.FC = () => {
 						variant='solid'
 						onClick={() => {
 							proceedtocheckout(false);
+							proceedtopayment(false);
 							addShippment(true);
 						}}>
-						Shippment
+						Continue
+					</Button>
+				</ModalFooter>
+			</Modal>
+			<Modal
+				isOpen={payment}
+				setIsOpen={proceedtopayment}
+				size={'lg'}
+				isCentered={true}
+				isAnimation={true}>
+				<ModalHeader>Payment Information</ModalHeader>
+				<ModalBody className='paymentclass'>
+					<div className='col-span-12 lg:col-span-9'>
+						<div className='grid grid-cols-12 gap-4'>
+							<div className='col-span-12'>
+								<Card>
+									<CardBody>
+										Credit/Debit card/FSA
+										<div className='grid grid-cols-12 gap-4'>
+											<div className='col-span-12 lg:col-span-6'>
+												<Label htmlFor='Cardnumber'>Card Number</Label>
+												<Input
+													id='cardno'
+													name='cardnumber'
+													value={'Credit/Debit number'}></Input>
+											</div>
+											<div className='col-span-12 lg:col-span-6'></div>
+											<div className='col-span-12 lg:col-span-6'>
+												Card Expiration Date
+											</div>
+											<div className='col-span-12 lg:col-span-6'></div>
+											<div className='col-span-12 lg:col-span-4'>
+												<Label htmlFor='month'>Month</Label>
+												<MonthPicker />
+											</div>
+											<div className='col-span-12 lg:col-span-4'>
+												<Label htmlFor='year'>Year</Label>
+												<YearPicker
+													selectedYear={selectedYear}
+													handleYearChange={handleYearChange}
+												/>
+											</div>
+											<div className='col-span-12 lg:col-span-3'>
+												<Label htmlFor='securitycode'>Security Code</Label>
+												<Input id='cvv' name='cvv' value={'CVV'}></Input>
+											</div>
+										</div>
+									</CardBody>
+								</Card>
+							</div>
+						</div>
+					</div>
+				</ModalBody>
+				<ModalFooter>
+					<Button
+						variant='solid'
+						onClick={() => {
+							proceedtopayment(false);
+						}}>
+						Back to Orders
+					</Button>
+					<Button
+						variant='solid'
+						onClick={() => {
+							proceedtopayment(false);
+							proceedtocheckout(true);
+						}}>
+						Continue to Checkout
 					</Button>
 				</ModalFooter>
 			</Modal>
