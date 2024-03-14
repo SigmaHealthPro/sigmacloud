@@ -127,11 +127,6 @@ const OrderManagement: React.FC = () => {
 		setSelectedQuantity(quantity);
 	};
 	const { addItemToCart } = useContext(DataContext);
-	// const addItemToCart = (item: Cart) => {
-	// 	setCartItems([...cartItems, item]);
-	// 	setData((prevData) => [...prevData, item]);
-	// 	localStorage.setItem('itemcount', Itemadded.toString());
-	// };
 
 	type Vaccine = {
 		product: string;
@@ -594,6 +589,10 @@ const OrderManagement: React.FC = () => {
 																value={formik.values.Facility}
 																onChange={(event) => {
 																	formik.handleChange(event);
+																	localStorage.setItem(
+																		'selectedfacility:',
+																		event.target.value,
+																	);
 																	handlevaccines(
 																		event.target.value,
 																	);

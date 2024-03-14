@@ -40,8 +40,9 @@ const useFakeUserAPI = (username: string) => {
 					setResponse(data as TUser);
 					localStorage.setItem('apiData', JSON.stringify(data));
 					localStorage.setItem('birthdate', JSON.stringify(data.birthdate));
-					localStorage.setItem('loggedinname', data.userName);
-					console.log(data.userName);
+					localStorage.setItem('userid', data.UserId);
+					localStorage.setItem('loggedinname', data.username);
+					console.log(data.username);
 					localStorage.setItem('position', data.position);
 					localStorage.setItem('facilityname', data.facility);
 					localStorage.setItem('juridictionname', data.juridiction);

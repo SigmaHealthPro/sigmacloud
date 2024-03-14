@@ -23,6 +23,7 @@ import FieldWrap from '../../../../components/form/FieldWrap';
 import { useFormik } from 'formik';
 import PeriodButtonsPartial from '../../../../pages/sales/SalesDashboardPage/_partial/PeriodButtons.partial';
 import PERIOD, { TPeriod } from '../../../../constants/periods.constant';
+import toast, { Toaster } from 'react-hot-toast';
 import Modal, {
 	ModalBody,
 	ModalHeader,
@@ -64,7 +65,9 @@ const CartPartial: React.FC = () => {
 	const [countryData, setCountryData] = useState([]);
 	const [stateData, setStateData] = useState([]);
 	const [filteredState, setFilteredState] = useState([]);
+	const [filteredCounty, setFilteredCounty] = useState([]);
 	const [filteredCity, setFilteredCity] = useState([]);
+	const [editTouched, setEditTouched] = useState(false);
 	const [filteredVaccine, setFilteredVaccine] = useState<Vaccine[]>([]);
 	const [vaccineloading, setVaccineLoading] = useState<boolean>(false);
 	const [rowcountstates, setRowCountstates] = useState<number>(0);
@@ -96,67 +99,189 @@ const CartPartial: React.FC = () => {
 		quantity: string;
 		price: string;
 	};
+	type OrderItem = {
+		productId: string;
+		quantity: string;
+		OrderItemDesc: string;
+		UnitPrice: string;
+	};
+	const orderItems: OrderItem[] = data.map((item) => ({
+		productId: item.productid,
+		quantity: item.quantity,
+		OrderItemDesc: item.vaccine,
+		UnitPrice: item.price,
+	}));
+	type Shipment = {
+		ShipmentDate: string;
+		PackageSize: string;
+		SizeUnitofMesure: string;
+		PackageLength: string;
+		PackageWidth: string;
+		PackageHeight: string;
+		WeightUnitofMeasure: string;
+		TypeofPackagingMaterial: string;
+		TypeofPackage: string;
+		Storingtemparature: string;
+		TemperatureUnitofmeasure: string;
+		NoofPackages: string;
+		Expecteddeliverydate: string;
+		ShippmentAddressId: string;
+		RecievingHours: string;
+		RecieverId: string;
+		IsSignatureneeded: string;
+		TrackingNumber: string;
+		Status: string;
+	};
+	type Address = {
+		Line1: string;
+		Line2: string;
+		Suite: string;
+		Countyid: string;
+		County: string;
+		Country: string;
+		Countryid: string;
+		State: string;
+		Stateid: string;
+		City: string;
+		Cityid: string;
+		ZipCode: string;
+	};
+	const calculateOrderTotal = (orderItems: OrderItem[]): string => {
+		// Initialize the total to 0
+		let total = 0;
+
+		// Iterate over each OrderItem
+		for (const item of orderItems) {
+			// Parse the UnitPrice as a number and add it to the total
+			total += parseFloat(item.UnitPrice);
+		}
+
+		// Return the total as a string
+		return total.toString();
+	};
+	const orderTotal: string = calculateOrderTotal(orderItems);
 	type checkoutitems = {
+		userid: string;
 		id: string;
-		city: string;
-		cityId: string;
-		state: string;
-		stateId: string;
-		country: string;
-		countryId: string;
-		zipCode: string;
-		phonenumber: number;
 		Facility: string;
 		FacilityId: string;
-		line1: string;
-		line2: string;
-		suite: string;
-		packagesize: string;
+		OrderDate: string;
+		OrderTotal: string;
+		TaxAmount: string;
+		DiscountAmount: string;
+		Incoterms: string;
+		TermsConditionsId: string;
+		OrderStatus: string;
+		orderItems: OrderItem[];
+		address: Address;
+		shipment: Shipment;
+		// Add other order fields as needed
 	};
-	const formik = useFormik({
+
+	const formik = useFormik<checkoutitems>({
 		initialValues: {
 			id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
-			city: '',
-			cityId: generatedGUID,
-			state: '',
-			stateId: generatedGUID,
-			country: '',
-			countryId: generatedGUID,
-			zipCode: '',
-			phonenumber: 0,
 			Facility: '',
 			FacilityId: generatedGUID,
-			line1: '',
-			line2: '',
-			suite: '',
-			packagesize: '',
+			userid: '',
+			OrderDate: '',
+			TermsConditionsId: '',
+			DiscountAmount: '',
+			Incoterms: '',
+			OrderStatus: 'Active',
+			OrderTotal: orderTotal,
+			TaxAmount: '',
+			address: {
+				City: '',
+				Cityid: generatedGUID,
+				State: '',
+				Stateid: generatedGUID,
+				Country: '',
+				Countryid: generatedGUID,
+				County: '',
+				Countyid: generatedGUID,
+				ZipCode: '',
+				Line1: '',
+				Line2: '',
+				Suite: '',
+			},
+			shipment: {
+				Expecteddeliverydate: '',
+				IsSignatureneeded: '',
+				NoofPackages: '',
+				PackageHeight: '',
+				PackageLength: '',
+				PackageSize: '',
+				PackageWidth: '',
+				RecieverId: '',
+				RecievingHours: '',
+				ShipmentDate: '',
+				ShippmentAddressId: '',
+				SizeUnitofMesure: '',
+				Status: '',
+				Storingtemparature: '',
+				TemperatureUnitofmeasure: '',
+				TrackingNumber: '',
+				TypeofPackage: '',
+				TypeofPackagingMaterial: '',
+				WeightUnitofMeasure: '',
+			},
+			orderItems: [],
 		},
 		validate: (values: checkoutitems) => {
 			const errors: any = {};
 
-			if (!values.country) {
+			if (!values.address.Country) {
 				errors.countryName = 'Required';
 			}
-			if (!values.state) {
+			if (!values.address.State) {
 				errors.stateName = 'Required';
 			}
-			if (!values.city) {
+			if (!values.address.County) {
+				errors.countyName = 'Required';
+			}
+			if (!values.address.City) {
 				errors.cityName = 'Required';
 			}
 
 			return errors;
 		},
-		onSubmit: async (values: checkoutitems) => {},
+		onSubmit: async (values: checkoutitems) => {
+			try {
+				const postResponse = await axios.post(
+					apiUrl + 'api/Vaccination/createorder',
+					values,
+					{
+						headers: { 'Content-Type': 'application/json' },
+					},
+				);
+				setEditTouched(false);
+				setTimeout(() => {
+					toast.success(`Order ${editTouched ? 'updated' : 'added'} successfully!`);
+				}, 2000);
+				formik.setFieldValue('id', '');
+				formik.setFieldValue('Facility', '');
+				formik.setFieldValue('FacilityId', '');
+				formik.setFieldValue('UserId', '');
+				formik.setFieldValue('DiscountAmount', '');
+				formik.setFieldValue('TaxAmount', '');
+				formik.setFieldValue('TermsConditionsId', '');
+				formik.setFieldValue('Incoterms', '');
+				formik.setFieldValue('OrderDate', '');
+				formik.setFieldValue('OrderStatus', '');
+				formik.setFieldValue('OrderTotal', '');
+				formik.setFieldValue('OrderItemDesc', '');
+				formik.setFieldValue('OrderItemStatus', '');
+				formik.setFieldValue('Quantity', '');
+				formik.setFieldValue('orderId', '');
+				formik.setFieldValue('UnitPrice', '');
+				formik.setFieldValue('Product', '');
+			} catch (error) {
+				console.error('Error: ', error);
+			}
+		},
 	});
-	const reset = () => {
-		formik.setFieldValue('firstName', '');
 
-		formik.setFieldValue('phonenumber', '');
-		formik.setFieldValue('personType', '');
-		formik.setFieldValue('city', '');
-		formik.setFieldValue('state', '');
-		formik.setFieldValue('country', '');
-	};
 	const listData = () => {
 		async function callInitial() {
 			await orderApi('/api/Vaccination/getallfacilities', 'GET')
@@ -170,12 +295,12 @@ const CartPartial: React.FC = () => {
 
 	useEffect(() => {
 		async function callInitial() {
-			await patientApi('/api/MasterData/Countries', 'GET')
+			await orderApi('/api/MasterData/Countries', 'GET')
 				.then((response) => {
 					setCountryData(response?.data);
 				})
 				.catch((err) => console.log('Error has occured', err));
-			await patientApi('/api/MasterData/States', 'GET')
+			await orderApi('/api/MasterData/States', 'GET')
 				.then((response) => {
 					setStateData(response?.data);
 				})
@@ -196,17 +321,27 @@ const CartPartial: React.FC = () => {
 		console.log('Filtered state', data);
 		setFilteredState(data);
 	};
-	const handleCity = async (state: any) => {
+	const handleCounty = async (state: any) => {
+		console.log('Selected State ID', state);
+		const response = await orderApi(
+			`/api/MasterData/getcountiesbystateid?stateid=${state}`,
+			'GET',
+		)
+			.then((resp) => setFilteredCounty(resp?.data))
+			.catch((err) => console.log('err', err));
+	};
+
+	const handleCity = async (state: any, county: any) => {
 		console.log('Selected State ID', state);
 		const response = await patientApi(
-			`/api/MasterData/getcitiesbystateid?stateid=${state}`,
+			`/api/MasterData/getcitiesbystateidandcountyid?stateid=${state}&countyid=${county}`,
 			'GET',
 		)
 			.then((resp) => setFilteredCity(resp?.data))
 			.catch((err) => console.log('err', err));
 	};
-	const apiUrl = apiconfig.apiHostUrl;
 
+	const apiUrl = apiconfig.apiHostUrl;
 	return (
 		<div className='relative'>
 			<Dropdown>
@@ -420,8 +555,10 @@ const CartPartial: React.FC = () => {
 												<Label htmlFor='country'>Country</Label>
 												<Validation
 													isValid={formik.isValid}
-													isTouched={formik.touched.country}
-													invalidFeedback={formik.errors.country}
+													isTouched={formik.touched?.address?.Country}
+													invalidFeedback={
+														formik.errors?.address?.Country
+													}
 													validFeedback='Good'>
 													<FieldWrap
 														style={{ color: 'black' }}
@@ -433,21 +570,18 @@ const CartPartial: React.FC = () => {
 														}>
 														<Select
 															id='country'
-															name='country'
+															name='address.Country'
 															style={{ color: 'black' }}
-															value={formik.values.country}
+															value={formik.values.address.Country}
 															onChange={(event) => {
 																formik.handleChange(event);
 																handleState(event.target.value);
 															}}
 															onBlur={formik.handleBlur}
 															placeholder='Select Country'>
-															{/* <option value={''}> Select</option> */}
 															{countryData?.map((country: any) => (
 																<option
-																	style={{
-																		color: 'black',
-																	}}
+																	style={{ color: 'black' }}
 																	id={country?.id}
 																	key={country?.id}
 																	value={country?.id}>
@@ -459,33 +593,25 @@ const CartPartial: React.FC = () => {
 												</Validation>
 											</div>
 											<div className='col-span-12 lg:col-span-6'>
-												<Label htmlFor='phonenumber'>Phone Number</Label>
-												<Validation
-													isValid={formik.isValid}
-													isTouched={formik.touched.phonenumber}
-													invalidFeedback={formik.errors.phonenumber}
-													validFeedback='Good'>
-													<Input
-														id='phone'
-														name='phonenumber'
-														onChange={formik.handleChange}
-														value={formik.values.phonenumber}
-														onBlur={formik.handleBlur}
-													/>
-												</Validation>
-											</div>
-											<div className='col-span-12 lg:col-span-6'>
 												<Label htmlFor='address'>Street Address</Label>
 												<Validation
 													isValid={formik.isValid}
-													isTouched={formik.touched.line1}
-													invalidFeedback={formik.errors.line1}
+													isTouched={
+														formik.touched.address
+															? formik.touched.address.Line1
+															: undefined
+													}
+													invalidFeedback={
+														formik.errors.address
+															? formik.errors.address.Line1
+															: undefined
+													}
 													validFeedback='Good'>
 													<Input
-														id='phone'
-														name='phonenumber'
+														id='Line1'
+														name='Line1'
 														onChange={formik.handleChange}
-														value={formik.values.line1}
+														value={formik.values.address.Line1}
 														onBlur={formik.handleBlur}
 													/>
 												</Validation>
@@ -496,14 +622,22 @@ const CartPartial: React.FC = () => {
 												</Label>
 												<Validation
 													isValid={formik.isValid}
-													isTouched={formik.touched.line2}
-													invalidFeedback={formik.errors.line2}
+													isTouched={
+														formik.touched.address
+															? formik.touched.address.Line2
+															: undefined
+													}
+													invalidFeedback={
+														formik.errors.address
+															? formik.errors.address.Line2
+															: undefined
+													}
 													validFeedback='Good'>
 													<Input
-														id='phone'
-														name='phonenumber'
+														id='Line2'
+														name='Line2'
 														onChange={formik.handleChange}
-														value={formik.values.line2}
+														value={formik.values.address.Line2}
 														onBlur={formik.handleBlur}
 													/>
 												</Validation>
@@ -512,25 +646,32 @@ const CartPartial: React.FC = () => {
 												<Label htmlFor='suite'>Apt/Suite/Other</Label>
 												<Validation
 													isValid={formik.isValid}
-													isTouched={formik.touched.suite}
-													invalidFeedback={formik.errors.suite}
+													isTouched={
+														formik.touched.address
+															? formik.touched.address.Suite
+															: undefined
+													}
+													invalidFeedback={
+														formik.errors.address
+															? formik.errors.address.Suite
+															: undefined
+													}
 													validFeedback='Good'>
 													<Input
 														id='phone'
 														name='phonenumber'
 														onChange={formik.handleChange}
-														value={formik.values.suite}
+														value={formik.values.address.Suite}
 														onBlur={formik.handleBlur}
 													/>
 												</Validation>
 											</div>
 											<div className='col-span-12 lg:col-span-6'>
 												<Label htmlFor='state'>State</Label>
-
 												<Validation
 													isValid={formik.isValid}
-													isTouched={formik.touched.state}
-													invalidFeedback={formik.errors.state}
+													isTouched={formik.touched?.address?.State}
+													invalidFeedback={formik.errors.address?.State}
 													validFeedback='Good'>
 													<FieldWrap
 														style={{ color: 'black' }}
@@ -542,12 +683,12 @@ const CartPartial: React.FC = () => {
 														}>
 														<Select
 															id='state'
-															name='state'
+															name='address.State'
 															style={{ color: 'black' }}
-															value={formik.values.state}
+															value={formik.values.address.State}
 															onChange={(event) => {
 																formik.handleChange(event);
-																handleCity(event.target.value);
+																handleCounty(event.target.value);
 															}}
 															onBlur={formik.handleBlur}
 															placeholder='Select State'>
@@ -568,12 +709,57 @@ const CartPartial: React.FC = () => {
 												</Validation>
 											</div>
 											<div className='col-span-12 lg:col-span-6'>
+												<Label htmlFor='county'>County</Label>
+												<Validation
+													isValid={formik.isValid}
+													isTouched={formik.touched.address?.County}
+													invalidFeedback={formik.errors.address?.County}
+													validFeedback='Good'>
+													<FieldWrap
+														style={{ color: 'black' }}
+														lastSuffix={
+															<Icon
+																icon='HeroChevronDown'
+																className='mx-2'
+															/>
+														}>
+														<Select
+															id='county'
+															name='address.County'
+															style={{ color: 'black' }}
+															value={formik.values.address.County}
+															onChange={(event) => {
+																formik.handleChange(event);
+																handleCity(
+																	formik.values.address.Stateid,
+																	event.target.value,
+																); // Pass both state and county
+															}}
+															onBlur={formik.handleBlur}
+															placeholder='Select County'>
+															{/* <option value={''}> Select</option> */}
+															{filteredCounty?.map((county: any) => (
+																<option
+																	style={{
+																		color: 'black',
+																	}}
+																	id={county?.id}
+																	key={county?.id}
+																	value={county?.id}>
+																	{county?.countyName}
+																</option>
+															))}
+														</Select>
+													</FieldWrap>
+												</Validation>
+											</div>
+											<div className='col-span-12 lg:col-span-6'>
 												<Label htmlFor='city'>City</Label>
 
 												<Validation
 													isValid={formik.isValid}
-													isTouched={formik.touched.city}
-													invalidFeedback={formik.errors.city}
+													isTouched={formik.touched.address?.City}
+													invalidFeedback={formik.errors.address?.City}
 													validFeedback='Good'>
 													<FieldWrap
 														style={{ color: 'black' }}
@@ -585,9 +771,9 @@ const CartPartial: React.FC = () => {
 														}>
 														<Select
 															id='city'
-															name='city'
+															name='address.City'
 															style={{ color: 'black' }}
-															value={formik.values.city}
+															value={formik.values.address.City}
 															onChange={formik.handleChange}
 															onBlur={formik.handleBlur}
 															placeholder='Select City'>
@@ -611,14 +797,22 @@ const CartPartial: React.FC = () => {
 												<Label htmlFor='zipcode'>Zip Code</Label>
 												<Validation
 													isValid={formik.isValid}
-													isTouched={formik.touched.zipCode}
-													invalidFeedback={formik.errors.zipCode}
+													isTouched={
+														formik.touched.address
+															? formik.touched.address.ZipCode
+															: undefined
+													}
+													invalidFeedback={
+														formik.errors.address
+															? formik.errors.address.ZipCode
+															: undefined
+													}
 													validFeedback='Good'>
 													<Input
 														id='zipcode'
 														name='zipcode'
 														onChange={formik.handleChange}
-														value={formik.values.zipCode}
+														value={formik.values.address.ZipCode}
 														onBlur={formik.handleBlur}
 													/>
 												</Validation>
@@ -735,24 +929,49 @@ const CartPartial: React.FC = () => {
 												<Label htmlFor={`shipment_date`}>
 													Shipment Date:
 												</Label>
-												<Input
-													type='date'
-													id={`shipment_date`}
-													name={`shipment_date`}
-												/>
+												<Validation
+													isValid={formik.isValid}
+													isTouched={
+														formik.touched.shipment
+															? formik.touched.shipment?.ShipmentDate
+															: undefined
+													}
+													invalidFeedback={
+														formik.errors.shipment
+															? formik.errors.shipment.ShipmentDate
+															: undefined
+													}
+													validFeedback='Good'>
+													<Input
+														type='date'
+														id='ShipmentDate'
+														name='shipment.ShipmentDate'
+														onChange={formik.handleChange}
+														value={formik.values.shipment.ShipmentDate}
+														onBlur={formik.handleBlur}
+													/>
+												</Validation>
 											</div>
 											<div className='col-span-12 lg:col-span-6'>
 												<Label htmlFor='packagesize'>Package Size</Label>
 												<Validation
 													isValid={formik.isValid}
-													isTouched={formik.touched.packagesize}
-													invalidFeedback={formik.errors.packagesize}
+													isTouched={
+														formik.touched.shipment
+															? formik.touched.shipment?.PackageSize
+															: undefined
+													}
+													invalidFeedback={
+														formik.errors.shipment
+															? formik.errors.shipment.PackageSize
+															: undefined
+													}
 													validFeedback='Good'>
 													<Input
 														id='packagesize'
-														name='packagesize'
+														name='shipment.PackageSize'
 														onChange={formik.handleChange}
-														value={formik.values.packagesize}
+														value={formik.values.shipment.PackageSize}
 														onBlur={formik.handleBlur}
 													/>
 												</Validation>
@@ -761,82 +980,376 @@ const CartPartial: React.FC = () => {
 												<Label htmlFor='packagelength'>
 													Package length
 												</Label>
-												<Input id='packagelength' name='packagelength' />
+												<Validation
+													isValid={formik.isValid}
+													isTouched={
+														formik.touched.shipment
+															? formik.touched.shipment?.PackageLength
+															: undefined
+													}
+													invalidFeedback={
+														formik.errors.shipment
+															? formik.errors.shipment.PackageLength
+															: undefined
+													}
+													validFeedback='Good'>
+													<Input
+														id='packagelength'
+														name='shipment.PackageLength'
+														onChange={formik.handleChange}
+														value={formik.values.shipment.PackageLength}
+														onBlur={formik.handleBlur}
+													/>
+												</Validation>
 											</div>
 											<div className='col-span-12 lg:col-span-6'>
 												<Label htmlFor='packagewidth'>Package width</Label>
-												<Input id='packagewidth' name='packagewidth' />
+												<Validation
+													isValid={formik.isValid}
+													isTouched={
+														formik.touched.shipment
+															? formik.touched.shipment?.PackageWidth
+															: undefined
+													}
+													invalidFeedback={
+														formik.errors.shipment
+															? formik.errors.shipment.PackageWidth
+															: undefined
+													}
+													validFeedback='Good'>
+													<Input
+														id='packagewidth'
+														name='shipment.PackageWidth'
+														onChange={formik.handleChange}
+														value={formik.values.shipment.PackageWidth}
+														onBlur={formik.handleBlur}
+													/>
+												</Validation>
 											</div>
 											<div className='col-span-12 lg:col-span-6'>
 												<Label htmlFor='packageheight'>
 													Package height
 												</Label>
-												<Input id='packageheight' name='packageheight' />
+												<Validation
+													isValid={formik.isValid}
+													isTouched={
+														formik.touched.shipment
+															? formik.touched.shipment?.PackageHeight
+															: undefined
+													}
+													invalidFeedback={
+														formik.errors.shipment
+															? formik.errors.shipment.PackageHeight
+															: undefined
+													}
+													validFeedback='Good'>
+													<Input
+														id='packageheight'
+														name='shipment.PackageHeight'
+														onChange={formik.handleChange}
+														value={formik.values.shipment.PackageHeight}
+														onBlur={formik.handleBlur}
+													/>
+												</Validation>
 											</div>
 											<div className='col-span-12 lg:col-span-6'>
 												<Label htmlFor='type of package'>
 													Type of package
 												</Label>
-												<Input id='packagetype' name='packagetype' />
+												<Validation
+													isValid={formik.isValid}
+													isTouched={
+														formik.touched.shipment
+															? formik.touched.shipment?.TypeofPackage
+															: undefined
+													}
+													invalidFeedback={
+														formik.errors.shipment
+															? formik.errors.shipment.TypeofPackage
+															: undefined
+													}
+													validFeedback='Good'>
+													<Input
+														id='packagetype'
+														name='shipment.TypeofPackage'
+														onChange={formik.handleChange}
+														value={formik.values.shipment.TypeofPackage}
+														onBlur={formik.handleBlur}
+													/>
+												</Validation>
 											</div>
 											<div className='col-span-12 lg:col-span-6'>
 												<Label htmlFor='packagematerial'>
 													Type of Package Material
 												</Label>
-												<Input
-													id='packagematerial'
-													name='packagematerial'
-												/>
+												<Validation
+													isValid={formik.isValid}
+													isTouched={
+														formik.touched.shipment
+															? formik.touched.shipment
+																	?.TypeofPackagingMaterial
+															: undefined
+													}
+													invalidFeedback={
+														formik.errors.shipment
+															? formik.errors.shipment
+																	.TypeofPackagingMaterial
+															: undefined
+													}
+													validFeedback='Good'>
+													<Input
+														id='packagematerial'
+														name='shipment
+														.TypeofPackagingMaterial'
+														onChange={formik.handleChange}
+														value={
+															formik.values.shipment
+																.TypeofPackagingMaterial
+														}
+														onBlur={formik.handleBlur}
+													/>
+												</Validation>
 											</div>
 											<div className='col-span-12 lg:col-span-6'>
 												<Label htmlFor='storingtemperature'>
 													Storing Temperaure
 												</Label>
-												<Input id='tempstored' name='tempstored' />
+												<Validation
+													isValid={formik.isValid}
+													isTouched={
+														formik.touched.shipment
+															? formik.touched.shipment
+																	?.Storingtemparature
+															: undefined
+													}
+													invalidFeedback={
+														formik.errors.shipment
+															? formik.errors.shipment
+																	.Storingtemparature
+															: undefined
+													}
+													validFeedback='Good'>
+													<Input
+														id='storingtemp'
+														name='shipment
+														.Storingtemparature'
+														onChange={formik.handleChange}
+														value={
+															formik.values.shipment
+																.Storingtemparature
+														}
+														onBlur={formik.handleBlur}
+													/>
+												</Validation>
 											</div>
 											<div className='col-span-12 lg:col-span-6'>
 												<Label htmlFor='temperatureuom'>
 													Temperaure Unit of Measure
 												</Label>
-												<Input id='tempuom' name='tempuom' />
+												<Validation
+													isValid={formik.isValid}
+													isTouched={
+														formik.touched.shipment
+															? formik.touched.shipment
+																	?.TemperatureUnitofmeasure
+															: undefined
+													}
+													invalidFeedback={
+														formik.errors.shipment
+															? formik.errors.shipment
+																	.TemperatureUnitofmeasure
+															: undefined
+													}
+													validFeedback='Good'>
+													<Input
+														id='tempuom'
+														name='shipment
+														.TemperatureUnitofmeasure'
+														onChange={formik.handleChange}
+														value={
+															formik.values.shipment
+																.TemperatureUnitofmeasure
+														}
+														onBlur={formik.handleBlur}
+													/>
+												</Validation>
 											</div>
 											<div className='col-span-12 lg:col-span-6'>
 												<Label htmlFor='sizeuom'>
 													Size Unit of Measure
 												</Label>
-												<Input id='sizeuom' name='sizeuom' />
+												<Validation
+													isValid={formik.isValid}
+													isTouched={
+														formik.touched.shipment
+															? formik.touched.shipment
+																	?.SizeUnitofMesure
+															: undefined
+													}
+													invalidFeedback={
+														formik.errors.shipment
+															? formik.errors.shipment
+																	.SizeUnitofMesure
+															: undefined
+													}
+													validFeedback='Good'>
+													<Input
+														id='sizeuom'
+														name='shipment.SizeUnitofMesure'
+														onChange={formik.handleChange}
+														value={
+															formik.values.shipment.SizeUnitofMesure
+														}
+														onBlur={formik.handleBlur}
+													/>
+												</Validation>
 											</div>
 											<div className='col-span-12 lg:col-span-6'>
 												<Label htmlFor='weightuom'>
 													Weight Unit of Measure
 												</Label>
-												<Input id='weightuom' name='weightuom' />
+												<Validation
+													isValid={formik.isValid}
+													isTouched={
+														formik.touched.shipment
+															? formik.touched.shipment
+																	?.WeightUnitofMeasure
+															: undefined
+													}
+													invalidFeedback={
+														formik.errors.shipment
+															? formik.errors.shipment
+																	.WeightUnitofMeasure
+															: undefined
+													}
+													validFeedback='Good'>
+													<Input
+														id='weightuom'
+														name='shipment
+														.WeightUnitofMeasure'
+														onChange={formik.handleChange}
+														value={
+															formik.values.shipment
+																.WeightUnitofMeasure
+														}
+														onBlur={formik.handleBlur}
+													/>
+												</Validation>
 											</div>
 											<div className='col-span-12 lg:col-span-6'>
 												<Label htmlFor='noofpackages'>No of Packages</Label>
-												<Input id='noofpkgs' name='noofpkgs' />
+												<Validation
+													isValid={formik.isValid}
+													isTouched={
+														formik.touched.shipment
+															? formik.touched.shipment?.NoofPackages
+															: undefined
+													}
+													invalidFeedback={
+														formik.errors.shipment
+															? formik.errors.shipment.NoofPackages
+															: undefined
+													}
+													validFeedback='Good'>
+													<Input
+														id='noofpkgs'
+														name='shipment.NoofPackages'
+														onChange={formik.handleChange}
+														value={formik.values.shipment.NoofPackages}
+														onBlur={formik.handleBlur}
+													/>
+												</Validation>
 											</div>
 											<div className='col-span-12 lg:col-span-6'>
 												<Label htmlFor='Tracking Number'>
 													Tracking Number
 												</Label>
-												<Input id='trackingno' name='trackingno' />
+												<Validation
+													isValid={formik.isValid}
+													isTouched={
+														formik.touched.shipment
+															? formik.touched.shipment
+																	?.TrackingNumber
+															: undefined
+													}
+													invalidFeedback={
+														formik.errors.shipment
+															? formik.errors.shipment.TrackingNumber
+															: undefined
+													}
+													validFeedback='Good'>
+													<Input
+														id='trackingno'
+														name='shipment.TrackingNumber'
+														onChange={formik.handleChange}
+														value={
+															formik.values.shipment.TrackingNumber
+														}
+														onBlur={formik.handleBlur}
+													/>
+												</Validation>
 											</div>
 											<div className='col-span-12 lg:col-span-6'>
 												<Label htmlFor='delivery_date'>
 													Expected Delivery Date:
 												</Label>
-												<Input
-													type='date'
-													id='delivery_date'
-													name='delivery_date'
-												/>
+												<Validation
+													isValid={formik.isValid}
+													isTouched={
+														formik.touched.shipment
+															? formik.touched.shipment
+																	?.Expecteddeliverydate
+															: undefined
+													}
+													invalidFeedback={
+														formik.errors.shipment
+															? formik.errors.shipment
+																	.Expecteddeliverydate
+															: undefined
+													}
+													validFeedback='Good'>
+													<Input
+														type='date'
+														id='shipment
+														.Expecteddeliverydate'
+														name='expecteddeliverydt'
+														onChange={formik.handleChange}
+														value={
+															formik.values.shipment
+																.Expecteddeliverydate
+														}
+														onBlur={formik.handleBlur}
+													/>
+												</Validation>
 											</div>
 											<div className='col-span-12 lg:col-span-6'>
 												<Label htmlFor='recieving hours'>
 													Recieving Hours
 												</Label>
-												<Input id='recievinghrs' name='recievinghrs' />
+												<Validation
+													isValid={formik.isValid}
+													isTouched={
+														formik.touched.shipment
+															? formik.touched.shipment
+																	?.RecievingHours
+															: undefined
+													}
+													invalidFeedback={
+														formik.errors.shipment
+															? formik.errors.shipment.RecievingHours
+															: undefined
+													}
+													validFeedback='Good'>
+													<Input
+														id='recievinghrs'
+														name='shipment.RecievingHours'
+														onChange={formik.handleChange}
+														value={
+															formik.values.shipment.RecievingHours
+														}
+														onBlur={formik.handleBlur}
+													/>
+												</Validation>
 											</div>
 										</div>
 									</CardBody>
@@ -856,6 +1369,7 @@ const CartPartial: React.FC = () => {
 					<Button
 						variant='solid'
 						onClick={() => {
+							formik.handleSubmit();
 							addShippment(false);
 						}}>
 						Submit Order
