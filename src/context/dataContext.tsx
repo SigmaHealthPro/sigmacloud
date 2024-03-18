@@ -1,5 +1,5 @@
 // DataContext.tsx
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Cart } from '../interface/cart.interface';
 
 export interface DataContextValue {
@@ -28,12 +28,20 @@ interface DataContextProviderProps {
 	children: React.ReactNode; // Define children as React.ReactNode
 }
 export const DataContextProvider: React.FC<DataContextProviderProps> = ({ children }) => {
-	const [data, setData] = useState<Cart[]>([]);
+	//const [data, setData] = useState<Cart[]>([]);
+	const [data, setData] = useState<Cart[]>(() => {
+		const storedData = localStorage.getItem('cartitemsData');
+		return storedData ? JSON.parse(storedData) : [];
+	});
 
 	// Function to add item to cart
 	const addItemToCart = (item: Cart) => {
 		setData((prevData) => [...prevData, item]);
 	};
+	// Update local storage whenever data changes
+	useEffect(() => {
+		localStorage.setItem('cartitemsData', JSON.stringify(data));
+	}, [data]);
 
 	// Context value with data, setData, and addItemToCart
 	const contextValue: DataContextValue = {

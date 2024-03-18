@@ -100,17 +100,21 @@ const CartPartial: React.FC = () => {
 		price: string;
 	};
 	type OrderItem = {
-		productId: string;
-		quantity: string;
+		productid: string;
+		Quantity: string;
 		OrderItemDesc: string;
 		UnitPrice: string;
+		OrderItemStatus: string;
 	};
-	const orderItems: OrderItem[] = data.map((item) => ({
-		productId: item.productid,
-		quantity: item.quantity,
-		OrderItemDesc: item.vaccine,
-		UnitPrice: item.price,
-	}));
+	const orderItems: OrderItem[] = Array.isArray(data)
+		? data.map((item) => ({
+				productid: item.productid,
+				Quantity: item.quantity,
+				OrderItemDesc: item.vaccine,
+				UnitPrice: item.price,
+				OrderItemStatus: 'Active',
+		  }))
+		: [];
 	type Shipment = {
 		ShipmentDate: string;
 		PackageSize: string;
@@ -149,19 +153,28 @@ const CartPartial: React.FC = () => {
 	const calculateOrderTotal = (orderItems: OrderItem[]): string => {
 		// Initialize the total to 0
 		let total = 0;
-
 		// Iterate over each OrderItem
 		for (const item of orderItems) {
-			// Parse the UnitPrice as a number and add it to the total
-			total += parseFloat(item.UnitPrice);
-		}
+			// Parse the UnitPrice as a number
+			const unitPrice = parseFloat(item.UnitPrice.replace(/[^0-9.]/g, ''));
 
+			// Check if unitPrice is a valid number
+			if (!isNaN(unitPrice)) {
+				// Add unitPrice to the total
+				total += unitPrice;
+			} else {
+				// Log a warning for invalid UnitPrice
+				console.warn(`Invalid UnitPrice found: ${item.UnitPrice}`);
+			}
+		}
 		// Return the total as a string
 		return total.toString();
 	};
 	const orderTotal: string = calculateOrderTotal(orderItems);
+	const currentDate = new Date();
+	const currentDateFormatted = currentDate.toISOString();
 	type checkoutitems = {
-		userid: string;
+		UserId: string;
 		id: string;
 		Facility: string;
 		FacilityId: string;
@@ -172,53 +185,64 @@ const CartPartial: React.FC = () => {
 		Incoterms: string;
 		TermsConditionsId: string;
 		OrderStatus: string;
-		orderItems: OrderItem[];
-		address: Address;
-		shipment: Shipment;
+		createdDate: string;
+		createdBy: string;
+		updatedBy: string;
+		OrderofItems: OrderItem[];
+		Address: Address;
+		Shiping: Shipment;
 		// Add other order fields as needed
 	};
-
+	const loggedinid = localStorage.getItem('userid');
+	const selectedfacilityid = localStorage.getItem('selectedfacility:');
+	console.log('selectedfacilityid', selectedfacilityid);
 	const formik = useFormik<checkoutitems>({
 		initialValues: {
 			id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
 			Facility: '',
-			FacilityId: generatedGUID,
-			userid: '',
-			OrderDate: '',
-			TermsConditionsId: '',
-			DiscountAmount: '',
-			Incoterms: '',
+			FacilityId: selectedfacilityid
+				? selectedfacilityid.toString()
+				: '4c7c7967-23d8-45e4-80e6-3363ef7ea5aa',
+			UserId: loggedinid ? loggedinid.toString() : '9e5806b4-b96e-49e4-9220-1b512d15eb71',
+			OrderDate: currentDateFormatted,
+			TermsConditionsId: generatedGUID,
+			DiscountAmount: '100',
+			Incoterms: '1',
 			OrderStatus: 'Active',
 			OrderTotal: orderTotal,
-			TaxAmount: '',
-			address: {
+			TaxAmount: '100',
+			createdDate: currentDateFormatted,
+			createdBy: 'system',
+			updatedBy: 'system',
+
+			Address: {
 				City: '',
-				Cityid: generatedGUID,
+				Cityid: '',
 				State: '',
-				Stateid: generatedGUID,
+				Stateid: '',
 				Country: '',
-				Countryid: generatedGUID,
+				Countryid: '',
 				County: '',
-				Countyid: generatedGUID,
+				Countyid: '',
 				ZipCode: '',
 				Line1: '',
 				Line2: '',
 				Suite: '',
 			},
-			shipment: {
+			Shiping: {
 				Expecteddeliverydate: '',
-				IsSignatureneeded: '',
+				IsSignatureneeded: 'Yes',
 				NoofPackages: '',
 				PackageHeight: '',
 				PackageLength: '',
 				PackageSize: '',
 				PackageWidth: '',
-				RecieverId: '',
+				RecieverId: '1',
 				RecievingHours: '',
 				ShipmentDate: '',
-				ShippmentAddressId: '',
+				ShippmentAddressId: generatedGUID,
 				SizeUnitofMesure: '',
-				Status: '',
+				Status: 'Active',
 				Storingtemparature: '',
 				TemperatureUnitofmeasure: '',
 				TrackingNumber: '',
@@ -226,25 +250,7 @@ const CartPartial: React.FC = () => {
 				TypeofPackagingMaterial: '',
 				WeightUnitofMeasure: '',
 			},
-			orderItems: [],
-		},
-		validate: (values: checkoutitems) => {
-			const errors: any = {};
-
-			if (!values.address.Country) {
-				errors.countryName = 'Required';
-			}
-			if (!values.address.State) {
-				errors.stateName = 'Required';
-			}
-			if (!values.address.County) {
-				errors.countyName = 'Required';
-			}
-			if (!values.address.City) {
-				errors.cityName = 'Required';
-			}
-
-			return errors;
+			OrderofItems: orderItems,
 		},
 		onSubmit: async (values: checkoutitems) => {
 			try {
@@ -259,10 +265,7 @@ const CartPartial: React.FC = () => {
 				setTimeout(() => {
 					toast.success(`Order ${editTouched ? 'updated' : 'added'} successfully!`);
 				}, 2000);
-				formik.setFieldValue('id', '');
-				formik.setFieldValue('Facility', '');
-				formik.setFieldValue('FacilityId', '');
-				formik.setFieldValue('UserId', '');
+
 				formik.setFieldValue('DiscountAmount', '');
 				formik.setFieldValue('TaxAmount', '');
 				formik.setFieldValue('TermsConditionsId', '');
@@ -276,8 +279,11 @@ const CartPartial: React.FC = () => {
 				formik.setFieldValue('orderId', '');
 				formik.setFieldValue('UnitPrice', '');
 				formik.setFieldValue('Product', '');
+
+				// Handle response
 			} catch (error) {
 				console.error('Error: ', error);
+				// Handle error
 			}
 		},
 	});
@@ -333,7 +339,7 @@ const CartPartial: React.FC = () => {
 
 	const handleCity = async (state: any, county: any) => {
 		console.log('Selected State ID', state);
-		const response = await patientApi(
+		const response = await orderApi(
 			`/api/MasterData/getcitiesbystateidandcountyid?stateid=${state}&countyid=${county}`,
 			'GET',
 		)
@@ -342,51 +348,54 @@ const CartPartial: React.FC = () => {
 	};
 
 	const apiUrl = apiconfig.apiHostUrl;
+	var selectedstateid = '';
 	return (
 		<div className='relative'>
 			<Dropdown>
 				<DropdownToggle hasIcon={false}>
 					<Button icon='HeroShoppingCart' aria-label='Messages' />
 				</DropdownToggle>
-
-				<DropdownMenu
-					className='flex flex-col flex-wrap divide-y divide-dashed divide-zinc-500/50 p-4 [&>*]:py-4'
-					placement='bottom-end'>
-					<div>
-						{data.map((item) => (
-							<div className='flex min-w-[24rem] gap-2'>
-								<div className='relative flex-shrink-0'>
-									<Avatar src='https://i.ebayimg.com/00/s/MTYwMFgxMTcz/z/5gwAAOSwfEVk-6CG/$_57.JPG?set_id=880000500F' />
-								</div>
-								<div className='grow-0'>
-									<div className='flex gap-2 font-bold'>{item.product}</div>
-									<div className='flex w-[18rem] gap-2 text-zinc-500'>
-										{item.vaccine}
-										{item.manufacturer}
-										<div className='flex w-[11rem] gap-2 text-zinc-500'>
-											Qty: {item.quantity}
-											<div className='text-zinc-500'>{item.price}</div>
+				{data && data.length > 0 ? (
+					<DropdownMenu
+						className='flex flex-col flex-wrap divide-y divide-dashed divide-zinc-500/50 p-4 [&>*]:py-4'
+						placement='bottom-end'>
+						<div>
+							{data.map((item) => (
+								<div className='flex min-w-[24rem] gap-2'>
+									<div className='relative flex-shrink-0'>
+										<Avatar src='https://i.ebayimg.com/00/s/MTYwMFgxMTcz/z/5gwAAOSwfEVk-6CG/$_57.JPG?set_id=880000500F' />
+									</div>
+									<div className='grow-0'>
+										<div className='flex gap-2 font-bold'>{item.product}</div>
+										<div className='flex w-[18rem] gap-2 text-zinc-500'>
+											{item.vaccine}
+											{item.manufacturer}
+											<div className='flex w-[11rem] gap-2 text-zinc-500'>
+												Qty: {item.quantity}
+												<div className='text-zinc-500'>{item.price}</div>
+											</div>
 										</div>
 									</div>
 								</div>
+							))}
+
+							<div className='gh-minicart-action'>
+								<Button
+									variant='solid'
+									icon='HeroShoppingBag'
+									id='proceed-to_checkout'
+									onClick={() => {
+										setNewCart(true);
+									}}>
+									Proceed to Cart
+								</Button>
 							</div>
-						))}
-
-						<div className='gh-minicart-action'>
-							<Button
-								variant='solid'
-								icon='HeroShoppingBag'
-								id='proceed-to_checkout'
-								onClick={() => {
-									setNewCart(true);
-								}}>
-								Proceed to Cart
-							</Button>
 						</div>
-					</div>
-				</DropdownMenu>
+					</DropdownMenu>
+				) : (
+					<>{/* Empty fragment */}</>
+				)}
 			</Dropdown>
-
 			<span className='absolute end-0 top-0 flex h-3 w-3'>
 				<span className='relative inline-flex h-3 w-0 rounded-full'></span>
 				<span className='absolute inline-flex h-full w-full' />
@@ -410,64 +419,66 @@ const CartPartial: React.FC = () => {
 									</CardHeaderChild>
 									<CardBody className='overflow-auto'>
 										<div>
-											{data.map((item) => (
-												<div>
-													<div className='listsummary-content'>
-														<div className='grid-item-information'>
-															<div className=' font-bold'>
+											{data.length > 0 &&
+												data.map((item) => (
+													<div>
+														<div className='listsummary-content'>
+															<div className='grid-item-information'>
+																<div className=' font-bold'>
+																	<Label
+																		className='item-product'
+																		htmlFor='ProductName'>
+																		{item.product}
+																	</Label>
+																</div>
+																<div>
+																	<span>
+																		<Avatar
+																			className='image-display'
+																			src='https://i.ebayimg.com/00/s/MTYwMFgxMTcz/z/5gwAAOSwfEVk-6CG/$_57.JPG?set_id=880000500F'></Avatar>
+																		<span>
+																			<Label
+																				className='grid-item-quantity'
+																				htmlFor='Quantity'>
+																				<QuantityUpdater
+																					rowId={
+																						item.productid
+																					}
+																					defaultValue={parseInt(
+																						item.quantity,
+																					)}
+																					step={1}
+																					min={0}
+																					max={999}
+																				/>
+																			</Label>
+																			<Label
+																				className='grid-item-price'
+																				htmlFor='price'>
+																				Price
+																				{' : ' + item.price}
+																			</Label>
+																		</span>
+																	</span>
+																</div>
+
 																<Label
-																	className='item-product'
-																	htmlFor='ProductName'>
-																	{item.product}
+																	className='item-vaccine'
+																	htmlFor='VaccineName'>
+																	Vaccine
+																	{' :         ' + item.vaccine}
+																</Label>
+																<Label
+																	className='item-manufacturer'
+																	htmlFor='ManufacturerName'>
+																	Manufacturer
+																	{' :         ' +
+																		item.manufacturer}
 																</Label>
 															</div>
-															<div>
-																<span>
-																	<Avatar
-																		className='image-display'
-																		src='https://i.ebayimg.com/00/s/MTYwMFgxMTcz/z/5gwAAOSwfEVk-6CG/$_57.JPG?set_id=880000500F'></Avatar>
-																	<span>
-																		<Label
-																			className='grid-item-quantity'
-																			htmlFor='Quantity'>
-																			<QuantityUpdater
-																				rowId={
-																					item.productid
-																				}
-																				defaultValue={parseInt(
-																					item.quantity,
-																				)}
-																				step={1}
-																				min={0}
-																				max={999}
-																			/>
-																		</Label>
-																		<Label
-																			className='grid-item-price'
-																			htmlFor='price'>
-																			Price
-																			{' : ' + item.price}
-																		</Label>
-																	</span>
-																</span>
-															</div>
-
-															<Label
-																className='item-vaccine'
-																htmlFor='VaccineName'>
-																Vaccine
-																{' :         ' + item.vaccine}
-															</Label>
-															<Label
-																className='item-manufacturer'
-																htmlFor='ManufacturerName'>
-																Manufacturer
-																{' :         ' + item.manufacturer}
-															</Label>
 														</div>
 													</div>
-												</div>
-											))}
+												))}
 										</div>
 									</CardBody>
 								</CardHeader>
@@ -509,55 +520,12 @@ const CartPartial: React.FC = () => {
 									<CardBody>
 										<div className='grid grid-cols-12 gap-4'>
 											<div className='col-span-12 lg:col-span-6'>
-												<Label htmlFor='Facilityname'>Facility Name </Label>
-												<Validation
-													isValid={formik.isValid}
-													isTouched={formik.touched.Facility}
-													invalidFeedback={formik.errors.Facility}
-													validFeedback='Good'>
-													<FieldWrap
-														style={{ color: 'black' }}
-														lastSuffix={
-															<Icon
-																icon='HeroChevronDown'
-																className='mx-2'
-															/>
-														}>
-														<Select
-															id='Facility'
-															name='Facility'
-															style={{ color: 'black' }}
-															value={formik.values.Facility}
-															onChange={(event) => {
-																formik.handleChange(event);
-															}}
-															onBlur={formik.handleBlur}
-															placeholder='Select Facility'>
-															{/* <option value={''}> Select</option> */}
-															{filteredFacility?.map(
-																(facility: any) => (
-																	<option
-																		style={{
-																			color: 'black',
-																		}}
-																		id={facility?.id}
-																		key={facility?.id}
-																		value={facility?.id}>
-																		{facility?.facilityName}
-																	</option>
-																),
-															)}
-														</Select>
-													</FieldWrap>
-												</Validation>
-											</div>
-											<div className='col-span-12 lg:col-span-6'>
 												<Label htmlFor='country'>Country</Label>
 												<Validation
 													isValid={formik.isValid}
-													isTouched={formik.touched?.address?.Country}
+													isTouched={formik.touched?.Address?.Country}
 													invalidFeedback={
-														formik.errors?.address?.Country
+														formik.errors?.Address?.Country
 													}
 													validFeedback='Good'>
 													<FieldWrap
@@ -570,11 +538,16 @@ const CartPartial: React.FC = () => {
 														}>
 														<Select
 															id='country'
-															name='address.Country'
+															name='Address.Country'
 															style={{ color: 'black' }}
-															value={formik.values.address.Country}
+															value={formik.values.Address.Country}
 															onChange={(event) => {
 																formik.handleChange(event);
+																formik.setFieldValue(
+																	'Address.Countryid',
+																	event.target.value,
+																);
+																event.target.value;
 																handleState(event.target.value);
 															}}
 															onBlur={formik.handleBlur}
@@ -597,21 +570,21 @@ const CartPartial: React.FC = () => {
 												<Validation
 													isValid={formik.isValid}
 													isTouched={
-														formik.touched.address
-															? formik.touched.address.Line1
+														formik.touched.Address
+															? formik.touched.Address.Line1
 															: undefined
 													}
 													invalidFeedback={
-														formik.errors.address
-															? formik.errors.address.Line1
+														formik.errors.Address
+															? formik.errors.Address.Line1
 															: undefined
 													}
 													validFeedback='Good'>
 													<Input
 														id='Line1'
-														name='Line1'
+														name='Address.Line1'
 														onChange={formik.handleChange}
-														value={formik.values.address.Line1}
+														value={formik.values.Address.Line1}
 														onBlur={formik.handleBlur}
 													/>
 												</Validation>
@@ -623,21 +596,21 @@ const CartPartial: React.FC = () => {
 												<Validation
 													isValid={formik.isValid}
 													isTouched={
-														formik.touched.address
-															? formik.touched.address.Line2
+														formik.touched.Address
+															? formik.touched.Address.Line2
 															: undefined
 													}
 													invalidFeedback={
-														formik.errors.address
-															? formik.errors.address.Line2
+														formik.errors.Address
+															? formik.errors.Address.Line2
 															: undefined
 													}
 													validFeedback='Good'>
 													<Input
 														id='Line2'
-														name='Line2'
+														name='Address.Line2'
 														onChange={formik.handleChange}
-														value={formik.values.address.Line2}
+														value={formik.values.Address.Line2}
 														onBlur={formik.handleBlur}
 													/>
 												</Validation>
@@ -647,21 +620,21 @@ const CartPartial: React.FC = () => {
 												<Validation
 													isValid={formik.isValid}
 													isTouched={
-														formik.touched.address
-															? formik.touched.address.Suite
+														formik.touched.Address
+															? formik.touched.Address.Suite
 															: undefined
 													}
 													invalidFeedback={
-														formik.errors.address
-															? formik.errors.address.Suite
+														formik.errors.Address
+															? formik.errors.Address.Suite
 															: undefined
 													}
 													validFeedback='Good'>
 													<Input
-														id='phone'
-														name='phonenumber'
+														id='Suite'
+														name='Address.Suite'
 														onChange={formik.handleChange}
-														value={formik.values.address.Suite}
+														value={formik.values.Address.Suite}
 														onBlur={formik.handleBlur}
 													/>
 												</Validation>
@@ -670,8 +643,8 @@ const CartPartial: React.FC = () => {
 												<Label htmlFor='state'>State</Label>
 												<Validation
 													isValid={formik.isValid}
-													isTouched={formik.touched?.address?.State}
-													invalidFeedback={formik.errors.address?.State}
+													isTouched={formik.touched?.Address?.State}
+													invalidFeedback={formik.errors.Address?.State}
 													validFeedback='Good'>
 													<FieldWrap
 														style={{ color: 'black' }}
@@ -683,11 +656,17 @@ const CartPartial: React.FC = () => {
 														}>
 														<Select
 															id='state'
-															name='address.State'
+															name='Address.State'
 															style={{ color: 'black' }}
-															value={formik.values.address.State}
+															value={formik.values.Address.State}
 															onChange={(event) => {
 																formik.handleChange(event);
+																formik.setFieldValue(
+																	'Address.Stateid',
+																	event.target.value,
+																);
+																selectedstateid =
+																	event.target.value;
 																handleCounty(event.target.value);
 															}}
 															onBlur={formik.handleBlur}
@@ -712,8 +691,8 @@ const CartPartial: React.FC = () => {
 												<Label htmlFor='county'>County</Label>
 												<Validation
 													isValid={formik.isValid}
-													isTouched={formik.touched.address?.County}
-													invalidFeedback={formik.errors.address?.County}
+													isTouched={formik.touched.Address?.County}
+													invalidFeedback={formik.errors.Address?.County}
 													validFeedback='Good'>
 													<FieldWrap
 														style={{ color: 'black' }}
@@ -725,13 +704,18 @@ const CartPartial: React.FC = () => {
 														}>
 														<Select
 															id='county'
-															name='address.County'
+															name='Address.County'
 															style={{ color: 'black' }}
-															value={formik.values.address.County}
+															value={formik.values.Address.County}
 															onChange={(event) => {
 																formik.handleChange(event);
+																formik.setFieldValue(
+																	'Address.Countyid',
+																	event.target.value,
+																);
+
 																handleCity(
-																	formik.values.address.Stateid,
+																	formik.values.Address.State,
 																	event.target.value,
 																); // Pass both state and county
 															}}
@@ -758,8 +742,8 @@ const CartPartial: React.FC = () => {
 
 												<Validation
 													isValid={formik.isValid}
-													isTouched={formik.touched.address?.City}
-													invalidFeedback={formik.errors.address?.City}
+													isTouched={formik.touched.Address?.City}
+													invalidFeedback={formik.errors.Address?.City}
 													validFeedback='Good'>
 													<FieldWrap
 														style={{ color: 'black' }}
@@ -771,10 +755,16 @@ const CartPartial: React.FC = () => {
 														}>
 														<Select
 															id='city'
-															name='address.City'
+															name='Address.City'
 															style={{ color: 'black' }}
-															value={formik.values.address.City}
-															onChange={formik.handleChange}
+															value={formik.values.Address.City}
+															onChange={(event) => {
+																formik.handleChange(event);
+																formik.setFieldValue(
+																	'Address.Cityid',
+																	event.target.value,
+																);
+															}}
 															onBlur={formik.handleBlur}
 															placeholder='Select City'>
 															{/* <option value={''}> Select</option> */}
@@ -798,21 +788,21 @@ const CartPartial: React.FC = () => {
 												<Validation
 													isValid={formik.isValid}
 													isTouched={
-														formik.touched.address
-															? formik.touched.address.ZipCode
+														formik.touched.Address
+															? formik.touched.Address.ZipCode
 															: undefined
 													}
 													invalidFeedback={
-														formik.errors.address
-															? formik.errors.address.ZipCode
+														formik.errors.Address
+															? formik.errors.Address.ZipCode
 															: undefined
 													}
 													validFeedback='Good'>
 													<Input
 														id='zipcode'
-														name='zipcode'
+														name='Address.ZipCode'
 														onChange={formik.handleChange}
-														value={formik.values.address.ZipCode}
+														value={formik.values.Address.ZipCode}
 														onBlur={formik.handleBlur}
 													/>
 												</Validation>
@@ -932,22 +922,22 @@ const CartPartial: React.FC = () => {
 												<Validation
 													isValid={formik.isValid}
 													isTouched={
-														formik.touched.shipment
-															? formik.touched.shipment?.ShipmentDate
+														formik.touched.Shiping
+															? formik.touched.Shiping?.ShipmentDate
 															: undefined
 													}
 													invalidFeedback={
-														formik.errors.shipment
-															? formik.errors.shipment.ShipmentDate
+														formik.errors.Shiping
+															? formik.errors.Shiping.ShipmentDate
 															: undefined
 													}
 													validFeedback='Good'>
 													<Input
 														type='date'
 														id='ShipmentDate'
-														name='shipment.ShipmentDate'
+														name='Shiping.ShipmentDate'
 														onChange={formik.handleChange}
-														value={formik.values.shipment.ShipmentDate}
+														value={formik.values.Shiping.ShipmentDate}
 														onBlur={formik.handleBlur}
 													/>
 												</Validation>
@@ -957,21 +947,21 @@ const CartPartial: React.FC = () => {
 												<Validation
 													isValid={formik.isValid}
 													isTouched={
-														formik.touched.shipment
-															? formik.touched.shipment?.PackageSize
+														formik.touched.Shiping
+															? formik.touched.Shiping?.PackageSize
 															: undefined
 													}
 													invalidFeedback={
-														formik.errors.shipment
-															? formik.errors.shipment.PackageSize
+														formik.errors.Shiping
+															? formik.errors.Shiping.PackageSize
 															: undefined
 													}
 													validFeedback='Good'>
 													<Input
 														id='packagesize'
-														name='shipment.PackageSize'
+														name='Shiping.PackageSize'
 														onChange={formik.handleChange}
-														value={formik.values.shipment.PackageSize}
+														value={formik.values.Shiping.PackageSize}
 														onBlur={formik.handleBlur}
 													/>
 												</Validation>
@@ -983,21 +973,21 @@ const CartPartial: React.FC = () => {
 												<Validation
 													isValid={formik.isValid}
 													isTouched={
-														formik.touched.shipment
-															? formik.touched.shipment?.PackageLength
+														formik.touched.Shiping
+															? formik.touched.Shiping?.PackageLength
 															: undefined
 													}
 													invalidFeedback={
-														formik.errors.shipment
-															? formik.errors.shipment.PackageLength
+														formik.errors.Shiping
+															? formik.errors.Shiping.PackageLength
 															: undefined
 													}
 													validFeedback='Good'>
 													<Input
 														id='packagelength'
-														name='shipment.PackageLength'
+														name='Shiping.PackageLength'
 														onChange={formik.handleChange}
-														value={formik.values.shipment.PackageLength}
+														value={formik.values.Shiping.PackageLength}
 														onBlur={formik.handleBlur}
 													/>
 												</Validation>
@@ -1007,21 +997,21 @@ const CartPartial: React.FC = () => {
 												<Validation
 													isValid={formik.isValid}
 													isTouched={
-														formik.touched.shipment
-															? formik.touched.shipment?.PackageWidth
+														formik.touched.Shiping
+															? formik.touched.Shiping?.PackageWidth
 															: undefined
 													}
 													invalidFeedback={
-														formik.errors.shipment
-															? formik.errors.shipment.PackageWidth
+														formik.errors.Shiping
+															? formik.errors.Shiping.PackageWidth
 															: undefined
 													}
 													validFeedback='Good'>
 													<Input
 														id='packagewidth'
-														name='shipment.PackageWidth'
+														name='Shiping.PackageWidth'
 														onChange={formik.handleChange}
-														value={formik.values.shipment.PackageWidth}
+														value={formik.values.Shiping.PackageWidth}
 														onBlur={formik.handleBlur}
 													/>
 												</Validation>
@@ -1033,21 +1023,21 @@ const CartPartial: React.FC = () => {
 												<Validation
 													isValid={formik.isValid}
 													isTouched={
-														formik.touched.shipment
-															? formik.touched.shipment?.PackageHeight
+														formik.touched.Shiping
+															? formik.touched.Shiping?.PackageHeight
 															: undefined
 													}
 													invalidFeedback={
-														formik.errors.shipment
-															? formik.errors.shipment.PackageHeight
+														formik.errors.Shiping
+															? formik.errors.Shiping.PackageHeight
 															: undefined
 													}
 													validFeedback='Good'>
 													<Input
 														id='packageheight'
-														name='shipment.PackageHeight'
+														name='Shiping.PackageHeight'
 														onChange={formik.handleChange}
-														value={formik.values.shipment.PackageHeight}
+														value={formik.values.Shiping.PackageHeight}
 														onBlur={formik.handleBlur}
 													/>
 												</Validation>
@@ -1059,21 +1049,21 @@ const CartPartial: React.FC = () => {
 												<Validation
 													isValid={formik.isValid}
 													isTouched={
-														formik.touched.shipment
-															? formik.touched.shipment?.TypeofPackage
+														formik.touched.Shiping
+															? formik.touched.Shiping?.TypeofPackage
 															: undefined
 													}
 													invalidFeedback={
-														formik.errors.shipment
-															? formik.errors.shipment.TypeofPackage
+														formik.errors.Shiping
+															? formik.errors.Shiping.TypeofPackage
 															: undefined
 													}
 													validFeedback='Good'>
 													<Input
 														id='packagetype'
-														name='shipment.TypeofPackage'
+														name='Shiping.TypeofPackage'
 														onChange={formik.handleChange}
-														value={formik.values.shipment.TypeofPackage}
+														value={formik.values.Shiping.TypeofPackage}
 														onBlur={formik.handleBlur}
 													/>
 												</Validation>
@@ -1085,25 +1075,24 @@ const CartPartial: React.FC = () => {
 												<Validation
 													isValid={formik.isValid}
 													isTouched={
-														formik.touched.shipment
-															? formik.touched.shipment
+														formik.touched.Shiping
+															? formik.touched.Shiping
 																	?.TypeofPackagingMaterial
 															: undefined
 													}
 													invalidFeedback={
-														formik.errors.shipment
-															? formik.errors.shipment
+														formik.errors.Shiping
+															? formik.errors.Shiping
 																	.TypeofPackagingMaterial
 															: undefined
 													}
 													validFeedback='Good'>
 													<Input
 														id='packagematerial'
-														name='shipment
-														.TypeofPackagingMaterial'
+														name='Shiping.TypeofPackagingMaterial'
 														onChange={formik.handleChange}
 														value={
-															formik.values.shipment
+															formik.values.Shiping
 																.TypeofPackagingMaterial
 														}
 														onBlur={formik.handleBlur}
@@ -1117,26 +1106,24 @@ const CartPartial: React.FC = () => {
 												<Validation
 													isValid={formik.isValid}
 													isTouched={
-														formik.touched.shipment
-															? formik.touched.shipment
+														formik.touched.Shiping
+															? formik.touched.Shiping
 																	?.Storingtemparature
 															: undefined
 													}
 													invalidFeedback={
-														formik.errors.shipment
-															? formik.errors.shipment
+														formik.errors.Shiping
+															? formik.errors.Shiping
 																	.Storingtemparature
 															: undefined
 													}
 													validFeedback='Good'>
 													<Input
 														id='storingtemp'
-														name='shipment
-														.Storingtemparature'
+														name='Shiping.Storingtemparature'
 														onChange={formik.handleChange}
 														value={
-															formik.values.shipment
-																.Storingtemparature
+															formik.values.Shiping.Storingtemparature
 														}
 														onBlur={formik.handleBlur}
 													/>
@@ -1149,25 +1136,24 @@ const CartPartial: React.FC = () => {
 												<Validation
 													isValid={formik.isValid}
 													isTouched={
-														formik.touched.shipment
-															? formik.touched.shipment
+														formik.touched.Shiping
+															? formik.touched.Shiping
 																	?.TemperatureUnitofmeasure
 															: undefined
 													}
 													invalidFeedback={
-														formik.errors.shipment
-															? formik.errors.shipment
+														formik.errors.Shiping
+															? formik.errors.Shiping
 																	.TemperatureUnitofmeasure
 															: undefined
 													}
 													validFeedback='Good'>
 													<Input
 														id='tempuom'
-														name='shipment
-														.TemperatureUnitofmeasure'
+														name='Shiping.TemperatureUnitofmeasure'
 														onChange={formik.handleChange}
 														value={
-															formik.values.shipment
+															formik.values.Shiping
 																.TemperatureUnitofmeasure
 														}
 														onBlur={formik.handleBlur}
@@ -1181,24 +1167,23 @@ const CartPartial: React.FC = () => {
 												<Validation
 													isValid={formik.isValid}
 													isTouched={
-														formik.touched.shipment
-															? formik.touched.shipment
+														formik.touched.Shiping
+															? formik.touched.Shiping
 																	?.SizeUnitofMesure
 															: undefined
 													}
 													invalidFeedback={
-														formik.errors.shipment
-															? formik.errors.shipment
-																	.SizeUnitofMesure
+														formik.errors.Shiping
+															? formik.errors.Shiping.SizeUnitofMesure
 															: undefined
 													}
 													validFeedback='Good'>
 													<Input
 														id='sizeuom'
-														name='shipment.SizeUnitofMesure'
+														name='Shiping.SizeUnitofMesure'
 														onChange={formik.handleChange}
 														value={
-															formik.values.shipment.SizeUnitofMesure
+															formik.values.Shiping.SizeUnitofMesure
 														}
 														onBlur={formik.handleBlur}
 													/>
@@ -1211,25 +1196,24 @@ const CartPartial: React.FC = () => {
 												<Validation
 													isValid={formik.isValid}
 													isTouched={
-														formik.touched.shipment
-															? formik.touched.shipment
+														formik.touched.Shiping
+															? formik.touched.Shiping
 																	?.WeightUnitofMeasure
 															: undefined
 													}
 													invalidFeedback={
-														formik.errors.shipment
-															? formik.errors.shipment
+														formik.errors.Shiping
+															? formik.errors.Shiping
 																	.WeightUnitofMeasure
 															: undefined
 													}
 													validFeedback='Good'>
 													<Input
 														id='weightuom'
-														name='shipment
-														.WeightUnitofMeasure'
+														name='Shiping.WeightUnitofMeasure'
 														onChange={formik.handleChange}
 														value={
-															formik.values.shipment
+															formik.values.Shiping
 																.WeightUnitofMeasure
 														}
 														onBlur={formik.handleBlur}
@@ -1241,21 +1225,21 @@ const CartPartial: React.FC = () => {
 												<Validation
 													isValid={formik.isValid}
 													isTouched={
-														formik.touched.shipment
-															? formik.touched.shipment?.NoofPackages
+														formik.touched.Shiping
+															? formik.touched.Shiping?.NoofPackages
 															: undefined
 													}
 													invalidFeedback={
-														formik.errors.shipment
-															? formik.errors.shipment.NoofPackages
+														formik.errors.Shiping
+															? formik.errors.Shiping.NoofPackages
 															: undefined
 													}
 													validFeedback='Good'>
 													<Input
 														id='noofpkgs'
-														name='shipment.NoofPackages'
+														name='Shiping.NoofPackages'
 														onChange={formik.handleChange}
-														value={formik.values.shipment.NoofPackages}
+														value={formik.values.Shiping.NoofPackages}
 														onBlur={formik.handleBlur}
 													/>
 												</Validation>
@@ -1267,24 +1251,21 @@ const CartPartial: React.FC = () => {
 												<Validation
 													isValid={formik.isValid}
 													isTouched={
-														formik.touched.shipment
-															? formik.touched.shipment
-																	?.TrackingNumber
+														formik.touched.Shiping
+															? formik.touched.Shiping?.TrackingNumber
 															: undefined
 													}
 													invalidFeedback={
-														formik.errors.shipment
-															? formik.errors.shipment.TrackingNumber
+														formik.errors.Shiping
+															? formik.errors.Shiping.TrackingNumber
 															: undefined
 													}
 													validFeedback='Good'>
 													<Input
 														id='trackingno'
-														name='shipment.TrackingNumber'
+														name='Shiping.TrackingNumber'
 														onChange={formik.handleChange}
-														value={
-															formik.values.shipment.TrackingNumber
-														}
+														value={formik.values.Shiping.TrackingNumber}
 														onBlur={formik.handleBlur}
 													/>
 												</Validation>
@@ -1296,26 +1277,25 @@ const CartPartial: React.FC = () => {
 												<Validation
 													isValid={formik.isValid}
 													isTouched={
-														formik.touched.shipment
-															? formik.touched.shipment
+														formik.touched.Shiping
+															? formik.touched.Shiping
 																	?.Expecteddeliverydate
 															: undefined
 													}
 													invalidFeedback={
-														formik.errors.shipment
-															? formik.errors.shipment
+														formik.errors.Shiping
+															? formik.errors.Shiping
 																	.Expecteddeliverydate
 															: undefined
 													}
 													validFeedback='Good'>
 													<Input
 														type='date'
-														id='shipment
-														.Expecteddeliverydate'
-														name='expecteddeliverydt'
+														id='Expecteddeliverydate'
+														name='Shiping.Expecteddeliverydate'
 														onChange={formik.handleChange}
 														value={
-															formik.values.shipment
+															formik.values.Shiping
 																.Expecteddeliverydate
 														}
 														onBlur={formik.handleBlur}
@@ -1329,24 +1309,21 @@ const CartPartial: React.FC = () => {
 												<Validation
 													isValid={formik.isValid}
 													isTouched={
-														formik.touched.shipment
-															? formik.touched.shipment
-																	?.RecievingHours
+														formik.touched.Shiping
+															? formik.touched.Shiping?.RecievingHours
 															: undefined
 													}
 													invalidFeedback={
-														formik.errors.shipment
-															? formik.errors.shipment.RecievingHours
+														formik.errors.Shiping
+															? formik.errors.Shiping.RecievingHours
 															: undefined
 													}
 													validFeedback='Good'>
 													<Input
 														id='recievinghrs'
-														name='shipment.RecievingHours'
+														name='Shiping.RecievingHours'
 														onChange={formik.handleChange}
-														value={
-															formik.values.shipment.RecievingHours
-														}
+														value={formik.values.Shiping.RecievingHours}
 														onBlur={formik.handleBlur}
 													/>
 												</Validation>

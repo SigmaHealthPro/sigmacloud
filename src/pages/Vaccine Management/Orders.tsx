@@ -63,7 +63,12 @@ import toast, { Toaster } from 'react-hot-toast';
 import Select from '../../components/form/Select';
 import { number } from 'prop-types';
 import { fontFamily, width } from '@mui/system';
-import { DataContextProvider, useDataContext, DataContext } from '../../context/dataContext';
+import {
+	DataContextProvider,
+	useDataContext,
+	DataContext,
+	DataContextValue,
+} from '../../context/dataContext';
 import Dropdown, {
 	DropdownItem,
 	DropdownMenu,
@@ -126,7 +131,7 @@ const OrderManagement: React.FC = () => {
 	const handleQuantityChange = (quantity: number) => {
 		setSelectedQuantity(quantity);
 	};
-	const { addItemToCart } = useContext(DataContext);
+	const { addItemToCart } = useContext(DataContext) as DataContextValue;
 
 	type Vaccine = {
 		product: string;
@@ -178,17 +183,13 @@ const OrderManagement: React.FC = () => {
 						localStorage.setItem('vaccinename', info.row.original.vaccine);
 						localStorage.setItem('manufacturername', info.row.original.manufacturer);
 						addItemToCart({
+							productid: info.row.original.productid,
 							product: info.row.original.product,
 							vaccine: info.row.original.vaccine,
 							manufacturer: info.row.original.manufacturer,
-							quantity: localStorage.getItem('quantityselected:${rowId}:'),
+							quantity: localStorage.getItem('quantityselected:${rowId}:') ?? '0',
 							price: info.row.original.price,
 						});
-						console.log(
-							'selectedqty:',
-							localStorage.getItem('quantityselected:${rowId}:'),
-						);
-
 						<CartPartial />;
 					}}>
 					ADD TO CART
