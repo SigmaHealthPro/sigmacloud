@@ -22,13 +22,9 @@ import Avatar from '../components/Avatar';
 import useSaveBtn from '../hooks/useSaveBtn';
 import FieldWrap from '../components/form/FieldWrap';
 import Icon from '../components/icon/Icon';
-import Checkbox from '../components/form/Checkbox';
 import Badge from '../components/ui/Badge';
-import RichText from '../components/RichText';
-import Radio, { RadioGroup } from '../components/form/Radio';
 import useDarkMode from '../hooks/useDarkMode';
 import { TDarkMode } from '../types/darkMode.type';
-import Box from '@mui/material/Box';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { makeStyles } from '@mui/styles';
 import axios from 'axios';
@@ -42,6 +38,8 @@ import TextField from '@mui/material/TextField';
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
 import PlacesAutocomplete, {geocodeByAddress,getLatLng,} from 'react-places-autocomplete';
 import Alert from '../components/ui/Alert';
+import Providers from './Facility Management/Providers/Providers.page';
+import EventsPage from './Facility Management/Events/EventsPage';
 
 
 interface LovMasterType {
@@ -74,18 +72,10 @@ interface LovMasterType {
   interface ValueFormatterParams {
 	value: string | null;
   }
-  interface Provider {
-  id: number;
-  providerName: string;
-}
-
-interface Site {
-  id: number;
-  siteName: string;
-}
+  
 
 
-const useStyles = makeStyles({
+export const useStyles = makeStyles({
     root: {
         // Increase specificity by repeating the class
         '& .MuiDataGrid-columnHeaderTitleContainer.MuiDataGrid-columnHeaderTitleContainer .MuiDataGrid-menuIcon, .MuiDataGrid-columnHeaderTitleContainer.MuiDataGrid-columnHeaderTitleContainer .MuiDataGrid-sortIcon': {
@@ -188,163 +178,18 @@ const FacilityProfile = () => {
 		},
 	  },
   ];
-  const [isEventModalOpen, setIsEventModalOpen] = useState(false);
-  const [eventData, setEventData] = useState([]);
-  const [eventForm, setEventForm] = useState({
-	"id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-	"createdDate": "2024-03-10T05:47:20.021Z",
-	"createdBy": "string",
-	"updatedBy": "string",
-	"eventName": "",
-	"eventDate": "",
-	"cvxCodeId": "a3b3ebac-05f4-4014-917c-d59645bc1731",
-	"providerId": "",
-	"siteId": ""
-  });
+ 
   
-  useEffect(() => {
-    fetchEventData();
-	axios.get('https://localhost:7155/api/Provider/AllProviders')
-	.then(response => {
-	  setProviderOptions(response.data);
-	})
-	.catch(error => {
-	  console.error('Error fetching providers:', error);
-	});
-
-  // Fetch site options
-  axios.get('https://localhost:7155/api/Site/AllSites')
-	.then(response => {
-	  setSiteOptions(response.data);
-	})
-	.catch(error => {
-	  console.error('Error fetching sites:', error);
-	});
-
-  }, []);
-  const fetchEventData = async () => {
-    try {
-      const response = await fetch('https://localhost:7155/api/Event/searchevent', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'accept': '*/*'
-        },
-        body: JSON.stringify({
-				"keyword": null,
-				"pagenumber": 1,
-				"pagesize": 10,
-				"eventName": null,
-				"eventDate": null,
-				"vaccineName": null,
-				"providerName": null,
-				"siteName": null,
-				"orderby": null
-		})
-      });
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-		console.log('response');
-      }
-	  console.log('response',response);
-      const data = await response.json();
-	  console.log('data',data);
-      setEventData(data);
-    } catch (error) {
-      console.error('There was a problem fetching the data: ', error);
-    }
-  };
-  const eventColumns = [
-	{ field: 'id', headerName: 'Event id', width: 250 },
-	{ field: 'eventName', headerName: 'Event Name', width: 250 },
-	{field: 'eventDate', headerName: 'Event Date', width: 250, },
-	{ field: 'providerName', headerName: 'Provider Name', width: 250 },
-	{ field: 'siteName', headerName: 'Site Name', width: 250 },
-	// You can add more columns as needed
-  ];
-  
+ 
 function formatDateToBackend(date:any) {
 	// Appends a dummy time to the date to match the backend's expected format
 	return `${date}T00:00:00.000Z`;
   }
-  const [providerOptions, setProviderOptions] = useState<Provider[]>([]);
-  const [siteOptions, setSiteOptions] = useState<Site[]>([]);
-//   useEffect(() => {
-//     // Fetch provider options
-//     axios.get('https://localhost:7155/api/Provider/AllProviders')
-//       .then(response => {
-//         setProviderOptions(response.data);
-//       })
-//       .catch(error => {
-//         console.error('Error fetching providers:', error);
-//       });
+  
 
-//     // Fetch site options
-//     axios.get('https://localhost:7155/api/Site/AllSites')
-//       .then(response => {
-//         setSiteOptions(response.data);
-//       })
-//       .catch(error => {
-//         console.error('Error fetching sites:', error);
-//       });
-//   }, []);
-  const handleEventInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement> ) => {
-    const { name, value } = e.target;
-    setEventForm(prevState => ({
-      ...prevState,
-	//   [name]: name === 'eventDate' ? formatDateToBackend(value) : value
-	[name]:value
-    }));
-  };
+  
 
-  const handleSubmitEvent = async () => {
-    try {
-      const response = await axios.post('https://localhost:7155/api/Event/createEvent', eventForm);
-      console.log(response.data);
-      setIsEventModalOpen(false); // Close modal on success
-      // Optionally, fetch the updated events list here
-    } catch (error) {
-      console.error('Error creating event:', error);
-      // Handle errors, e.g., show an error message
-    }
-  };
-  const [isProviderModalOpen, setIsProviderModalOpen] = useState(false);
-const [providerForm, setProviderForm] = useState({
-id: "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-  createdDate: "2024-02-20T00:55:41.176Z",
-  createdBy: "string",
-  updatedBy: "string",
-  providerId: "string",
-  providerName: "",
-  providerType: "",
-  contactNumber: "",
-  email: "",
-  speciality: "",
-  facilityId: "9b9a7d00-b684-48f0-8c39-8d9c35f8d1c0",
-  facilityName: "string",
-  cityName: "string",
-  stateName: "string",
-  zipCode: "string",
-  addressId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-});
-const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-	const { name, value } = e.target;
-	setProviderForm(prevState => ({
-	  ...prevState,
-	  [name]: value,
-	}));
-  };
-  const handleSubmitProvider = async () => {
-	try {
-	  const response = await axios.post('https://localhost:7155/api/Provider/createprovider', providerForm);
-	  console.log(response.data);
-	  setIsProviderModalOpen(false); // Close modal on success
-	  // Optionally, fetch the updated providers list here
-	} catch (error) {
-	  console.error('Error creating provider:', error);
-	  // Handle errors, e.g., show an error message
-	}
-  };
+
 
   const { id } = useParams();
   const [facilityId, setFacilityId] = useState<string | null>(null); // Initialize facilityId state variable
@@ -862,58 +707,7 @@ const [googleAddress, setGoogleAddress] = useState('');
     { field: 'zipCode', headerName: 'Zip Code', width: 130 },
     // Add more columns as needed
   ];
-  const [providerData, setProviderData] = useState([]);
-  useEffect(() => {
-    fetchProviderData();
-  }, []);
-  const fetchProviderData = async () => {
-    try {
-      const response = await fetch('https://localhost:7155/api/Provider/searchprovider', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'accept': '*/*'
-        },
-        body: JSON.stringify({
-			"keyword": null,
-			"pagenumber": 1,
-			"pagesize": 10,
-			"providerName": null,
-			"providerType": null,
-			"email": null,
-			"speciality": null,
-			"facilityid": null,
-			"facility_name": null,
-			"city": null,
-			"contact_number": null,
-			"state": null,
-			"zipcode": null,
-			"orderby": null
-		})
-      });
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-		console.log('response');
-      }
-	  console.log('response',response);
-      const data = await response.json();
-      setProviderData(data);
-    } catch (error) {
-      console.error('There was a problem fetching the data: ', error);
-    }
-  };
-
-  const providerColumns = [
-	{ field: 'providerName', headerName: 'Provider Name', width: 200 },
-	{ field: 'providerType', headerName: 'Provider Type', width: 150 },
-	{ field: 'facilityName', headerName: 'Facility Name', width: 200 },
-	{ field: 'contactNumber', headerName: 'Contact Number', width: 200 },
-	{ field: 'email', headerName: 'Email', width: 200 },
-	{ field: 'cityName', headerName: 'City', width: 150 },
-	{ field: 'stateName', headerName: 'State', width: 150 },
-	{ field: 'zipCode', headerName: 'Zip Code', width: 130 },
-	// You can add more columns as needed
-  ];
+  
 
   
 
@@ -1566,170 +1360,11 @@ const [googleAddress, setGoogleAddress] = useState('');
 			</div>
 									</>
 								)}
-								{activeTab === TAB.Providers && (
-									<>
-									<div className='flex items-center justify-between mb-4'>
-<div className='text-4xl font-semibold'>Providers</div>
-{/* Add your button here */}
-<Button variant='solid' onClick={() => setIsProviderModalOpen(true)} icon='HeroPlus'>
-	  New
-	</Button>
-</div>
-<Modal isOpen={isProviderModalOpen} setIsOpen={setIsProviderModalOpen}>
-  <ModalHeader>Add New Provider</ModalHeader>
-  <ModalBody>
-  <div className='grid grid-cols-12 gap-4'>
-    {/* Provider Name */}
-    <Input
-      className="col-span-12"
-      name="providerName"
-      placeholder="Provider Name"
-      value={providerForm.providerName}
-      onChange={e => setProviderForm({...providerForm, providerName: e.target.value})}
-    />
-
-    {/* Provider Type */}
-    <Input
-      className="col-span-12"
-      name="providerType"
-      placeholder="Provider Type"
-      value={providerForm.providerType}
-      onChange={e => setProviderForm({...providerForm, providerType: e.target.value})}
-    />
-
-    {/* Contact Number */}
-    <Input
-      className="col-span-6"
-      name="contactNumber"
-      placeholder="Contact Number"
-      value={providerForm.contactNumber}
-      onChange={e => setProviderForm({...providerForm, contactNumber: e.target.value})}
-    />
-
-    {/* Email */}
-    <Input
-      className="col-span-6"
-      name="email"
-      placeholder="Email"
-      value={providerForm.email}
-      onChange={e => setProviderForm({...providerForm, email: e.target.value})}
-    />
-
-    {/* Speciality */}
-    <Input
-      className="col-span-12"
-      name="speciality"
-      placeholder="Speciality"
-      value={providerForm.speciality}
-      onChange={e => setProviderForm({...providerForm, speciality: e.target.value})}
-    />
-
-   
-    {/* Facility Name */}
-   
-    
-  </div>
-</ModalBody>
-  <ModalFooter>
-    <Button variant='solid' onClick={handleSubmitProvider}>Save</Button>
-  </ModalFooter>
-</Modal>
-
-							
-								<div style={{ height: 400, width: '100%' }}>
-	<DataGrid
-	className={classes.root}
-	  rows={providerData}
-	  columns={providerColumns}
-	  checkboxSelection
-	  sx={{ '& .MuiDataGrid-columnHeaders': { backgroundColor: '#e5e7eb' },
-'& .MuiDataGrid-columnHeaderTitle': {
-	fontWeight: 'bold',
-},}}
-	/>
-	</div>
-							</>
-								)}
-{activeTab === TAB.Events && (
-									<>
-									<div className='flex items-center justify-between mb-4'>
-<div className='text-4xl font-semibold'>Events</div>
-{/* Add your button here */}
-<Button variant='solid' onClick={() => setIsEventModalOpen(true)} icon='HeroPlus'>
-          New
-        </Button>
-      </div>
-      <Modal isOpen={isEventModalOpen} setIsOpen={setIsEventModalOpen}>
-        <ModalHeader>Add New Event</ModalHeader>
-        <ModalBody>
-          <div className='grid grid-cols-12 gap-4'>
-            {/* Event Name */}
-            <Input
-              className="col-span-12"
-              name="eventName"
-              placeholder="Event Name"
-              value={eventForm.eventName}
-              onChange={handleEventInputChange}
-            />
-
-            {/* Event Date */}
-			<Input
-        className="col-span-12"
-        type="date"
-        name="eventDate"
-        placeholder="Event Date"
-        value={eventForm.eventDate}
-        onChange={handleEventInputChange}
-      />
-
-            {/* Provider Name Dropdown */}
-            <Select
-              className="col-span-6"
-              name="providerId"
-              value={eventForm.providerId}
-              onChange={handleEventInputChange}
-            >
-              <option value="">Select Provider</option>
-              {providerOptions.map(provider => (
-                <option key={provider.id} value={provider.id}>{provider.providerName}</option>
-              ))}
-            </Select>
-
-            {/* Site Name Dropdown */}
-            <Select
-              className="col-span-6"
-              name="siteId"
-              value={eventForm.siteId}
-              onChange={handleEventInputChange}
-            >
-              <option value="">Select Site</option>
-              {siteOptions.map(site => (
-                <option key={site.id} value={site.id}>{site.siteName}</option>
-              ))}
-            </Select>
-
-          </div>
-        </ModalBody>
-        <ModalFooter>
-          <Button variant='solid' onClick={handleSubmitEvent}>Save</Button>
-        </ModalFooter>
-      </Modal>
-
-							
-								<div style={{ height: 400, width: '100%' }}>
-	<DataGrid
-	className={classes.root}
-	  rows={eventData}
-	  columns={eventColumns}
-	  checkboxSelection
-	  sx={{ '& .MuiDataGrid-columnHeaders': { backgroundColor: '#e5e7eb' },
-'& .MuiDataGrid-columnHeaderTitle': {
-	fontWeight: 'bold',
-},}}
-	/>
-	</div>
-							</>
-								)}
+								{/* {activeTab === TAB.Providers && (
+									<Providers/>
+								)} */}
+								{activeTab === TAB.Providers && <Providers />}
+								{activeTab === TAB.Events && <EventsPage/>}
 
 
 								
@@ -1762,3 +1397,4 @@ const [googleAddress, setGoogleAddress] = useState('');
 };
 
 export default FacilityProfile;
+
