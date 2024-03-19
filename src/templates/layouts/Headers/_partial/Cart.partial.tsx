@@ -56,6 +56,7 @@ import apiconfig from '../../../../config/apiconfig';
 const CartPartial: React.FC = () => {
 	const contextValue = useContext(DataContext);
 	const data = (contextValue as DataContextValue).data;
+	//const { data: cartData, setData: setCartData } = useContext(DataContext);
 	const [newCartItem, setNewCart] = useState(false);
 	const [checkout, proceedtocheckout] = useState(false);
 	const [payment, proceedtopayment] = useState(false);
@@ -76,6 +77,13 @@ const CartPartial: React.FC = () => {
 		page: 0,
 		pageSize: 5,
 	});
+	// Provide a default value if contextValue is undefined
+	const { data: cartData, setData: setCartData } = contextValue || {
+		data: [],
+		setData: () => {},
+		addItemToCart: () => {},
+	};
+
 	const [selectedYear, setSelectedYear] = useState<number | undefined>(undefined);
 
 	// Handler function to handle year change
@@ -346,6 +354,10 @@ const CartPartial: React.FC = () => {
 			.then((resp) => setFilteredCity(resp?.data))
 			.catch((err) => console.log('err', err));
 	};
+	const removeItemFromCart = (productid: string) => {
+		const updatedCartData = cartData.filter((item) => item.productid !== productid);
+		setCartData(updatedCartData);
+	};
 
 	const apiUrl = apiconfig.apiHostUrl;
 	var selectedstateid = '';
@@ -360,7 +372,7 @@ const CartPartial: React.FC = () => {
 						className='flex flex-col flex-wrap divide-y divide-dashed divide-zinc-500/50 p-4 [&>*]:py-4'
 						placement='bottom-end'>
 						<div>
-							{data.map((item) => (
+							{cartData.map((item) => (
 								<div className='flex min-w-[24rem] gap-2'>
 									<div className='relative flex-shrink-0'>
 										<Avatar src='https://i.ebayimg.com/00/s/MTYwMFgxMTcz/z/5gwAAOSwfEVk-6CG/$_57.JPG?set_id=880000500F' />
@@ -370,9 +382,16 @@ const CartPartial: React.FC = () => {
 										<div className='flex w-[18rem] gap-2 text-zinc-500'>
 											{item.vaccine}
 											{item.manufacturer}
-											<div className='flex w-[11rem] gap-2 text-zinc-500'>
+											<div className='flex w-[11rem] gap-2 text-zinc-800'>
 												Qty: {item.quantity}
 												<div className='text-zinc-500'>{item.price}</div>
+												<Button
+													variant='default'
+													icon='HeroTrash'
+													id='cart_trash_items'
+													onClick={() =>
+														removeItemFromCart(item.productid)
+													}></Button>
 											</div>
 										</div>
 									</div>

@@ -40,11 +40,22 @@ import {
 	MoreVert as MoreVertIcon,
 	Edit as EditIcon,
 	Delete as DeleteIcon,
+	ViewColumnOutlined,
+	ViewCarousel,
+	ViewComfyOutlined,
+	ViewAgendaOutlined,
+	ViewKanban,
 } from '@mui/icons-material';
 import QuantityUpdater from './QuantityUpdater';
 import { makeStyles } from '@mui/styles';
 import { Button as AntButton, Popconfirm, Space, Table } from 'antd';
-import { EditOutlined, DeleteOutlined, MoreOutlined, BoldOutlined } from '@ant-design/icons';
+import {
+	EditOutlined,
+	DeleteOutlined,
+	MoreOutlined,
+	BoldOutlined,
+	EyeOutlined,
+} from '@ant-design/icons';
 import { GridCellParams, GridRowParams } from '@mui/x-data-grid';
 import { appPages } from '../../config/pages.config';
 import { Orders } from '../../interface/order.interface';
@@ -78,6 +89,8 @@ import Dropdown, {
 import TableTemplate, { TableCardFooterTemplate } from '../../templates/common/TableParts.template';
 import { indexOf } from 'lodash';
 import themeConfig from '../../config/theme.config';
+import SvgViewColumns from '../../components/icon/heroicons/ViewColumns';
+import { HeroEye } from '../../components/icon/heroicons';
 
 const useStyles = makeStyles({
 	root: {
@@ -127,6 +140,7 @@ const OrderManagement: React.FC = () => {
 	const [selectedQuantity, setSelectedQuantity] = useState<number>(1);
 	const [cartItems, setCartItems] = useState<Cart[]>([]);
 	const { setData } = useDataContext();
+	const [viewOrderModal, setViewOrderModal] = useState(false);
 
 	const handleQuantityChange = (quantity: number) => {
 		setSelectedQuantity(quantity);
@@ -281,11 +295,11 @@ const OrderManagement: React.FC = () => {
 						<div
 							className='absolute left-10 top-full mt-1 hidden -translate-x-1/2 -translate-y-full 
                         transform flex-col items-center bg-white shadow-md group-hover:flex'>
-							<Space size='middle'>
+							<Space size='small'>
 								<AntButton
 									icon={
-										<view
-										// onClick={(event) => handleEditData(params, event)}
+										<EyeOutlined
+											onClick={(event) => handleViewData(params, event)}
 										/>
 									}
 								/>
@@ -296,6 +310,19 @@ const OrderManagement: React.FC = () => {
 			},
 		},
 	];
+	const handleViewData = async (params: any, event: any) => {
+		event.preventDefault();
+		setEditTouched(false);
+		setViewOrderModal(true);
+		formik.setFieldValue('product', params.row.product);
+		formik.setFieldValue('orderItemDesc', params.row.orderItemDesc);
+		formik.setFieldValue('facility', params.row.facility);
+		formik.setFieldValue('orderDate', params.row.orderDate);
+		formik.setFieldValue('quantity', params.row.quantity);
+		formik.setFieldValue('unitPrice', params.row.unitPrice);
+		formik.setFieldValue('orderTotal', params.row.orderTotal);
+		formik.setFieldValue('orderStatus', params.row.orderStatus);
+	};
 
 	const handleRowClick = (params: GridRowParams) => {
 		// Ensure to use backticks for template literals
@@ -379,35 +406,35 @@ const OrderManagement: React.FC = () => {
 		createdBy: string;
 		updatedBy: string;
 		orderId: number;
-		Facility: string;
+		facility: string;
 		FacilityId: string;
 		UserId: string;
 		DiscountAmount: string;
 		Incoterms: string;
-		OrderDate: string;
-		OrderStatus: string;
-		OrderTotal: string;
+		orderDate: string;
+		orderStatus: string;
+		orderTotal: string;
 		TaxAmount: string;
 		TermsConditionsId: string;
-		OrderItemDesc: string;
+		orderItemDesc: string;
 		OrderItemStatus: string;
-		Product: string;
+		product: string;
 		ProductId: string;
-		Quantity: string;
-		UnitPrice: string;
+		quantity: string;
+		unitPrice: string;
 	};
 	const reset = () => {
-		formik.setFieldValue('OrderItemDesc', '');
-		formik.setFieldValue('Facility', '');
-		formik.setFieldValue('Product', '');
+		formik.setFieldValue('orderItemDesc', '');
+		formik.setFieldValue('facility', '');
+		formik.setFieldValue('product', '');
 		formik.setFieldValue('OrderItemStatus', '');
-		formik.setFieldValue('UnitPrice', '');
-		formik.setFieldValue('Quantity', '');
+		formik.setFieldValue('unitPrice', '');
+		formik.setFieldValue('quantity', '');
 		formik.setFieldValue('DiscountAmount', '');
 		formik.setFieldValue('Incoterms', '');
-		formik.setFieldValue('OrderDate', '');
-		formik.setFieldValue('OrderStatus', '');
-		formik.setFieldValue('OrderTotal', '');
+		formik.setFieldValue('orderDate', '');
+		formik.setFieldValue('orderStatus', '');
+		formik.setFieldValue('orderTotal', '');
 		formik.setFieldValue('TaxAmount', '');
 	};
 
@@ -415,22 +442,22 @@ const OrderManagement: React.FC = () => {
 		initialValues: {
 			id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
 			orderId: 0,
-			Facility: '',
+			facility: '',
 			FacilityId: generatedGUID,
 			UserId: generatedGUID,
 			DiscountAmount: '',
 			Incoterms: '',
-			OrderDate: '',
-			OrderStatus: '',
-			OrderTotal: '',
+			orderDate: '',
+			orderStatus: '',
+			orderTotal: '',
 			TaxAmount: '',
 			TermsConditionsId: generatedGUID,
-			OrderItemDesc: '',
+			orderItemDesc: '',
 			OrderItemStatus: '',
 			ProductId: generatedGUID,
-			Product: '',
-			Quantity: '',
-			UnitPrice: '',
+			product: '',
+			quantity: '',
+			unitPrice: '',
 			createdDate: '2024-01-17T18:25:24.798Z',
 			createdBy: 'string',
 			updatedBy: 'string',
@@ -439,17 +466,17 @@ const OrderManagement: React.FC = () => {
 		validate: (values: Order) => {
 			const errors: any = {};
 
-			if (!values.Facility) {
+			if (!values.facility) {
 				errors.Facility = 'Required';
 			}
-			if (!values.Product) {
-				errors.Product = 'Required';
+			if (!values.product) {
+				errors.product = 'Required';
 			}
-			if (!values.OrderItemDesc) {
+			if (!values.orderItemDesc) {
 				errors.OrderItemDes = 'Required';
 			}
-			if (!values.OrderStatus) {
-				errors.OrderStatus = 'Required';
+			if (!values.orderStatus) {
+				errors.orderStatus = 'Required';
 			}
 			if (!values.DiscountAmount) {
 				errors.DiscountAmount = 'Required';
@@ -457,16 +484,16 @@ const OrderManagement: React.FC = () => {
 			if (!values.TaxAmount) {
 				errors.TaxAmount = 'Required';
 			}
-			if (!values.OrderDate) {
+			if (!values.orderDate) {
 				errors.OrderDate = 'Required';
 			}
-			if (!values.OrderTotal) {
+			if (!values.orderTotal) {
 				errors.OrderTotal = 'Required';
 			}
-			if (!values.Quantity) {
+			if (!values.quantity) {
 				errors.Quantity = 'Required';
 			}
-			if (!values.UnitPrice) {
+			if (!values.unitPrice) {
 				errors.UnitPrice = 'Required';
 			}
 			return errors;
@@ -474,41 +501,6 @@ const OrderManagement: React.FC = () => {
 
 		onSubmit: async (values: Order) => {
 			//console.log('Request Payload: ', values);
-			try {
-				const postResponse = await axios.post(
-					apiUrl + 'api/Vaccination/createorder',
-					values,
-					{
-						headers: { 'Content-Type': 'application/json' },
-					},
-				);
-				setNewOrderModal(false);
-				setNewCart(false);
-				setEditTouched(false);
-				setTimeout(() => {
-					toast.success(`Order ${editTouched ? 'updated' : 'added'} successfully!`);
-				}, 2000);
-				listOrders();
-				formik.setFieldValue('id', '');
-				formik.setFieldValue('Facility', '');
-				formik.setFieldValue('FacilityId', '');
-				formik.setFieldValue('UserId', '');
-				formik.setFieldValue('DiscountAmount', '');
-				formik.setFieldValue('TaxAmount', '');
-				formik.setFieldValue('TermsConditionsId', '');
-				formik.setFieldValue('Incoterms', '');
-				formik.setFieldValue('OrderDate', '');
-				formik.setFieldValue('OrderStatus', '');
-				formik.setFieldValue('OrderTotal', '');
-				formik.setFieldValue('OrderItemDesc', '');
-				formik.setFieldValue('OrderItemStatus', '');
-				formik.setFieldValue('Quantity', '');
-				formik.setFieldValue('orderId', '');
-				formik.setFieldValue('UnitPrice', '');
-				formik.setFieldValue('Product', '');
-			} catch (error) {
-				console.error('Error: ', error);
-			}
 		},
 	});
 
@@ -542,7 +534,7 @@ const OrderManagement: React.FC = () => {
 						variant='solid'
 						icon='HeroPlus'
 						onClick={() => {
-							localStorage.removeItem('itemcount');
+							// localStorage.removeItem('itemcount');
 							setNewCart(false);
 							setNewOrderModal(true);
 							reset();
@@ -640,6 +632,128 @@ const OrderManagement: React.FC = () => {
 									setEditTouched(false);
 								}}>
 								Back to Orders
+							</Button>
+						</ModalFooter>
+					</Modal>
+					<Modal isOpen={viewOrderModal} setIsOpen={setViewOrderModal}>
+						<ModalHeader> {'Selected Order History'}</ModalHeader>
+						<ModalBody>
+							<div className='col-span-12 lg:col-span-9'>
+								<div className='grid grid-cols-12 gap-4'>
+									<div className='col-span-12'>
+										<Card>
+											<CardBody>
+												<div className='grid grid-cols-12 gap-4'>
+													<div className='col-span-12 lg:col-span-6'>
+														<Label htmlFor='Product'>Product </Label>
+
+														<Input
+															id='product'
+															name='product'
+															value={formik.values.product}
+															onBlur={formik.handleBlur}
+														/>
+													</div>
+													<div className='col-span-12 lg:col-span-6'>
+														<Label htmlFor='OrderitemDesc'>
+															OrderitemDesc
+														</Label>
+
+														<Input
+															id='orderItemDesc'
+															name='orderItemDesc'
+															value={formik.values.orderItemDesc}
+															onBlur={formik.handleBlur}
+														/>
+													</div>
+													<div className='col-span-12 lg:col-span-6'>
+														<Label htmlFor='Facility'>Facility</Label>
+
+														<Input
+															id='facility'
+															name='facility'
+															value={formik.values.facility}
+															onBlur={formik.handleBlur}
+														/>
+													</div>
+													<div className='col-span-12 lg:col-span-6'>
+														<Label htmlFor='OrderDate'>
+															Order Date
+														</Label>
+
+														<Input
+															id='OrderDate'
+															name='OrderDate'
+															value={
+																formik.values.orderDate
+																	? formik.values.orderDate
+																			.toString()
+																			.split('T')[0]
+																	: ''
+															}
+															onBlur={formik.handleBlur}
+														/>
+													</div>
+													<div className='col-span-12 lg:col-span-6'>
+														<Label htmlFor='Quantity'>Quantity</Label>
+
+														<Input
+															id='quantity'
+															name='quantity'
+															value={formik.values.quantity}
+															onBlur={formik.handleBlur}
+														/>
+													</div>
+													<div className='col-span-12 lg:col-span-6'>
+														<Label htmlFor='UnitPrice'>
+															Unit Price
+														</Label>
+
+														<Input
+															id='unitPrice'
+															name='unitPrice'
+															value={formik.values.unitPrice}
+															onBlur={formik.handleBlur}
+														/>
+													</div>
+													<div className='col-span-12 lg:col-span-6'>
+														<Label htmlFor='OrderTotal'>
+															Order Total
+														</Label>
+
+														<Input
+															id='orderTotal'
+															name='orderTotal'
+															value={formik.values.orderTotal}
+															onBlur={formik.handleBlur}
+														/>
+													</div>
+													<div className='col-span-12 lg:col-span-6'>
+														<Label htmlFor='OrderStatus'>
+															Order Status
+														</Label>
+														<Input
+															id='orderStatus'
+															name='orderStatus'
+															value={formik.values.orderStatus}
+															onBlur={formik.handleBlur}
+														/>
+													</div>
+												</div>
+											</CardBody>
+										</Card>
+									</div>
+								</div>
+							</div>
+						</ModalBody>
+						<ModalFooter>
+							<Button
+								variant='solid'
+								onClick={() => {
+									setViewOrderModal(false);
+									setEditTouched(false);
+								}}>
+								Cancel
 							</Button>
 						</ModalFooter>
 					</Modal>
