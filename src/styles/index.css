@@ -419,3 +419,12 @@ gh-info__row {
 .custom-select-container {
 	width: 150px;
 }
+.accordion-buttons {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+}
+.collapse-content {
+	max-height: 400px; /* Set a maximum height for the content */
+	overflow-y: auto; /* Enable vertical scrolling */
+}

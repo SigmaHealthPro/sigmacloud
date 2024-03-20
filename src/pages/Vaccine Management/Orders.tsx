@@ -111,6 +111,7 @@ const OrderManagement: React.FC = () => {
 	var vaccinename = '';
 	var manufacturername = '';
 	const [filteredFacility, setFilteredFacility] = useState([]);
+	const [filteredManufacturer, setFilteredManufacturer] = useState([]);
 	const [filteredProduct, setFilteredProduct] = useState([]);
 	const navigate = useNavigate();
 	const [editTouched, setEditTouched] = useState(false);
@@ -212,7 +213,7 @@ const OrderManagement: React.FC = () => {
 			header: 'Actions',
 		}),
 	];
-	const handlevaccines = async (facilityid: any) => {
+	const handlevaccines = async (facilityid: any, manufacturerid: any) => {
 		const pagenumber = paginationModel.page + 1;
 		const pagesize = paginationModel.pageSize;
 		axios
@@ -223,7 +224,9 @@ const OrderManagement: React.FC = () => {
 					'&pagenumber=' +
 					pagenumber +
 					'&pagesize=' +
-					pagesize,
+					pagesize +
+					'&manufacturerid=' +
+					manufacturerid,
 			)
 			.then((response) => {
 				setVaccineLoading(true);
@@ -397,6 +400,11 @@ const OrderManagement: React.FC = () => {
 					setFilteredProduct(response?.data);
 				})
 				.catch((err) => console.log('Error has occured', err));
+			await orderApi('/api/Vaccination/getallmvx', 'GET')
+				.then((response) => {
+					setFilteredManufacturer(response?.data);
+				})
+				.catch((err) => console.log('Error has occured', err));
 		}
 		callInitial();
 	};
@@ -407,7 +415,7 @@ const OrderManagement: React.FC = () => {
 		updatedBy: string;
 		orderId: number;
 		facility: string;
-		FacilityId: string;
+		facilityId: string;
 		UserId: string;
 		DiscountAmount: string;
 		Incoterms: string;
@@ -422,6 +430,8 @@ const OrderManagement: React.FC = () => {
 		ProductId: string;
 		quantity: string;
 		unitPrice: string;
+		manufacturer: string;
+		manufacturerid: string;
 	};
 	const reset = () => {
 		formik.setFieldValue('orderItemDesc', '');
@@ -443,7 +453,7 @@ const OrderManagement: React.FC = () => {
 			id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
 			orderId: 0,
 			facility: '',
-			FacilityId: generatedGUID,
+			facilityId: '',
 			UserId: generatedGUID,
 			DiscountAmount: '',
 			Incoterms: '',
@@ -461,6 +471,8 @@ const OrderManagement: React.FC = () => {
 			createdDate: '2024-01-17T18:25:24.798Z',
 			createdBy: 'string',
 			updatedBy: 'string',
+			manufacturer: '',
+			manufacturerid: '',
 		},
 
 		validate: (values: Order) => {
@@ -548,67 +560,139 @@ const OrderManagement: React.FC = () => {
 						size={'2xl'}
 						isCentered={true}
 						isAnimation={true}>
-						<ModalHeader>
-							{!editTouched ? 'Vaccine Order Form' : 'Edit Order'}
-						</ModalHeader>
+						<ModalHeader>{'Order Vaccines'}</ModalHeader>
 						<ModalBody>
 							<PageWrapper name='Vaccine List'>
 								<Container>
 									<Card className='h-full'>
 										<CardHeader>
 											<CardHeaderChild>
-												<CardTitle>All Vaccines</CardTitle>
-											</CardHeaderChild>
-											<CardHeaderChild>
-												<div>
-													<Label htmlFor='Facility'>Facility</Label>
-													<Validation
-														isValid={formik.isValid}
-														isTouched={formik.touched.Facility}
-														invalidFeedback={formik.errors.Facility}
-														validFeedback='Good'>
-														<FieldWrap
-															style={{ color: 'black' }}
-															lastSuffix={
-																<Icon
-																	icon='HeroChevronDown'
-																	className='mx-2'
-																/>
-															}>
-															<Select
-																id='Facility'
-																name='Facility'
+												<div className='grid grid-cols-12 gap-6'>
+													<div className='col-span-12 lg:col-span-3'>
+														<Label htmlFor='Facility'>Facility</Label>
+														<Validation
+															isValid={formik.isValid}
+															isTouched={formik.touched.facility}
+															invalidFeedback={formik.errors.facility}
+															validFeedback='Good'>
+															<FieldWrap
 																style={{ color: 'black' }}
-																value={formik.values.Facility}
-																onChange={(event) => {
-																	formik.handleChange(event);
-																	localStorage.setItem(
-																		'selectedfacility:',
-																		event.target.value,
-																	);
-																	handlevaccines(
-																		event.target.value,
-																	);
-																}}
-																onBlur={formik.handleBlur}
-																placeholder='Select Facility'>
-																{/* <option value={''}> Select</option> */}
-																{filteredFacility?.map(
-																	(facility: any) => (
-																		<option
-																			style={{
-																				color: 'black',
-																			}}
-																			id={facility?.id}
-																			key={facility?.id}
-																			value={facility?.id}>
-																			{facility?.facilityName}
-																		</option>
-																	),
-																)}
-															</Select>
-														</FieldWrap>
-													</Validation>
+																lastSuffix={
+																	<Icon
+																		icon='HeroChevronDown'
+																		className='mx-2'
+																	/>
+																}>
+																<Select
+																	id='Facility'
+																	name='facility'
+																	style={{ color: 'black' }}
+																	value={formik.values.facility}
+																	onChange={(event) => {
+																		formik.handleChange(event);
+																		localStorage.setItem(
+																			'selectedfacility:',
+																			event.target.value,
+																		);
+																		formik.setFieldValue(
+																			'facilityId',
+																			event.target.value,
+																		);
+																	}}
+																	onBlur={formik.handleBlur}
+																	placeholder='Select Facility'>
+																	{/* <option value={''}> Select</option> */}
+																	{filteredFacility?.map(
+																		(facility: any) => (
+																			<option
+																				style={{
+																					color: 'black',
+																				}}
+																				id={facility?.id}
+																				key={facility?.id}
+																				value={
+																					facility?.id
+																				}>
+																				{
+																					facility?.facilityName
+																				}
+																			</option>
+																		),
+																	)}
+																</Select>
+															</FieldWrap>
+														</Validation>
+													</div>
+													<div className='col-span-12 lg:col-span-3'>
+														<Label htmlFor='Manufacturer'>
+															Manufacturer
+														</Label>
+														<Validation
+															isValid={formik.isValid}
+															isTouched={formik.touched.manufacturer}
+															invalidFeedback={
+																formik.errors.manufacturer
+															}
+															validFeedback='Good'>
+															<FieldWrap
+																style={{ color: 'black' }}
+																lastSuffix={
+																	<Icon
+																		icon='HeroChevronDown'
+																		className='mx-2'
+																	/>
+																}>
+																<Select
+																	id='Manufacturer'
+																	name='manufacturer'
+																	style={{ color: 'black' }}
+																	value={
+																		formik.values.manufacturer
+																	}
+																	onChange={(event) => {
+																		formik.handleChange(event);
+																		localStorage.setItem(
+																			'selectedmanufacturer:',
+																			event.target.value,
+																		);
+																		formik.setFieldValue(
+																			'manufacturerid',
+																			event.target.value,
+																		);
+																		handlevaccines(
+																			formik.values
+																				.facilityId,
+																			event.target.value,
+																		);
+																	}}
+																	onBlur={formik.handleBlur}
+																	placeholder='Select Manufacturer'>
+																	{/* <option value={''}> Select</option> */}
+																	{filteredManufacturer?.map(
+																		(manufacturer: any) => (
+																			<option
+																				style={{
+																					color: 'black',
+																				}}
+																				id={
+																					manufacturer?.Id
+																				}
+																				key={
+																					manufacturer?.Id
+																				}
+																				value={
+																					manufacturer?.id
+																				}>
+																				{
+																					manufacturer?.manufacturerName
+																				}
+																			</option>
+																		),
+																	)}
+																</Select>
+															</FieldWrap>
+														</Validation>
+													</div>
 												</div>
 											</CardHeaderChild>
 										</CardHeader>
