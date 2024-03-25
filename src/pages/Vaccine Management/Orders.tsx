@@ -9,6 +9,7 @@ import Button, { IButtonProps } from '../../components/ui/Button';
 import Icon from '../../components/icon/Icon';
 import Input from '../../components/form/Input';
 import CartPartial from '../../templates/layouts/Headers/_partial/Cart.partial';
+import { TUser } from '../../mocks/db/users.db';
 import DefaultHeaderRightCommon from '../../templates/layouts/Headers/_common/DefaultHeaderRight.common';
 import {
 	createColumnHelper,
@@ -142,6 +143,7 @@ const OrderManagement: React.FC = () => {
 	const [cartItems, setCartItems] = useState<Cart[]>([]);
 	const { setData } = useDataContext();
 	const [viewOrderModal, setViewOrderModal] = useState(false);
+	const [localData, setLocalData] = useState<TUser | null>(null);
 
 	const handleQuantityChange = (quantity: number) => {
 		setSelectedQuantity(quantity);
@@ -385,12 +387,19 @@ const OrderManagement: React.FC = () => {
 	};
 
 	useEffect(() => {
+		console.log('selectedorgid', localStorage.getItem('organizationidlogged'));
+		const storedData = localStorage.getItem('apiData');
+		if (storedData) {
+			setLocalData(JSON.parse(storedData));
+		}
 		listOrders();
 	}, [globalFilter, paginationModel]);
+	let jurdid = localStorage.getItem('juridictionidlogged')?.toString();
 
 	const listData = () => {
 		async function callInitial() {
-			await orderApi('/api/Vaccination/getallfacilities', 'GET')
+			await axios
+				.post(apiUrl + 'api/Vaccination/getallfacilitiesbyjurdid?jurdid=' + jurdid)
 				.then((response) => {
 					setFilteredFacility(response?.data);
 				})
@@ -408,6 +417,7 @@ const OrderManagement: React.FC = () => {
 		}
 		callInitial();
 	};
+
 	type Order = {
 		id: string;
 		createdDate: string;

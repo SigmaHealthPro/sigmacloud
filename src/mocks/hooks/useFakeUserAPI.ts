@@ -38,14 +38,17 @@ const useFakeUserAPI = (username: string) => {
 				.then((data) => {
 					resolve(data);
 					setResponse(data as TUser);
+					console.log('loggedindata:', data);
 					localStorage.setItem('apiData', JSON.stringify(data));
 					localStorage.setItem('birthdate', JSON.stringify(data.birthdate));
 					localStorage.setItem('userid', data.UserId);
+					localStorage.setItem('loggedinid', data.id);
 					localStorage.setItem('loggedinname', data.username);
-					console.log(data.username);
 					localStorage.setItem('position', data.position);
 					localStorage.setItem('facilityname', data.facility);
 					localStorage.setItem('juridictionname', data.juridiction);
+					localStorage.setItem('juridictionidlogged', data.juridictionid);
+					localStorage.setItem('organizationidlogged', data.organizationid);
 				})
 				.catch((error) => {
 					reject(error.message);

@@ -34,6 +34,9 @@ export type TUser = {
 	isVerified: boolean;
 	facility: string;
 	juridiction: string;
+	juridictionid: string;
+	organizationid: string;
+
 	image?: {
 		org: string;
 		thumb: string;
@@ -73,6 +76,8 @@ export const usersDbList = {
 		isVerified: true,
 		facility: '',
 		juridiction: '',
+		juridictionid: '',
+		organizationid: '',
 		image: { org: User1 as string, thumb: User1Thumb as string },
 		socialAuth: {
 			google: true,
@@ -102,6 +107,8 @@ export const usersDbList = {
 		isVerified: true,
 		facility: '',
 		juridiction: '',
+		juridictionid: '',
+		organizationid: '',
 		image: { org: User2 as string, thumb: User2Thumb as string },
 		socialAuth: {
 			google: true,
@@ -123,6 +130,8 @@ export const usersDbList = {
 		isVerified: true,
 		facility: '',
 		juridiction: '',
+		juridictionid: '',
+		organizationid: '',
 		image: { org: User3 as string, thumb: User3Thumb as string },
 		socialAuth: {
 			google: true,
@@ -144,6 +153,8 @@ export const usersDbList = {
 		isVerified: true,
 		facility: '',
 		juridiction: '',
+		juridictionid: '',
+		organizationid: '',
 		image: { org: User4 as string, thumb: User4Thumb as string },
 		socialAuth: {
 			google: false,
@@ -165,6 +176,8 @@ export const usersDbList = {
 		isVerified: true,
 		facility: '',
 		juridiction: '',
+		juridictionid: '',
+		organizationid: '',
 		image: { org: User5 as string, thumb: User5Thumb as string },
 		socialAuth: {
 			google: true,
@@ -186,6 +199,8 @@ export const usersDbList = {
 		isVerified: true,
 		facility: '',
 		juridiction: '',
+		juridictionid: '',
+		organizationid: '',
 		image: { org: User6 as string, thumb: User6Thumb as string },
 		socialAuth: {
 			google: true,
@@ -221,6 +236,8 @@ export const usersDbList = {
 		isVerified: true,
 		facility: '',
 		juridiction: '',
+		juridictionid: '',
+		organizationid: '',
 		image: { org: User7 as string, thumb: User7Thumb as string },
 		socialAuth: {
 			google: true,
@@ -242,6 +259,8 @@ export const usersDbList = {
 		isVerified: true,
 		facility: '',
 		juridiction: '',
+		juridictionid: '',
+		organizationid: '',
 		image: { org: User8 as string, thumb: User8Thumb as string },
 		socialAuth: {
 			google: false,
@@ -263,6 +282,8 @@ export const usersDbList = {
 		isVerified: true,
 		facility: '',
 		juridiction: '',
+		juridictionid: '',
+		organizationid: '',
 		socialAuth: {
 			google: false,
 			facebook: false,
@@ -283,6 +304,8 @@ export const usersDbList = {
 		isVerified: true,
 		facility: '',
 		juridiction: '',
+		juridictionid: '',
+		organizationid: '',
 		image: { org: User9 as string, thumb: User9Thumb as string },
 		socialAuth: {
 			google: true,

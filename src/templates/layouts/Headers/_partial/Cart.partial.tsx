@@ -24,6 +24,7 @@ import { useFormik } from 'formik';
 import PeriodButtonsPartial from '../../../../pages/sales/SalesDashboardPage/_partial/PeriodButtons.partial';
 import PERIOD, { TPeriod } from '../../../../constants/periods.constant';
 import toast, { Toaster } from 'react-hot-toast';
+import { TUser } from '../../../../mocks/db/users.db';
 import Modal, {
 	ModalBody,
 	ModalHeader,
@@ -59,6 +60,22 @@ interface AccordionState {
 	showShippingDetails: boolean;
 	showPaymentInfo: boolean;
 }
+interface UserAddressModel {
+	id: string;
+	addressid: string;
+	line1: string;
+	line2: string;
+	suite: string;
+	cityname: string;
+	countyname: string;
+	statename: string;
+	countryname: string;
+	countyid: string;
+	countryid: string;
+	stateid: string;
+	cityid: string;
+	zipCode: string;
+}
 
 const CartPartial: React.FC = () => {
 	const contextValue = useContext(DataContext);
@@ -70,6 +87,7 @@ const CartPartial: React.FC = () => {
 	const [shippment, addShippment] = useState(false);
 	const productName = localStorage.getItem('productname');
 	const [selectedItem, setSelectedItem] = useState<Cart | null>(null);
+	const [existingAddress, setExistingAddress] = useState<UserAddressModel | null>(null);
 	const [countryData, setCountryData] = useState([]);
 	const [stateData, setStateData] = useState([]);
 	const [filteredState, setFilteredState] = useState([]);
@@ -80,6 +98,7 @@ const CartPartial: React.FC = () => {
 	const [vaccineloading, setVaccineLoading] = useState<boolean>(false);
 	const [rowcountstates, setRowCountstates] = useState<number>(0);
 	const [filteredFacility, setFilteredFacility] = useState([]);
+	const [localData, setLocalData] = useState<TUser | null>(null);
 	const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
 		page: 0,
 		pageSize: 5,
@@ -101,7 +120,7 @@ const CartPartial: React.FC = () => {
 
 	let generatedGUID: string;
 	generatedGUID = uuidv4();
-	console.log('in cart page itemcount=', localStorage.getItem('itemcount'));
+
 	var totalprice = 0;
 	type Vaccine = {
 		product: string;
@@ -195,6 +214,11 @@ const CartPartial: React.FC = () => {
 		showShippingDetails: false,
 		showPaymentInfo: false,
 	});
+	const [showChangeAddress, setShowChangeAddress] = useState(false);
+
+	const toggleAddressSection = () => {
+		setShowChangeAddress((prevState) => !prevState);
+	};
 
 	const toggleAccordion = (section: keyof AccordionState) => {
 		setAccordionState({
@@ -223,9 +247,9 @@ const CartPartial: React.FC = () => {
 		Shiping: Shipment;
 		// Add other order fields as needed
 	};
-	const loggedinid = localStorage.getItem('userid');
+	const loggedinid = localData?.id; //localStorage.getItem('userid');
 	const selectedfacilityid = localStorage.getItem('selectedfacility:');
-	console.log('selectedfacilityid', selectedfacilityid);
+
 	const formik = useFormik<checkoutitems>({
 		initialValues: {
 			id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
@@ -330,6 +354,10 @@ const CartPartial: React.FC = () => {
 	};
 
 	useEffect(() => {
+		const storedData = localStorage.getItem('apiData');
+		if (storedData) {
+			setLocalData(JSON.parse(storedData));
+		}
 		async function callInitial() {
 			await orderApi('/api/MasterData/Countries', 'GET')
 				.then((response) => {
@@ -341,7 +369,21 @@ const CartPartial: React.FC = () => {
 					setStateData(response?.data);
 				})
 				.catch((err) => console.log('Error has occured', err));
+			await axios
+				.post(
+					apiUrl +
+						'api/Vaccination/getaddressbyuserid?userid=' +
+						localStorage.getItem('loggedinid'),
+				)
+				.then((response) => {
+					setExistingAddress(response?.data.data);
+					console.log('existing', response.data.data);
+				})
+				.catch((err) => console.log('Error has occured', err));
 		}
+		handleState(existingAddress?.countryid);
+		handleCounty(existingAddress?.stateid);
+		handleCity(existingAddress?.stateid, existingAddress?.countyid);
 		callInitial();
 	}, []);
 
@@ -352,13 +394,11 @@ const CartPartial: React.FC = () => {
 		setSelectedItem(null);
 	};
 	const handleState = async (country: any) => {
-		console.log('Selectd state ID', country);
 		const data = stateData?.filter((item: any) => item.countryId === country);
-		console.log('Filtered state', data);
+
 		setFilteredState(data);
 	};
 	const handleCounty = async (state: any) => {
-		console.log('Selected State ID', state);
 		const response = await orderApi(
 			`/api/MasterData/getcountiesbystateid?stateid=${state}`,
 			'GET',
@@ -368,7 +408,6 @@ const CartPartial: React.FC = () => {
 	};
 
 	const handleCity = async (state: any, county: any) => {
-		console.log('Selected State ID', state);
 		const response = await orderApi(
 			`/api/MasterData/getcitiesbystateidandcountyid?stateid=${state}&countyid=${county}`,
 			'GET',
@@ -383,6 +422,10 @@ const CartPartial: React.FC = () => {
 
 	const apiUrl = apiconfig.apiHostUrl;
 	var selectedstateid = '';
+	let manufacturerName = '';
+	data.forEach((item) => {
+		manufacturerName = item.manufacturer; // Assign the manufacturer name
+	});
 	return (
 		<div className='relative'>
 			<Dropdown>
@@ -443,11 +486,40 @@ const CartPartial: React.FC = () => {
 				{data.length}
 				<span className='relative inline-flex h-3 w-3'></span>
 			</span>
-			<Modal isOpen={isOpen} setIsOpen={setIsOpen}>
+			<Modal isOpen={isOpen} setIsOpen={setIsOpen} size={'lg'}>
 				<ModalHeader setIsOpen={setIsOpen}>{'Checkout'}</ModalHeader>
 				<ModalBody>
+					<div className='grid grid-cols-12 gap-16'>
+						<div className='col-span-12 flex lg:col-span-6'>
+							<Label htmlFor={`order_id`} style={{ fontSize: '13px' }}>
+								Order ID: {'PO123489'}
+							</Label>
+							<Label htmlFor={`order_date`} style={{ fontSize: '13px' }}>
+								Order Date:
+								{formik.values.OrderDate
+									? formik.values.OrderDate.toString().split('T')[0]
+									: ''}
+							</Label>
+						</div>
+						<div className='col-span-12 flex lg:col-span-3'>
+							<Label htmlFor={`Manufacturer_name`} style={{ fontSize: '13px' }}>
+								Manufacturer:
+							</Label>
+							<Label htmlFor={`Manufacturer_name`} style={{ fontSize: '13px' }}>
+								{manufacturerName}
+							</Label>
+						</div>
+						<div className='col-span-12 flex lg:col-span-3'>
+							<Label htmlFor={`Manufacturer_address`} style={{ fontSize: '13px' }}>
+								{'GSK 2929 Walnut Street Ste. 1700 Philadelphia, PA 19104'}
+							</Label>
+						</div>
+					</div>
+
 					<div className='accordion-buttons'>
 						<Button
+							icon='HeroShoppingCart'
+							rightIcon='HeroShoppingCart'
 							onClick={() => toggleAccordion('showItems')}
 							variant='outline'
 							style={{ marginBottom: '10px', textAlign: 'left' }}>
@@ -514,6 +586,8 @@ const CartPartial: React.FC = () => {
 							)}
 						</Collapse>
 						<Button
+							icon='HeroAtSymbol'
+							rightIcon='HeroAtSymbol'
 							onClick={() => toggleAccordion('showBillingAddress')}
 							variant='outline'
 							style={{ marginBottom: '10px', textAlign: 'left' }}>
@@ -522,298 +596,362 @@ const CartPartial: React.FC = () => {
 						<Collapse isOpen={accordionState.showBillingAddress}>
 							{accordionState.showBillingAddress && (
 								<div className='collapse-content'>
-									<div className='grid grid-cols-12 gap-4'>
-										<div className='col-span-12 lg:col-span-6'>
-											<Label htmlFor='country'>Country</Label>
-											<Validation
-												isValid={formik.isValid}
-												isTouched={formik.touched?.Address?.Country}
-												invalidFeedback={formik.errors?.Address?.Country}
-												validFeedback='Good'>
-												<FieldWrap
-													style={{ color: 'black' }}
-													lastSuffix={
-														<Icon
-															icon='HeroChevronDown'
-															className='mx-2'
-														/>
-													}>
-													<Select
-														id='country'
-														name='Address.Country'
-														style={{ color: 'black' }}
-														value={formik.values.Address.Country}
-														onChange={(event) => {
-															formik.handleChange(event);
-															formik.setFieldValue(
-																'Address.Countryid',
-																event.target.value,
-															);
-															event.target.value;
-															handleState(event.target.value);
-														}}
-														onBlur={formik.handleBlur}
-														placeholder='Select Country'>
-														{countryData?.map((country: any) => (
-															<option
-																style={{ color: 'black' }}
-																id={country?.id}
-																key={country?.id}
-																value={country?.id}>
-																{country?.countryName}
-															</option>
-														))}
-													</Select>
-												</FieldWrap>
-											</Validation>
-										</div>
-										<div className='col-span-12 lg:col-span-6'>
-											<Label htmlFor='address'>Street Address</Label>
-											<Validation
-												isValid={formik.isValid}
-												isTouched={
-													formik.touched.Address
-														? formik.touched.Address.Line1
-														: undefined
-												}
-												invalidFeedback={
-													formik.errors.Address
-														? formik.errors.Address.Line1
-														: undefined
-												}
-												validFeedback='Good'>
-												<Input
-													id='Line1'
-													name='Address.Line1'
-													onChange={formik.handleChange}
-													value={formik.values.Address.Line1}
-													onBlur={formik.handleBlur}
-												/>
-											</Validation>
-										</div>
-										<div className='col-span-12 lg:col-span-6'>
-											<Label htmlFor='addressline2'>
-												Street Address line2
-											</Label>
-											<Validation
-												isValid={formik.isValid}
-												isTouched={
-													formik.touched.Address
-														? formik.touched.Address.Line2
-														: undefined
-												}
-												invalidFeedback={
-													formik.errors.Address
-														? formik.errors.Address.Line2
-														: undefined
-												}
-												validFeedback='Good'>
-												<Input
-													id='Line2'
-													name='Address.Line2'
-													onChange={formik.handleChange}
-													value={formik.values.Address.Line2}
-													onBlur={formik.handleBlur}
-												/>
-											</Validation>
-										</div>
-										<div className='col-span-12 lg:col-span-6'>
-											<Label htmlFor='suite'>Apt/Suite/Other</Label>
-											<Validation
-												isValid={formik.isValid}
-												isTouched={
-													formik.touched.Address
-														? formik.touched.Address.Suite
-														: undefined
-												}
-												invalidFeedback={
-													formik.errors.Address
-														? formik.errors.Address.Suite
-														: undefined
-												}
-												validFeedback='Good'>
-												<Input
-													id='Suite'
-													name='Address.Suite'
-													onChange={formik.handleChange}
-													value={formik.values.Address.Suite}
-													onBlur={formik.handleBlur}
-												/>
-											</Validation>
-										</div>
-										<div className='col-span-12 lg:col-span-6'>
-											<Label htmlFor='state'>State</Label>
-											<Validation
-												isValid={formik.isValid}
-												isTouched={formik.touched?.Address?.State}
-												invalidFeedback={formik.errors.Address?.State}
-												validFeedback='Good'>
-												<FieldWrap
-													style={{ color: 'black' }}
-													lastSuffix={
-														<Icon
-															icon='HeroChevronDown'
-															className='mx-2'
-														/>
-													}>
-													<Select
-														id='state'
-														name='Address.State'
-														style={{ color: 'black' }}
-														value={formik.values.Address.State}
-														onChange={(event) => {
-															formik.handleChange(event);
-															formik.setFieldValue(
-																'Address.Stateid',
-																event.target.value,
-															);
-															selectedstateid = event.target.value;
-															handleCounty(event.target.value);
-														}}
-														onBlur={formik.handleBlur}
-														placeholder='Select State'>
-														{/* <option value={''}> Select</option> */}
-														{filteredState?.map((state: any) => (
-															<option
-																style={{
-																	color: 'black',
-																}}
-																id={state?.id}
-																key={state?.id}
-																value={state?.id}>
-																{state?.stateName}
-															</option>
-														))}
-													</Select>
-												</FieldWrap>
-											</Validation>
-										</div>
-										<div className='col-span-12 lg:col-span-6'>
-											<Label htmlFor='county'>County</Label>
-											<Validation
-												isValid={formik.isValid}
-												isTouched={formik.touched.Address?.County}
-												invalidFeedback={formik.errors.Address?.County}
-												validFeedback='Good'>
-												<FieldWrap
-													style={{ color: 'black' }}
-													lastSuffix={
-														<Icon
-															icon='HeroChevronDown'
-															className='mx-2'
-														/>
-													}>
-													<Select
-														id='county'
-														name='Address.County'
-														style={{ color: 'black' }}
-														value={formik.values.Address.County}
-														onChange={(event) => {
-															formik.handleChange(event);
-															formik.setFieldValue(
-																'Address.Countyid',
-																event.target.value,
-															);
+									<div
+										className='existing-address'
+										style={{
+											display: showChangeAddress ? 'none' : 'block',
+											color: 'orangered',
+										}}>
+										<div key={existingAddress?.id}>
+											<p>{localStorage.getItem('loggedinname')}</p>
+											<p>
+												{existingAddress?.suite}
+												{'#'}
 
-															handleCity(
-																formik.values.Address.State,
-																event.target.value,
-															); // Pass both state and county
-														}}
-														onBlur={formik.handleBlur}
-														placeholder='Select County'>
-														{/* <option value={''}> Select</option> */}
-														{filteredCounty?.map((county: any) => (
-															<option
-																style={{
-																	color: 'black',
-																}}
-																id={county?.id}
-																key={county?.id}
-																value={county?.id}>
-																{county?.countyName}
-															</option>
-														))}
-													</Select>
-												</FieldWrap>
-											</Validation>
-										</div>
-										<div className='col-span-12 lg:col-span-6'>
-											<Label htmlFor='city'>City</Label>
+												{existingAddress?.line2}
+											</p>
+											<p>{existingAddress?.line1}</p>
 
-											<Validation
-												isValid={formik.isValid}
-												isTouched={formik.touched.Address?.City}
-												invalidFeedback={formik.errors.Address?.City}
-												validFeedback='Good'>
-												<FieldWrap
-													style={{ color: 'black' }}
-													lastSuffix={
-														<Icon
-															icon='HeroChevronDown'
-															className='mx-2'
-														/>
-													}>
-													<Select
-														id='city'
-														name='Address.City'
-														style={{ color: 'black' }}
-														value={formik.values.Address.City}
-														onChange={(event) => {
-															formik.handleChange(event);
-															formik.setFieldValue(
-																'Address.Cityid',
-																event.target.value,
-															);
-														}}
-														onBlur={formik.handleBlur}
-														placeholder='Select City'>
-														{/* <option value={''}> Select</option> */}
-														{filteredCity?.map((city: any) => (
-															<option
-																style={{
-																	color: 'black',
-																}}
-																id={city?.id}
-																key={city?.id}
-																value={city?.id}>
-																{city?.cityName}
-															</option>
-														))}
-													</Select>
-												</FieldWrap>
-											</Validation>
-										</div>
-										<div className='col-span-12 lg:col-span-6'>
-											<Label htmlFor='zipcode'>Zip Code</Label>
-											<Validation
-												isValid={formik.isValid}
-												isTouched={
-													formik.touched.Address
-														? formik.touched.Address.ZipCode
-														: undefined
-												}
-												invalidFeedback={
-													formik.errors.Address
-														? formik.errors.Address.ZipCode
-														: undefined
-												}
-												validFeedback='Good'>
-												<Input
-													id='zipcode'
-													name='Address.ZipCode'
-													onChange={formik.handleChange}
-													value={formik.values.Address.ZipCode}
-													onBlur={formik.handleBlur}
-												/>
-											</Validation>
+											<p>{existingAddress?.cityname}</p>
+											<p>{existingAddress?.countyname}</p>
+											<p>
+												{existingAddress?.statename}{' '}
+												{existingAddress?.zipCode}
+											</p>
+											<p>{existingAddress?.countryname}</p>
 										</div>
 									</div>
+									<div
+										className='change-address'
+										style={{ display: showChangeAddress ? 'block' : 'none' }}>
+										<div className='grid grid-cols-12 gap-4'>
+											<div className='col-span-12 lg:col-span-6'>
+												<Label htmlFor='country'>Country</Label>
+												<Validation
+													isValid={formik.isValid}
+													isTouched={formik.touched?.Address?.Country}
+													invalidFeedback={
+														formik.errors?.Address?.Country
+													}
+													validFeedback='Good'>
+													<FieldWrap
+														style={{ color: 'black' }}
+														lastSuffix={
+															<Icon
+																icon='HeroChevronDown'
+																className='mx-2'
+															/>
+														}>
+														<Select
+															id='country'
+															name='Address.Country'
+															style={{ color: 'black' }}
+															value={
+																formik.values.Address.Country ||
+																existingAddress?.countryid
+															}
+															onChange={(event) => {
+																formik.handleChange(event);
+																formik.setFieldValue(
+																	'Address.Countryid',
+																	event.target.value,
+																);
+																event.target.value;
+																handleState(event.target.value);
+															}}
+															onBlur={formik.handleBlur}
+															placeholder='Select Country'>
+															{countryData?.map((country: any) => (
+																<option
+																	style={{ color: 'black' }}
+																	id={country?.id}
+																	key={country?.id}
+																	value={country?.id}>
+																	{country?.countryName}
+																</option>
+															))}
+														</Select>
+													</FieldWrap>
+												</Validation>
+											</div>
+											<div className='col-span-12 lg:col-span-6'>
+												<Label htmlFor='address'>Street Address</Label>
+												<Validation
+													isValid={formik.isValid}
+													isTouched={
+														formik.touched.Address
+															? formik.touched.Address.Line1
+															: undefined
+													}
+													invalidFeedback={
+														formik.errors.Address
+															? formik.errors.Address.Line1
+															: undefined
+													}
+													validFeedback='Good'>
+													<Input
+														id='Line1'
+														name='Address.Line1'
+														onChange={formik.handleChange}
+														value={
+															formik.values.Address.Line1 ||
+															existingAddress?.line1
+														}
+														onBlur={formik.handleBlur}
+													/>
+												</Validation>
+											</div>
+											<div className='col-span-12 lg:col-span-6'>
+												<Label htmlFor='addressline2'>
+													Street Address line2
+												</Label>
+												<Validation
+													isValid={formik.isValid}
+													isTouched={
+														formik.touched.Address
+															? formik.touched.Address.Line2
+															: undefined
+													}
+													invalidFeedback={
+														formik.errors.Address
+															? formik.errors.Address.Line2
+															: undefined
+													}
+													validFeedback='Good'>
+													<Input
+														id='Line2'
+														name='Address.Line2'
+														onChange={formik.handleChange}
+														value={
+															formik.values.Address.Line2 ||
+															existingAddress?.line2
+														}
+														onBlur={formik.handleBlur}
+													/>
+												</Validation>
+											</div>
+											<div className='col-span-12 lg:col-span-6'>
+												<Label htmlFor='suite'>Apt/Suite/Other</Label>
+												<Validation
+													isValid={formik.isValid}
+													isTouched={
+														formik.touched.Address
+															? formik.touched.Address.Suite
+															: undefined
+													}
+													invalidFeedback={
+														formik.errors.Address
+															? formik.errors.Address.Suite
+															: undefined
+													}
+													validFeedback='Good'>
+													<Input
+														id='Suite'
+														name='Address.Suite'
+														onChange={formik.handleChange}
+														value={
+															formik.values.Address.Suite ||
+															existingAddress?.suite
+														}
+														onBlur={formik.handleBlur}
+													/>
+												</Validation>
+											</div>
+											<div className='col-span-12 lg:col-span-6'>
+												<Label htmlFor='state'>State</Label>
+												<Validation
+													isValid={formik.isValid}
+													isTouched={formik.touched?.Address?.State}
+													invalidFeedback={formik.errors.Address?.State}
+													validFeedback='Good'>
+													<FieldWrap
+														style={{ color: 'black' }}
+														lastSuffix={
+															<Icon
+																icon='HeroChevronDown'
+																className='mx-2'
+															/>
+														}>
+														<Select
+															id='state'
+															name='Address.State'
+															style={{ color: 'black' }}
+															value={
+																formik.values.Address.State ||
+																existingAddress?.stateid
+															}
+															onChange={(event) => {
+																formik.handleChange(event);
+																formik.setFieldValue(
+																	'Address.Stateid',
+																	event.target.value,
+																);
+																selectedstateid =
+																	event.target.value;
+																handleCounty(event.target.value);
+															}}
+															onBlur={formik.handleBlur}
+															placeholder='Select State'>
+															{/* <option value={''}> Select</option> */}
+															{filteredState?.map((state: any) => (
+																<option
+																	style={{
+																		color: 'black',
+																	}}
+																	id={state?.id}
+																	key={state?.id}
+																	value={state?.id}>
+																	{state?.stateName}
+																</option>
+															))}
+														</Select>
+													</FieldWrap>
+												</Validation>
+											</div>
+											<div className='col-span-12 lg:col-span-6'>
+												<Label htmlFor='county'>County</Label>
+												<Validation
+													isValid={formik.isValid}
+													isTouched={formik.touched.Address?.County}
+													invalidFeedback={formik.errors.Address?.County}
+													validFeedback='Good'>
+													<FieldWrap
+														style={{ color: 'black' }}
+														lastSuffix={
+															<Icon
+																icon='HeroChevronDown'
+																className='mx-2'
+															/>
+														}>
+														<Select
+															id='county'
+															name='Address.County'
+															style={{ color: 'black' }}
+															value={
+																formik.values.Address.County ||
+																existingAddress?.countyid
+															}
+															onChange={(event) => {
+																formik.handleChange(event);
+																formik.setFieldValue(
+																	'Address.Countyid',
+																	event.target.value,
+																);
+
+																handleCity(
+																	formik.values.Address.State,
+																	event.target.value,
+																); // Pass both state and county
+															}}
+															onBlur={formik.handleBlur}
+															placeholder='Select County'>
+															{/* <option value={''}> Select</option> */}
+															{filteredCounty?.map((county: any) => (
+																<option
+																	style={{
+																		color: 'black',
+																	}}
+																	id={county?.id}
+																	key={county?.id}
+																	value={county?.id}>
+																	{county?.countyName}
+																</option>
+															))}
+														</Select>
+													</FieldWrap>
+												</Validation>
+											</div>
+											<div className='col-span-12 lg:col-span-6'>
+												<Label htmlFor='city'>City</Label>
+
+												<Validation
+													isValid={formik.isValid}
+													isTouched={formik.touched.Address?.City}
+													invalidFeedback={formik.errors.Address?.City}
+													validFeedback='Good'>
+													<FieldWrap
+														style={{ color: 'black' }}
+														lastSuffix={
+															<Icon
+																icon='HeroChevronDown'
+																className='mx-2'
+															/>
+														}>
+														<Select
+															id='city'
+															name='Address.City'
+															style={{ color: 'black' }}
+															value={
+																formik.values.Address.City ||
+																existingAddress?.cityid
+															}
+															onChange={(event) => {
+																formik.handleChange(event);
+																formik.setFieldValue(
+																	'Address.Cityid',
+																	event.target.value,
+																);
+															}}
+															onBlur={formik.handleBlur}
+															placeholder='Select City'>
+															{/* <option value={''}> Select</option> */}
+															{filteredCity?.map((city: any) => (
+																<option
+																	style={{
+																		color: 'black',
+																	}}
+																	id={city?.id}
+																	key={city?.id}
+																	value={city?.id}>
+																	{city?.cityName}
+																</option>
+															))}
+														</Select>
+													</FieldWrap>
+												</Validation>
+											</div>
+											<div className='col-span-12 lg:col-span-6'>
+												<Label htmlFor='zipcode'>Zip Code</Label>
+												<Validation
+													isValid={formik.isValid}
+													isTouched={
+														formik.touched.Address
+															? formik.touched.Address.ZipCode
+															: undefined
+													}
+													invalidFeedback={
+														formik.errors.Address
+															? formik.errors.Address.ZipCode
+															: undefined
+													}
+													validFeedback='Good'>
+													<Input
+														id='zipcode'
+														name='Address.ZipCode'
+														onChange={formik.handleChange}
+														value={
+															formik.values.Address.ZipCode ||
+															existingAddress?.zipCode
+														}
+														onBlur={formik.handleBlur}
+													/>
+												</Validation>
+											</div>
+										</div>
+									</div>
+									<Button
+										onClick={toggleAddressSection}
+										variant='outline'
+										style={{ marginBottom: '10px', textAlign: 'left' }}>
+										{showChangeAddress ? 'Cancel' : 'Change Address'}
+									</Button>
 								</div>
 							)}
 						</Collapse>
 
 						<Button
+							icon='HeroCreditCard'
+							rightIcon='HeroCreditCard'
 							onClick={() => toggleAccordion('showPaymentInfo')}
 							variant='outline'
 							style={{ marginBottom: '10px', textAlign: 'left' }}>
@@ -856,6 +994,8 @@ const CartPartial: React.FC = () => {
 						</Collapse>
 
 						<Button
+							icon='HeroTruck'
+							rightIcon='HeroTruck'
 							onClick={() => toggleAccordion('showShippingDetails')}
 							variant='outline'
 							style={{ marginBottom: '10px', textAlign: 'left' }}>
