@@ -6,19 +6,13 @@ import axios from 'axios';
 import Modal, { ModalHeader, ModalBody, ModalFooter, ModalFooterChild } from '../../../components/ui/Modal';
 import { makeStyles } from '@mui/styles';
 import Select from '../../../components/form/Select';
+import {Provider, Site} from '../../../interface/facility.interface';
 
-interface Provider {
-    id: number;
-    providerName: string;
-  }
-  
-  interface Site {
-    id: number;
-    siteName: string;
-  } 
 
 const AddEvent = () => {
     const [isEventModalOpen, setIsEventModalOpen] = useState(false);
+    const [providerOptions, setProviderOptions] = useState<Provider[]>([]);
+    const [siteOptions, setSiteOptions] = useState<Site[]>([]);
     const [eventForm, setEventForm] = useState({
         "id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
         "createdDate": "2024-03-10T05:47:20.021Z",
@@ -30,8 +24,7 @@ const AddEvent = () => {
         "providerId": "",
         "siteId": ""
       });
-      const [providerOptions, setProviderOptions] = useState<Provider[]>([]);
-      const [siteOptions, setSiteOptions] = useState<Site[]>([]);
+      
       const handleEventInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement> ) => {
         const { name, value } = e.target;
         setEventForm(prevState => ({
@@ -75,10 +68,9 @@ const AddEvent = () => {
   return (
     <div>
         <div className='flex items-center justify-between mb-4'>
-<div className='text-4xl font-semibold'>Events</div>
-{/* Add your button here */}
-<Button variant='solid' onClick={() => setIsEventModalOpen(true)} icon='HeroPlus'>
-          New
+        <div className='text-4xl font-semibold'>Events</div>
+        <Button variant='solid' onClick={() => setIsEventModalOpen(true)} icon='HeroPlus'>
+                New
         </Button>
       </div>
       <Modal isOpen={isEventModalOpen} setIsOpen={setIsEventModalOpen}>

@@ -7,23 +7,13 @@ import Modal, { ModalHeader, ModalBody, ModalFooter, ModalFooterChild } from '..
 import { makeStyles } from '@mui/styles';
 import AddProvider from './AddProvider';
 
-const useStyles = makeStyles({
-    root: {
-        // Increase specificity by repeating the class
-        '& .MuiDataGrid-columnHeaderTitleContainer.MuiDataGrid-columnHeaderTitleContainer .MuiDataGrid-menuIcon, .MuiDataGrid-columnHeaderTitleContainer.MuiDataGrid-columnHeaderTitleContainer .MuiDataGrid-sortIcon': {
-            visibility: 'visible !important', // ensure it overrides other styles
-        },
-        '& .MuiDataGrid-columnHeader.MuiDataGrid-columnHeader': {
-            color: 'inherit', // Just an example to ensure color is consistent
-        },
-    },
-});
-const Providers = () => {
+
+const Providers = ({...props}) => {
 
     const [isProviderModalOpen, setIsProviderModalOpen] = useState(false);
     const [providerData, setProviderData] = useState([]);
     
-    const classes = useStyles();
+ 
     const providerColumns = [
         { field: 'providerName', headerName: 'Provider Name', width: 200 },
         { field: 'providerType', headerName: 'Provider Type', width: 150 },
@@ -86,7 +76,7 @@ const Providers = () => {
         <AddProvider/>
         <div style={{ height: 400, width: '100%' }}>
             {<DataGrid
-                className={classes.root}
+                className={props.classes.root}
                 rows={providerData}
                 columns={providerColumns}
                 checkboxSelection
