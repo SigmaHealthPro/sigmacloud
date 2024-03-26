@@ -116,6 +116,17 @@ const AddAddress = ({...props}) => {
 	  console.error('Error fetching details:', error);
 	}
   };
+  useEffect(() => {
+   
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyDDn0VVkgVc71AYGU_3gh-1tviPHiWUGbg&libraries=places`;
+script.async = true;
+    document.head.appendChild(script);
+    return () => {
+      document.head.removeChild(script);
+    };
+  }, []);
+
   const fetchAddressTypes = async () => {
     try {
       const response = await axios.get(
@@ -194,6 +205,33 @@ fetchAddressTypes();
 	addresssetModalStatus(false);
 	
   };
+  useEffect(() => {
+    const fetchAddresses = async () => {
+      try {
+        const response = await axios.post(
+          'https://dev-api-iis-sigmacloud.azurewebsites.net/api/Addresses/get-addresses',
+          {
+            identifier: inputValue,
+            recordCount: 1000,
+          }
+        );
+
+        if (response.data && response.data.status === 'Success') {
+          setAddresses(response.data.dataList || []);
+        } else {
+          console.error('Error fetching addresses data');
+        }
+      } catch (error) {
+        console.error('Error fetching addresses data', error);
+      }
+    };
+
+    if (inputValue !== '') {
+      fetchAddresses();
+    } else {
+      setAddresses([]); 
+    }
+  }, [inputValue]);
 const saveEntityAddress = async () => {
 	try {
 	  const response = await axios.post('https://dev-api-iis-sigmacloud.azurewebsites.net/api/Addresses/create-entity-addresses', {

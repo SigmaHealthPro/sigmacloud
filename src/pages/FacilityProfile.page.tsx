@@ -11,6 +11,7 @@ import Subheader, {
 	SubheaderLeft,
 	SubheaderRight,
 } from '../components/layouts/Subheader/Subheader';
+import {TAB, TTab,TTabs, TColors} from '../constants/facilitypage.constants';
 import Card, { CardBody, CardFooter, CardFooterChild } from '../components/ui/Card';
 import Button, { IButtonProps } from '../components/ui/Button';
 import Label from '../components/form/Label';
@@ -21,19 +22,42 @@ import Avatar from '../components/Avatar';
 import useSaveBtn from '../hooks/useSaveBtn';
 import FieldWrap from '../components/form/FieldWrap';
 import Icon from '../components/icon/Icon';
-import Badge from '../components/ui/Badge';
-import useDarkMode from '../hooks/useDarkMode';
-import { TDarkMode } from '../types/darkMode.type';
-import { makeStyles } from '@mui/styles';
-import Alert from '../components/ui/Alert';
+
 import Providers from './Facility Management/Providers/Providers.page';
 import EventsPage from './Facility Management/Events/EventsPage';
-import {TAB, TTab,TTabs, TColors} from '../constants/facilitypage.constants';
+
 import SitesPage from './Facility Management/Sites/SitesPage';
 import AddressPage from './Facility Management/Address/AddressPage';
 import ContactPage  from './Facility Management/Contact/ContactPage';
 
-export const useStyles = makeStyles({
+
+import { TIcons } from '../types/icons.type';
+
+import Checkbox from '../components/form/Checkbox';
+import Badge from '../components/ui/Badge';
+import RichText from '../components/RichText';
+import Radio, { RadioGroup } from '../components/form/Radio';
+import useDarkMode from '../hooks/useDarkMode';
+import { TDarkMode } from '../types/darkMode.type';
+import Box from '@mui/material/Box';
+import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import { makeStyles } from '@mui/styles';
+import axios from 'axios';
+import { MoreVert as MoreVertIcon, Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
+import { Button as AntButton, Popconfirm, Space } from 'antd';
+import { EditOutlined, DeleteOutlined, MoreOutlined } from '@ant-design/icons';
+import { GridCellParams,GridRowParams } from '@mui/x-data-grid';
+import Modal, { ModalHeader, ModalBody, ModalFooter, ModalFooterChild } from '../components/ui/Modal';
+import Autocomplete from '@mui/material/Autocomplete';
+import TextField from '@mui/material/TextField';
+import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
+import PlacesAutocomplete, {geocodeByAddress,getLatLng,} from 'react-places-autocomplete';
+import Alert from '../components/ui/Alert';
+
+
+
+
+const useStyles = makeStyles({
     root: {
         // Increase specificity by repeating the class
         '& .MuiDataGrid-columnHeaderTitleContainer.MuiDataGrid-columnHeaderTitleContainer .MuiDataGrid-menuIcon, .MuiDataGrid-columnHeaderTitleContainer.MuiDataGrid-columnHeaderTitleContainer .MuiDataGrid-sortIcon': {
@@ -44,17 +68,24 @@ export const useStyles = makeStyles({
         },
     },
 });
+
+
+
 const FacilityProfile = () => {
-		
+	
 	const classes = useStyles();
+	const [entityAddressmodalStatus, entityAddresssetModalStatus] = useState<boolean>(false);
+	const [addressmodalStatus, addresssetModalStatus] = useState<boolean>(false);
 	const [showAlert, setShowAlert] = useState(false);
-	const [alertMessage, setAlertMessage] = useState('');
-	const [alertColor, setAlertColor] = useState<TColors>(TColors.Red);
-	const [alertTitle, setAlertTitle] = useState('');
-	const { id } = useParams();
-	const [facilityId, setFacilityId] = useState<string | null>(null); // Initialize facilityId state variable
-	const navigation = useNavigate();
-	const fetchContactData = async () => {
+	const [entityContactmodalStatus, setEntityContactmodalStatus] = useState<boolean>(false);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertColor, setAlertColor] = useState<TColors>(TColors.Red);
+  const [alertTitle, setAlertTitle] = useState('');
+  
+  const { id } = useParams();
+  const [facilityId, setFacilityId] = useState<string | null>(null); // Initialize facilityId state variable
+  const navigation = useNavigate();
+
 	const { i18n } = useTranslation();
 	const { setDarkModeStatus } = useDarkMode();
 	const { userData, isLoading } = useAuth();
@@ -78,9 +109,11 @@ const FacilityProfile = () => {
     const timeoutId = setTimeout(() => {
       setShowAlert(false);
     }, 10000);
-	return () => clearTimeout(timeoutId);
+
+
+    return () => clearTimeout(timeoutId);
   }, [showAlert]);
-	
+
 	
 	
 
@@ -141,6 +174,7 @@ const FacilityProfile = () => {
 		isSaving,
 		isDirty: formik.dirty,
 	});
+
 
 	return (
 		<PageWrapper name={formik.values.firstName}>
@@ -365,8 +399,6 @@ const FacilityProfile = () => {
 								{activeTab === TAB.Sites && <SitesPage id={facilityId} classes={classes} />}
 								{activeTab === TAB.Providers && <Providers classes={classes} />}
 								{activeTab === TAB.Events && <EventsPage classes={classes}/>}
-
-
 								
 							</div>
 						</div>
@@ -395,6 +427,5 @@ const FacilityProfile = () => {
 		</PageWrapper>
 	);
 };
-}
-export default FacilityProfile;
 
+export default FacilityProfile;

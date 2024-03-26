@@ -1,5 +1,5 @@
 
-import { useStyles } from '../../FacilityProfile.page';
+
 
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 import { useEffect, useState } from "react";
@@ -41,6 +41,8 @@ const contactNumberColumns: GridColDef[] = [
   { field: 'createdBy', headerName: 'Created By', flex: 1 },
   { field: 'contactType', headerName: 'Contact Type', flex: 1 },
 ];
+
+
 const fetchContactData = async () => {
     try {
       const response = await axios.post('https://dev-api-iis-sigmacloud.azurewebsites.net/api/Contact/get-entity-contact', {
@@ -79,7 +81,7 @@ const fetchContactData = async () => {
             fontWeight: 'bold',
         },}}
             />
-            <AddContacts/>
+            
             </div>
 </>
   )
