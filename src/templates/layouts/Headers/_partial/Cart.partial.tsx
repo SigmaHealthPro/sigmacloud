@@ -486,7 +486,7 @@ const CartPartial: React.FC = () => {
 				{data.length}
 				<span className='relative inline-flex h-3 w-3'></span>
 			</span>
-			<Modal isOpen={isOpen} setIsOpen={setIsOpen} size={'lg'}>
+			<Modal isOpen={isOpen} setIsOpen={setIsOpen} size={'xl'}>
 				<ModalHeader setIsOpen={setIsOpen}>{'Checkout'}</ModalHeader>
 				<ModalBody>
 					<div className='grid grid-cols-12 gap-16'>
@@ -515,905 +515,1045 @@ const CartPartial: React.FC = () => {
 							</Label>
 						</div>
 					</div>
+					<div
+						className='grid grid-cols-12 gap-16'
+						style={{
+							marginBottom: '15px',
+						}}></div>
+					<div className='popup-container'>
+						<div
+							className='accordion-buttons'
+							style={{
+								marginLeft: '60px',
+								width: '580px',
+							}}>
+							<Button
+								icon='HeroShoppingCart'
+								rightIcon='HeroShoppingCart'
+								onClick={() => toggleAccordion('showItems')}
+								variant='outline'
+								style={{
+									marginBottom: '4px',
+									textAlign: 'left',
+								}}>
+								Cart Items
+							</Button>
+							<Collapse isOpen={accordionState.showItems}>
+								{accordionState.showItems && (
+									<div className='collapse-content'>
+										{data.length > 0 &&
+											data.map((item) => (
+												<div key={item.productid}>
+													<div className='listsummary-content'>
+														<div className='grid-item-information'>
+															<div className='font-bold'>
+																<Label
+																	className='item-product'
+																	htmlFor='ProductName'>
+																	{item.product}
+																</Label>
+															</div>
+															<div>
+																<span>
+																	<Avatar
+																		className='image-display'
+																		src='https://i.ebayimg.com/00/s/MTYwMFgxMTcz/z/5gwAAOSwfEVk-6CG/$_57.JPG?set_id=880000500F'></Avatar>
+																	<span>
+																		<Label
+																			className='grid-item-quantity'
+																			htmlFor='Quantity'>
+																			<QuantityUpdater
+																				rowId={
+																					item.productid
+																				}
+																				defaultValue={parseInt(
+																					item.quantity,
+																				)}
+																				step={1}
+																				min={0}
+																				max={999}
+																			/>
+																		</Label>
+																		<Label
+																			className='grid-item-price'
+																			htmlFor='price'>
+																			Price: {item.price}
+																		</Label>
+																	</span>
+																</span>
+															</div>
 
-					<div className='accordion-buttons'>
-						<Button
-							icon='HeroShoppingCart'
-							rightIcon='HeroShoppingCart'
-							onClick={() => toggleAccordion('showItems')}
-							variant='outline'
-							style={{ marginBottom: '10px', textAlign: 'left' }}>
-							Shopping Cart Items
-						</Button>
-						<Collapse isOpen={accordionState.showItems}>
-							{accordionState.showItems && (
-								<div className='collapse-content'>
-									{data.length > 0 &&
-										data.map((item) => (
-											<div key={item.productid}>
-												<div className='listsummary-content'>
-													<div className='grid-item-information'>
-														<div className='font-bold'>
 															<Label
-																className='item-product'
-																htmlFor='ProductName'>
-																{item.product}
+																className='item-vaccine'
+																htmlFor='VaccineName'>
+																Vaccine: {item.vaccine}
+															</Label>
+															<Label
+																className='item-manufacturer'
+																htmlFor='ManufacturerName'>
+																Manufacturer: {item.manufacturer}
 															</Label>
 														</div>
-														<div>
-															<span>
-																<Avatar
-																	className='image-display'
-																	src='https://i.ebayimg.com/00/s/MTYwMFgxMTcz/z/5gwAAOSwfEVk-6CG/$_57.JPG?set_id=880000500F'></Avatar>
-																<span>
-																	<Label
-																		className='grid-item-quantity'
-																		htmlFor='Quantity'>
-																		<QuantityUpdater
-																			rowId={item.productid}
-																			defaultValue={parseInt(
-																				item.quantity,
-																			)}
-																			step={1}
-																			min={0}
-																			max={999}
-																		/>
-																	</Label>
-																	<Label
-																		className='grid-item-price'
-																		htmlFor='price'>
-																		Price: {item.price}
-																	</Label>
-																</span>
-															</span>
-														</div>
-
-														<Label
-															className='item-vaccine'
-															htmlFor='VaccineName'>
-															Vaccine: {item.vaccine}
-														</Label>
-														<Label
-															className='item-manufacturer'
-															htmlFor='ManufacturerName'>
-															Manufacturer: {item.manufacturer}
-														</Label>
 													</div>
 												</div>
-											</div>
-										))}
-								</div>
-							)}
-						</Collapse>
-						<Button
-							icon='HeroAtSymbol'
-							rightIcon='HeroAtSymbol'
-							onClick={() => toggleAccordion('showBillingAddress')}
-							variant='outline'
-							style={{ marginBottom: '10px', textAlign: 'left' }}>
-							Billing Address
-						</Button>
-						<Collapse isOpen={accordionState.showBillingAddress}>
-							{accordionState.showBillingAddress && (
-								<div className='collapse-content'>
-									<div
-										className='existing-address'
-										style={{
-											display: showChangeAddress ? 'none' : 'block',
-											color: 'orangered',
-										}}>
-										<div key={existingAddress?.id}>
-											<p>{localStorage.getItem('loggedinname')}</p>
-											<p>
-												{existingAddress?.suite}
-												{'#'}
-
-												{existingAddress?.line2}
-											</p>
-											<p>{existingAddress?.line1}</p>
-
-											<p>{existingAddress?.cityname}</p>
-											<p>{existingAddress?.countyname}</p>
-											<p>
-												{existingAddress?.statename}{' '}
-												{existingAddress?.zipCode}
-											</p>
-											<p>{existingAddress?.countryname}</p>
-										</div>
+											))}
 									</div>
-									<div
-										className='change-address'
-										style={{ display: showChangeAddress ? 'block' : 'none' }}>
+								)}
+							</Collapse>
+							<Button
+								icon='HeroAtSymbol'
+								rightIcon='HeroAtSymbol'
+								onClick={() => toggleAccordion('showBillingAddress')}
+								variant='outline'
+								style={{
+									marginBottom: '4px',
+									textAlign: 'left',
+								}}>
+								Shipping Address
+							</Button>
+							<Collapse isOpen={accordionState.showBillingAddress}>
+								{accordionState.showBillingAddress && (
+									<div className='collapse-content'>
+										<div
+											className='existing-address'
+											style={{
+												display: showChangeAddress ? 'none' : 'block',
+												color: 'orangered',
+											}}>
+											<div key={existingAddress?.id}>
+												<p>{localStorage.getItem('loggedinname')}</p>
+												<p>
+													{existingAddress?.suite}
+													{'#'}
+
+													{existingAddress?.line2}
+												</p>
+												<p>{existingAddress?.line1}</p>
+
+												<p>{existingAddress?.cityname}</p>
+												<p>{existingAddress?.countyname}</p>
+												<p>
+													{existingAddress?.statename}{' '}
+													{existingAddress?.zipCode}
+												</p>
+												<p>{existingAddress?.countryname}</p>
+											</div>
+										</div>
+										<div
+											className='change-address'
+											style={{
+												display: showChangeAddress ? 'block' : 'none',
+											}}>
+											<div className='grid grid-cols-12 gap-4'>
+												<div className='col-span-12 lg:col-span-6'>
+													<Label htmlFor='country'>Country</Label>
+													<Validation
+														isValid={formik.isValid}
+														isTouched={formik.touched?.Address?.Country}
+														invalidFeedback={
+															formik.errors?.Address?.Country
+														}
+														validFeedback='Good'>
+														<FieldWrap
+															style={{ color: 'black' }}
+															lastSuffix={
+																<Icon
+																	icon='HeroChevronDown'
+																	className='mx-2'
+																/>
+															}>
+															<Select
+																id='country'
+																name='Address.Country'
+																style={{ color: 'black' }}
+																value={
+																	formik.values.Address.Country ||
+																	existingAddress?.countryid
+																}
+																onChange={(event) => {
+																	formik.handleChange(event);
+																	formik.setFieldValue(
+																		'Address.Countryid',
+																		event.target.value,
+																	);
+																	event.target.value;
+																	handleState(event.target.value);
+																}}
+																onBlur={formik.handleBlur}
+																placeholder='Select Country'>
+																{countryData?.map(
+																	(country: any) => (
+																		<option
+																			style={{
+																				color: 'black',
+																			}}
+																			id={country?.id}
+																			key={country?.id}
+																			value={country?.id}>
+																			{country?.countryName}
+																		</option>
+																	),
+																)}
+															</Select>
+														</FieldWrap>
+													</Validation>
+												</div>
+												<div className='col-span-12 lg:col-span-6'>
+													<Label htmlFor='address'>Street Address</Label>
+													<Validation
+														isValid={formik.isValid}
+														isTouched={
+															formik.touched.Address
+																? formik.touched.Address.Line1
+																: undefined
+														}
+														invalidFeedback={
+															formik.errors.Address
+																? formik.errors.Address.Line1
+																: undefined
+														}
+														validFeedback='Good'>
+														<Input
+															id='Line1'
+															name='Address.Line1'
+															onChange={formik.handleChange}
+															value={
+																formik.values.Address.Line1 ||
+																existingAddress?.line1
+															}
+															onBlur={formik.handleBlur}
+														/>
+													</Validation>
+												</div>
+												<div className='col-span-12 lg:col-span-6'>
+													<Label htmlFor='addressline2'>
+														Street Address line2
+													</Label>
+													<Validation
+														isValid={formik.isValid}
+														isTouched={
+															formik.touched.Address
+																? formik.touched.Address.Line2
+																: undefined
+														}
+														invalidFeedback={
+															formik.errors.Address
+																? formik.errors.Address.Line2
+																: undefined
+														}
+														validFeedback='Good'>
+														<Input
+															id='Line2'
+															name='Address.Line2'
+															onChange={formik.handleChange}
+															value={
+																formik.values.Address.Line2 ||
+																existingAddress?.line2
+															}
+															onBlur={formik.handleBlur}
+														/>
+													</Validation>
+												</div>
+												<div className='col-span-12 lg:col-span-6'>
+													<Label htmlFor='suite'>Apt/Suite/Other</Label>
+													<Validation
+														isValid={formik.isValid}
+														isTouched={
+															formik.touched.Address
+																? formik.touched.Address.Suite
+																: undefined
+														}
+														invalidFeedback={
+															formik.errors.Address
+																? formik.errors.Address.Suite
+																: undefined
+														}
+														validFeedback='Good'>
+														<Input
+															id='Suite'
+															name='Address.Suite'
+															onChange={formik.handleChange}
+															value={
+																formik.values.Address.Suite ||
+																existingAddress?.suite
+															}
+															onBlur={formik.handleBlur}
+														/>
+													</Validation>
+												</div>
+												<div className='col-span-12 lg:col-span-6'>
+													<Label htmlFor='state'>State</Label>
+													<Validation
+														isValid={formik.isValid}
+														isTouched={formik.touched?.Address?.State}
+														invalidFeedback={
+															formik.errors.Address?.State
+														}
+														validFeedback='Good'>
+														<FieldWrap
+															style={{ color: 'black' }}
+															lastSuffix={
+																<Icon
+																	icon='HeroChevronDown'
+																	className='mx-2'
+																/>
+															}>
+															<Select
+																id='state'
+																name='Address.State'
+																style={{ color: 'black' }}
+																value={
+																	formik.values.Address.State ||
+																	existingAddress?.stateid
+																}
+																onChange={(event) => {
+																	formik.handleChange(event);
+																	formik.setFieldValue(
+																		'Address.Stateid',
+																		event.target.value,
+																	);
+																	selectedstateid =
+																		event.target.value;
+																	handleCounty(
+																		event.target.value,
+																	);
+																}}
+																onBlur={formik.handleBlur}
+																placeholder='Select State'>
+																{/* <option value={''}> Select</option> */}
+																{filteredState?.map(
+																	(state: any) => (
+																		<option
+																			style={{
+																				color: 'black',
+																			}}
+																			id={state?.id}
+																			key={state?.id}
+																			value={state?.id}>
+																			{state?.stateName}
+																		</option>
+																	),
+																)}
+															</Select>
+														</FieldWrap>
+													</Validation>
+												</div>
+												<div className='col-span-12 lg:col-span-6'>
+													<Label htmlFor='county'>County</Label>
+													<Validation
+														isValid={formik.isValid}
+														isTouched={formik.touched.Address?.County}
+														invalidFeedback={
+															formik.errors.Address?.County
+														}
+														validFeedback='Good'>
+														<FieldWrap
+															style={{ color: 'black' }}
+															lastSuffix={
+																<Icon
+																	icon='HeroChevronDown'
+																	className='mx-2'
+																/>
+															}>
+															<Select
+																id='county'
+																name='Address.County'
+																style={{ color: 'black' }}
+																value={
+																	formik.values.Address.County ||
+																	existingAddress?.countyid
+																}
+																onChange={(event) => {
+																	formik.handleChange(event);
+																	formik.setFieldValue(
+																		'Address.Countyid',
+																		event.target.value,
+																	);
+
+																	handleCity(
+																		formik.values.Address.State,
+																		event.target.value,
+																	); // Pass both state and county
+																}}
+																onBlur={formik.handleBlur}
+																placeholder='Select County'>
+																{/* <option value={''}> Select</option> */}
+																{filteredCounty?.map(
+																	(county: any) => (
+																		<option
+																			style={{
+																				color: 'black',
+																			}}
+																			id={county?.id}
+																			key={county?.id}
+																			value={county?.id}>
+																			{county?.countyName}
+																		</option>
+																	),
+																)}
+															</Select>
+														</FieldWrap>
+													</Validation>
+												</div>
+												<div className='col-span-12 lg:col-span-6'>
+													<Label htmlFor='city'>City</Label>
+
+													<Validation
+														isValid={formik.isValid}
+														isTouched={formik.touched.Address?.City}
+														invalidFeedback={
+															formik.errors.Address?.City
+														}
+														validFeedback='Good'>
+														<FieldWrap
+															style={{ color: 'black' }}
+															lastSuffix={
+																<Icon
+																	icon='HeroChevronDown'
+																	className='mx-2'
+																/>
+															}>
+															<Select
+																id='city'
+																name='Address.City'
+																style={{ color: 'black' }}
+																value={
+																	formik.values.Address.City ||
+																	existingAddress?.cityid
+																}
+																onChange={(event) => {
+																	formik.handleChange(event);
+																	formik.setFieldValue(
+																		'Address.Cityid',
+																		event.target.value,
+																	);
+																}}
+																onBlur={formik.handleBlur}
+																placeholder='Select City'>
+																{/* <option value={''}> Select</option> */}
+																{filteredCity?.map((city: any) => (
+																	<option
+																		style={{
+																			color: 'black',
+																		}}
+																		id={city?.id}
+																		key={city?.id}
+																		value={city?.id}>
+																		{city?.cityName}
+																	</option>
+																))}
+															</Select>
+														</FieldWrap>
+													</Validation>
+												</div>
+												<div className='col-span-12 lg:col-span-6'>
+													<Label htmlFor='zipcode'>Zip Code</Label>
+													<Validation
+														isValid={formik.isValid}
+														isTouched={
+															formik.touched.Address
+																? formik.touched.Address.ZipCode
+																: undefined
+														}
+														invalidFeedback={
+															formik.errors.Address
+																? formik.errors.Address.ZipCode
+																: undefined
+														}
+														validFeedback='Good'>
+														<Input
+															id='zipcode'
+															name='Address.ZipCode'
+															onChange={formik.handleChange}
+															value={
+																formik.values.Address.ZipCode ||
+																existingAddress?.zipCode
+															}
+															onBlur={formik.handleBlur}
+														/>
+													</Validation>
+												</div>
+											</div>
+										</div>
+										<Button
+											onClick={toggleAddressSection}
+											variant='outline'
+											style={{ marginBottom: '10px', textAlign: 'left' }}>
+											{showChangeAddress ? 'Cancel' : 'Change Address'}
+										</Button>
+									</div>
+								)}
+							</Collapse>
+
+							<Button
+								icon='HeroCreditCard'
+								rightIcon='HeroCreditCard'
+								onClick={() => toggleAccordion('showPaymentInfo')}
+								variant='outline'
+								style={{
+									marginBottom: '4px',
+									textAlign: 'left',
+								}}>
+								Payment Information
+							</Button>
+							<Collapse isOpen={accordionState.showPaymentInfo}>
+								{accordionState.showPaymentInfo && (
+									<div className='collapse-content'>
 										<div className='grid grid-cols-12 gap-4'>
 											<div className='col-span-12 lg:col-span-6'>
-												<Label htmlFor='country'>Country</Label>
-												<Validation
-													isValid={formik.isValid}
-													isTouched={formik.touched?.Address?.Country}
-													invalidFeedback={
-														formik.errors?.Address?.Country
-													}
-													validFeedback='Good'>
-													<FieldWrap
-														style={{ color: 'black' }}
-														lastSuffix={
-															<Icon
-																icon='HeroChevronDown'
-																className='mx-2'
-															/>
-														}>
-														<Select
-															id='country'
-															name='Address.Country'
-															style={{ color: 'black' }}
-															value={
-																formik.values.Address.Country ||
-																existingAddress?.countryid
-															}
-															onChange={(event) => {
-																formik.handleChange(event);
-																formik.setFieldValue(
-																	'Address.Countryid',
-																	event.target.value,
-																);
-																event.target.value;
-																handleState(event.target.value);
-															}}
-															onBlur={formik.handleBlur}
-															placeholder='Select Country'>
-															{countryData?.map((country: any) => (
-																<option
-																	style={{ color: 'black' }}
-																	id={country?.id}
-																	key={country?.id}
-																	value={country?.id}>
-																	{country?.countryName}
-																</option>
-															))}
-														</Select>
-													</FieldWrap>
-												</Validation>
+												<Label htmlFor='Cardnumber'>Card Number</Label>
+												<Input
+													id='cardno'
+													name='cardnumber'
+													value={'Credit/Debit number'}></Input>
 											</div>
+											<div className='col-span-12 lg:col-span-6'></div>
 											<div className='col-span-12 lg:col-span-6'>
-												<Label htmlFor='address'>Street Address</Label>
-												<Validation
-													isValid={formik.isValid}
-													isTouched={
-														formik.touched.Address
-															? formik.touched.Address.Line1
-															: undefined
-													}
-													invalidFeedback={
-														formik.errors.Address
-															? formik.errors.Address.Line1
-															: undefined
-													}
-													validFeedback='Good'>
-													<Input
-														id='Line1'
-														name='Address.Line1'
-														onChange={formik.handleChange}
-														value={
-															formik.values.Address.Line1 ||
-															existingAddress?.line1
-														}
-														onBlur={formik.handleBlur}
-													/>
-												</Validation>
+												Card Expiration Date
 											</div>
-											<div className='col-span-12 lg:col-span-6'>
-												<Label htmlFor='addressline2'>
-													Street Address line2
+											<div className='col-span-12 lg:col-span-6'></div>
+											<div className='col-span-12 lg:col-span-4'>
+												<Label htmlFor='month'>Month</Label>
+												<MonthPicker />
+											</div>
+											<div className='col-span-12 lg:col-span-4'>
+												<Label htmlFor='year'>Year</Label>
+												<YearPicker
+													selectedYear={selectedYear}
+													handleYearChange={handleYearChange}
+												/>
+											</div>
+											<div className='col-span-12 lg:col-span-3'>
+												<Label htmlFor='securitycode'>Security Code</Label>
+												<Input id='cvv' name='cvv' value={'CVV'}></Input>
+											</div>
+										</div>
+									</div>
+								)}
+							</Collapse>
+
+							<Button
+								icon='HeroTruck'
+								rightIcon='HeroTruck'
+								onClick={() => toggleAccordion('showShippingDetails')}
+								variant='outline'
+								style={{
+									marginBottom: '4px',
+
+									textAlign: 'left',
+								}}>
+								Shipping Details
+							</Button>
+							<Collapse isOpen={accordionState.showShippingDetails}>
+								{accordionState.showShippingDetails && (
+									<div className='collapse-content'>
+										<div className='grid grid-cols-12 gap-4'>
+											<div className='col-span-12 lg:col-span-3'>
+												<Label htmlFor={`shipment_date`}>
+													Shipment Date:
 												</Label>
 												<Validation
 													isValid={formik.isValid}
 													isTouched={
-														formik.touched.Address
-															? formik.touched.Address.Line2
+														formik.touched.Shiping
+															? formik.touched.Shiping?.ShipmentDate
 															: undefined
 													}
 													invalidFeedback={
-														formik.errors.Address
-															? formik.errors.Address.Line2
+														formik.errors.Shiping
+															? formik.errors.Shiping.ShipmentDate
 															: undefined
 													}
 													validFeedback='Good'>
 													<Input
-														id='Line2'
-														name='Address.Line2'
+														type='date'
+														id='ShipmentDate'
+														name='Shiping.ShipmentDate'
 														onChange={formik.handleChange}
-														value={
-															formik.values.Address.Line2 ||
-															existingAddress?.line2
-														}
+														value={formik.values.Shiping.ShipmentDate}
 														onBlur={formik.handleBlur}
+														style={{ width: '120px' }}
 													/>
 												</Validation>
 											</div>
-											<div className='col-span-12 lg:col-span-6'>
-												<Label htmlFor='suite'>Apt/Suite/Other</Label>
+											<div className='col-span-12 lg:col-span-2'>
+												<Label htmlFor='packagesize'>Package Size</Label>
 												<Validation
 													isValid={formik.isValid}
 													isTouched={
-														formik.touched.Address
-															? formik.touched.Address.Suite
+														formik.touched.Shiping
+															? formik.touched.Shiping?.PackageSize
 															: undefined
 													}
 													invalidFeedback={
-														formik.errors.Address
-															? formik.errors.Address.Suite
+														formik.errors.Shiping
+															? formik.errors.Shiping.PackageSize
 															: undefined
 													}
 													validFeedback='Good'>
 													<Input
-														id='Suite'
-														name='Address.Suite'
+														id='packagesize'
+														name='Shiping.PackageSize'
 														onChange={formik.handleChange}
-														value={
-															formik.values.Address.Suite ||
-															existingAddress?.suite
-														}
+														value={formik.values.Shiping.PackageSize}
 														onBlur={formik.handleBlur}
+														style={{ width: '70px' }}
 													/>
 												</Validation>
 											</div>
-											<div className='col-span-12 lg:col-span-6'>
-												<Label htmlFor='state'>State</Label>
-												<Validation
-													isValid={formik.isValid}
-													isTouched={formik.touched?.Address?.State}
-													invalidFeedback={formik.errors.Address?.State}
-													validFeedback='Good'>
-													<FieldWrap
-														style={{ color: 'black' }}
-														lastSuffix={
-															<Icon
-																icon='HeroChevronDown'
-																className='mx-2'
-															/>
-														}>
-														<Select
-															id='state'
-															name='Address.State'
-															style={{ color: 'black' }}
-															value={
-																formik.values.Address.State ||
-																existingAddress?.stateid
-															}
-															onChange={(event) => {
-																formik.handleChange(event);
-																formik.setFieldValue(
-																	'Address.Stateid',
-																	event.target.value,
-																);
-																selectedstateid =
-																	event.target.value;
-																handleCounty(event.target.value);
-															}}
-															onBlur={formik.handleBlur}
-															placeholder='Select State'>
-															{/* <option value={''}> Select</option> */}
-															{filteredState?.map((state: any) => (
-																<option
-																	style={{
-																		color: 'black',
-																	}}
-																	id={state?.id}
-																	key={state?.id}
-																	value={state?.id}>
-																	{state?.stateName}
-																</option>
-															))}
-														</Select>
-													</FieldWrap>
-												</Validation>
-											</div>
-											<div className='col-span-12 lg:col-span-6'>
-												<Label htmlFor='county'>County</Label>
-												<Validation
-													isValid={formik.isValid}
-													isTouched={formik.touched.Address?.County}
-													invalidFeedback={formik.errors.Address?.County}
-													validFeedback='Good'>
-													<FieldWrap
-														style={{ color: 'black' }}
-														lastSuffix={
-															<Icon
-																icon='HeroChevronDown'
-																className='mx-2'
-															/>
-														}>
-														<Select
-															id='county'
-															name='Address.County'
-															style={{ color: 'black' }}
-															value={
-																formik.values.Address.County ||
-																existingAddress?.countyid
-															}
-															onChange={(event) => {
-																formik.handleChange(event);
-																formik.setFieldValue(
-																	'Address.Countyid',
-																	event.target.value,
-																);
-
-																handleCity(
-																	formik.values.Address.State,
-																	event.target.value,
-																); // Pass both state and county
-															}}
-															onBlur={formik.handleBlur}
-															placeholder='Select County'>
-															{/* <option value={''}> Select</option> */}
-															{filteredCounty?.map((county: any) => (
-																<option
-																	style={{
-																		color: 'black',
-																	}}
-																	id={county?.id}
-																	key={county?.id}
-																	value={county?.id}>
-																	{county?.countyName}
-																</option>
-															))}
-														</Select>
-													</FieldWrap>
-												</Validation>
-											</div>
-											<div className='col-span-12 lg:col-span-6'>
-												<Label htmlFor='city'>City</Label>
-
-												<Validation
-													isValid={formik.isValid}
-													isTouched={formik.touched.Address?.City}
-													invalidFeedback={formik.errors.Address?.City}
-													validFeedback='Good'>
-													<FieldWrap
-														style={{ color: 'black' }}
-														lastSuffix={
-															<Icon
-																icon='HeroChevronDown'
-																className='mx-2'
-															/>
-														}>
-														<Select
-															id='city'
-															name='Address.City'
-															style={{ color: 'black' }}
-															value={
-																formik.values.Address.City ||
-																existingAddress?.cityid
-															}
-															onChange={(event) => {
-																formik.handleChange(event);
-																formik.setFieldValue(
-																	'Address.Cityid',
-																	event.target.value,
-																);
-															}}
-															onBlur={formik.handleBlur}
-															placeholder='Select City'>
-															{/* <option value={''}> Select</option> */}
-															{filteredCity?.map((city: any) => (
-																<option
-																	style={{
-																		color: 'black',
-																	}}
-																	id={city?.id}
-																	key={city?.id}
-																	value={city?.id}>
-																	{city?.cityName}
-																</option>
-															))}
-														</Select>
-													</FieldWrap>
-												</Validation>
-											</div>
-											<div className='col-span-12 lg:col-span-6'>
-												<Label htmlFor='zipcode'>Zip Code</Label>
+											<div className='col-span-12 lg:col-span-2'>
+												<Label htmlFor='packagelength'>
+													Package length
+												</Label>
 												<Validation
 													isValid={formik.isValid}
 													isTouched={
-														formik.touched.Address
-															? formik.touched.Address.ZipCode
+														formik.touched.Shiping
+															? formik.touched.Shiping?.PackageLength
 															: undefined
 													}
 													invalidFeedback={
-														formik.errors.Address
-															? formik.errors.Address.ZipCode
+														formik.errors.Shiping
+															? formik.errors.Shiping.PackageLength
 															: undefined
 													}
 													validFeedback='Good'>
 													<Input
-														id='zipcode'
-														name='Address.ZipCode'
+														id='packagelength'
+														name='Shiping.PackageLength'
 														onChange={formik.handleChange}
-														value={
-															formik.values.Address.ZipCode ||
-															existingAddress?.zipCode
-														}
+														value={formik.values.Shiping.PackageLength}
 														onBlur={formik.handleBlur}
+														style={{ width: '70px' }}
 													/>
 												</Validation>
 											</div>
-										</div>
-									</div>
-									<Button
-										onClick={toggleAddressSection}
-										variant='outline'
-										style={{ marginBottom: '10px', textAlign: 'left' }}>
-										{showChangeAddress ? 'Cancel' : 'Change Address'}
-									</Button>
-								</div>
-							)}
-						</Collapse>
-
-						<Button
-							icon='HeroCreditCard'
-							rightIcon='HeroCreditCard'
-							onClick={() => toggleAccordion('showPaymentInfo')}
-							variant='outline'
-							style={{ marginBottom: '10px', textAlign: 'left' }}>
-							Payment Information
-						</Button>
-						<Collapse isOpen={accordionState.showPaymentInfo}>
-							{accordionState.showPaymentInfo && (
-								<div className='collapse-content'>
-									<div className='grid grid-cols-12 gap-4'>
-										<div className='col-span-12 lg:col-span-6'>
-											<Label htmlFor='Cardnumber'>Card Number</Label>
-											<Input
-												id='cardno'
-												name='cardnumber'
-												value={'Credit/Debit number'}></Input>
-										</div>
-										<div className='col-span-12 lg:col-span-6'></div>
-										<div className='col-span-12 lg:col-span-6'>
-											Card Expiration Date
-										</div>
-										<div className='col-span-12 lg:col-span-6'></div>
-										<div className='col-span-12 lg:col-span-4'>
-											<Label htmlFor='month'>Month</Label>
-											<MonthPicker />
-										</div>
-										<div className='col-span-12 lg:col-span-4'>
-											<Label htmlFor='year'>Year</Label>
-											<YearPicker
-												selectedYear={selectedYear}
-												handleYearChange={handleYearChange}
-											/>
-										</div>
-										<div className='col-span-12 lg:col-span-3'>
-											<Label htmlFor='securitycode'>Security Code</Label>
-											<Input id='cvv' name='cvv' value={'CVV'}></Input>
-										</div>
-									</div>
-								</div>
-							)}
-						</Collapse>
-
-						<Button
-							icon='HeroTruck'
-							rightIcon='HeroTruck'
-							onClick={() => toggleAccordion('showShippingDetails')}
-							variant='outline'
-							style={{ marginBottom: '10px', textAlign: 'left' }}>
-							Shipping Details
-						</Button>
-						<Collapse isOpen={accordionState.showShippingDetails}>
-							{accordionState.showShippingDetails && (
-								<div className='collapse-content'>
-									<div className='grid grid-cols-12 gap-4'>
-										<div className='col-span-12 lg:col-span-3'>
-											<Label htmlFor={`shipment_date`}>Shipment Date:</Label>
-											<Validation
-												isValid={formik.isValid}
-												isTouched={
-													formik.touched.Shiping
-														? formik.touched.Shiping?.ShipmentDate
-														: undefined
-												}
-												invalidFeedback={
-													formik.errors.Shiping
-														? formik.errors.Shiping.ShipmentDate
-														: undefined
-												}
-												validFeedback='Good'>
-												<Input
-													type='date'
-													id='ShipmentDate'
-													name='Shiping.ShipmentDate'
-													onChange={formik.handleChange}
-													value={formik.values.Shiping.ShipmentDate}
-													onBlur={formik.handleBlur}
-													style={{ width: '120px' }}
-												/>
-											</Validation>
-										</div>
-										<div className='col-span-12 lg:col-span-2'>
-											<Label htmlFor='packagesize'>Package Size</Label>
-											<Validation
-												isValid={formik.isValid}
-												isTouched={
-													formik.touched.Shiping
-														? formik.touched.Shiping?.PackageSize
-														: undefined
-												}
-												invalidFeedback={
-													formik.errors.Shiping
-														? formik.errors.Shiping.PackageSize
-														: undefined
-												}
-												validFeedback='Good'>
-												<Input
-													id='packagesize'
-													name='Shiping.PackageSize'
-													onChange={formik.handleChange}
-													value={formik.values.Shiping.PackageSize}
-													onBlur={formik.handleBlur}
-													style={{ width: '70px' }}
-												/>
-											</Validation>
-										</div>
-										<div className='col-span-12 lg:col-span-2'>
-											<Label htmlFor='packagelength'>Package length</Label>
-											<Validation
-												isValid={formik.isValid}
-												isTouched={
-													formik.touched.Shiping
-														? formik.touched.Shiping?.PackageLength
-														: undefined
-												}
-												invalidFeedback={
-													formik.errors.Shiping
-														? formik.errors.Shiping.PackageLength
-														: undefined
-												}
-												validFeedback='Good'>
-												<Input
-													id='packagelength'
-													name='Shiping.PackageLength'
-													onChange={formik.handleChange}
-													value={formik.values.Shiping.PackageLength}
-													onBlur={formik.handleBlur}
-													style={{ width: '70px' }}
-												/>
-											</Validation>
-										</div>
-										<div className='col-span-12 lg:col-span-2'>
-											<Label htmlFor='packagewidth'>Package width</Label>
-											<Validation
-												isValid={formik.isValid}
-												isTouched={
-													formik.touched.Shiping
-														? formik.touched.Shiping?.PackageWidth
-														: undefined
-												}
-												invalidFeedback={
-													formik.errors.Shiping
-														? formik.errors.Shiping.PackageWidth
-														: undefined
-												}
-												validFeedback='Good'>
-												<Input
-													id='packagewidth'
-													name='Shiping.PackageWidth'
-													onChange={formik.handleChange}
-													value={formik.values.Shiping.PackageWidth}
-													onBlur={formik.handleBlur}
-													style={{ width: '70px' }}
-												/>
-											</Validation>
-										</div>
-										<div className='col-span-12 lg:col-span-2'>
-											<Label htmlFor='packageheight'>Package height</Label>
-											<Validation
-												isValid={formik.isValid}
-												isTouched={
-													formik.touched.Shiping
-														? formik.touched.Shiping?.PackageHeight
-														: undefined
-												}
-												invalidFeedback={
-													formik.errors.Shiping
-														? formik.errors.Shiping.PackageHeight
-														: undefined
-												}
-												validFeedback='Good'>
-												<Input
-													id='packageheight'
-													name='Shiping.PackageHeight'
-													onChange={formik.handleChange}
-													value={formik.values.Shiping.PackageHeight}
-													onBlur={formik.handleBlur}
-													style={{ width: '70px' }}
-												/>
-											</Validation>
-										</div>
-										<div className='col-span-12 lg:col-span-2'>
-											<Label htmlFor='type of package'>Type of package</Label>
-											<Validation
-												isValid={formik.isValid}
-												isTouched={
-													formik.touched.Shiping
-														? formik.touched.Shiping?.TypeofPackage
-														: undefined
-												}
-												invalidFeedback={
-													formik.errors.Shiping
-														? formik.errors.Shiping.TypeofPackage
-														: undefined
-												}
-												validFeedback='Good'>
-												<Input
-													id='packagetype'
-													name='Shiping.TypeofPackage'
-													onChange={formik.handleChange}
-													value={formik.values.Shiping.TypeofPackage}
-													onBlur={formik.handleBlur}
-													style={{ width: '80px' }}
-												/>
-											</Validation>
-										</div>
-										<div className='col-span-12 lg:col-span-3'>
-											<Label htmlFor='packagematerial'>
-												Type of Package Material
-											</Label>
-											<Validation
-												isValid={formik.isValid}
-												isTouched={
-													formik.touched.Shiping
-														? formik.touched.Shiping
-																?.TypeofPackagingMaterial
-														: undefined
-												}
-												invalidFeedback={
-													formik.errors.Shiping
-														? formik.errors.Shiping
+											<div className='col-span-12 lg:col-span-2'>
+												<Label htmlFor='packagewidth'>Package width</Label>
+												<Validation
+													isValid={formik.isValid}
+													isTouched={
+														formik.touched.Shiping
+															? formik.touched.Shiping?.PackageWidth
+															: undefined
+													}
+													invalidFeedback={
+														formik.errors.Shiping
+															? formik.errors.Shiping.PackageWidth
+															: undefined
+													}
+													validFeedback='Good'>
+													<Input
+														id='packagewidth'
+														name='Shiping.PackageWidth'
+														onChange={formik.handleChange}
+														value={formik.values.Shiping.PackageWidth}
+														onBlur={formik.handleBlur}
+														style={{ width: '70px' }}
+													/>
+												</Validation>
+											</div>
+											<div className='col-span-12 lg:col-span-2'>
+												<Label htmlFor='packageheight'>
+													Package height
+												</Label>
+												<Validation
+													isValid={formik.isValid}
+													isTouched={
+														formik.touched.Shiping
+															? formik.touched.Shiping?.PackageHeight
+															: undefined
+													}
+													invalidFeedback={
+														formik.errors.Shiping
+															? formik.errors.Shiping.PackageHeight
+															: undefined
+													}
+													validFeedback='Good'>
+													<Input
+														id='packageheight'
+														name='Shiping.PackageHeight'
+														onChange={formik.handleChange}
+														value={formik.values.Shiping.PackageHeight}
+														onBlur={formik.handleBlur}
+														style={{ width: '70px' }}
+													/>
+												</Validation>
+											</div>
+											<div className='col-span-12 lg:col-span-2'>
+												<Label htmlFor='type of package'>
+													Type of package
+												</Label>
+												<Validation
+													isValid={formik.isValid}
+													isTouched={
+														formik.touched.Shiping
+															? formik.touched.Shiping?.TypeofPackage
+															: undefined
+													}
+													invalidFeedback={
+														formik.errors.Shiping
+															? formik.errors.Shiping.TypeofPackage
+															: undefined
+													}
+													validFeedback='Good'>
+													<Input
+														id='packagetype'
+														name='Shiping.TypeofPackage'
+														onChange={formik.handleChange}
+														value={formik.values.Shiping.TypeofPackage}
+														onBlur={formik.handleBlur}
+														style={{ width: '80px' }}
+													/>
+												</Validation>
+											</div>
+											<div className='col-span-12 lg:col-span-3'>
+												<Label htmlFor='packagematerial'>
+													Type of Package Material
+												</Label>
+												<Validation
+													isValid={formik.isValid}
+													isTouched={
+														formik.touched.Shiping
+															? formik.touched.Shiping
+																	?.TypeofPackagingMaterial
+															: undefined
+													}
+													invalidFeedback={
+														formik.errors.Shiping
+															? formik.errors.Shiping
+																	.TypeofPackagingMaterial
+															: undefined
+													}
+													validFeedback='Good'>
+													<Input
+														id='packagematerial'
+														name='Shiping.TypeofPackagingMaterial'
+														onChange={formik.handleChange}
+														value={
+															formik.values.Shiping
 																.TypeofPackagingMaterial
-														: undefined
-												}
-												validFeedback='Good'>
-												<Input
-													id='packagematerial'
-													name='Shiping.TypeofPackagingMaterial'
-													onChange={formik.handleChange}
-													value={
-														formik.values.Shiping
-															.TypeofPackagingMaterial
+														}
+														onBlur={formik.handleBlur}
+														style={{ width: '130px' }}
+													/>
+												</Validation>
+											</div>
+											<div className='col-span-12 lg:col-span-3'>
+												<Label htmlFor='storingtemperature'>
+													Storing Temperaure
+												</Label>
+												<Validation
+													isValid={formik.isValid}
+													isTouched={
+														formik.touched.Shiping
+															? formik.touched.Shiping
+																	?.Storingtemparature
+															: undefined
 													}
-													onBlur={formik.handleBlur}
-													style={{ width: '130px' }}
-												/>
-											</Validation>
-										</div>
-										<div className='col-span-12 lg:col-span-3'>
-											<Label htmlFor='storingtemperature'>
-												Storing Temperaure
-											</Label>
-											<Validation
-												isValid={formik.isValid}
-												isTouched={
-													formik.touched.Shiping
-														? formik.touched.Shiping?.Storingtemparature
-														: undefined
-												}
-												invalidFeedback={
-													formik.errors.Shiping
-														? formik.errors.Shiping.Storingtemparature
-														: undefined
-												}
-												validFeedback='Good'>
-												<Input
-													id='storingtemp'
-													name='Shiping.Storingtemparature'
-													onChange={formik.handleChange}
-													value={formik.values.Shiping.Storingtemparature}
-													onBlur={formik.handleBlur}
-													style={{ width: '120px' }}
-												/>
-											</Validation>
-										</div>
-										<div className='col-span-12 lg:col-span-4'>
-											<Label htmlFor='temperatureuom'>
-												Temperaure Unit of Measure
-											</Label>
-											<Validation
-												isValid={formik.isValid}
-												isTouched={
-													formik.touched.Shiping
-														? formik.touched.Shiping
-																?.TemperatureUnitofmeasure
-														: undefined
-												}
-												invalidFeedback={
-													formik.errors.Shiping
-														? formik.errors.Shiping
+													invalidFeedback={
+														formik.errors.Shiping
+															? formik.errors.Shiping
+																	.Storingtemparature
+															: undefined
+													}
+													validFeedback='Good'>
+													<Input
+														id='storingtemp'
+														name='Shiping.Storingtemparature'
+														onChange={formik.handleChange}
+														value={
+															formik.values.Shiping.Storingtemparature
+														}
+														onBlur={formik.handleBlur}
+														style={{ width: '120px' }}
+													/>
+												</Validation>
+											</div>
+											<div className='col-span-12 lg:col-span-4'>
+												<Label htmlFor='temperatureuom'>
+													Temperaure Unit of Measure
+												</Label>
+												<Validation
+													isValid={formik.isValid}
+													isTouched={
+														formik.touched.Shiping
+															? formik.touched.Shiping
+																	?.TemperatureUnitofmeasure
+															: undefined
+													}
+													invalidFeedback={
+														formik.errors.Shiping
+															? formik.errors.Shiping
+																	.TemperatureUnitofmeasure
+															: undefined
+													}
+													validFeedback='Good'>
+													<Input
+														id='tempuom'
+														name='Shiping.TemperatureUnitofmeasure'
+														onChange={formik.handleChange}
+														value={
+															formik.values.Shiping
 																.TemperatureUnitofmeasure
-														: undefined
-												}
-												validFeedback='Good'>
-												<Input
-													id='tempuom'
-													name='Shiping.TemperatureUnitofmeasure'
-													onChange={formik.handleChange}
-													value={
-														formik.values.Shiping
-															.TemperatureUnitofmeasure
+														}
+														onBlur={formik.handleBlur}
+														style={{ width: '100px' }}
+													/>
+												</Validation>
+											</div>
+											<div className='col-span-12 lg:col-span-2'>
+												<Label htmlFor='sizeuom'>
+													Size Unit of Measure
+												</Label>
+												<Validation
+													isValid={formik.isValid}
+													isTouched={
+														formik.touched.Shiping
+															? formik.touched.Shiping
+																	?.SizeUnitofMesure
+															: undefined
 													}
-													onBlur={formik.handleBlur}
-													style={{ width: '100px' }}
-												/>
-											</Validation>
-										</div>
-										<div className='col-span-12 lg:col-span-2'>
-											<Label htmlFor='sizeuom'>Size Unit of Measure</Label>
-											<Validation
-												isValid={formik.isValid}
-												isTouched={
-													formik.touched.Shiping
-														? formik.touched.Shiping?.SizeUnitofMesure
-														: undefined
-												}
-												invalidFeedback={
-													formik.errors.Shiping
-														? formik.errors.Shiping.SizeUnitofMesure
-														: undefined
-												}
-												validFeedback='Good'>
-												<Input
-													id='sizeuom'
-													name='Shiping.SizeUnitofMesure'
-													onChange={formik.handleChange}
-													value={formik.values.Shiping.SizeUnitofMesure}
-													onBlur={formik.handleBlur}
-													style={{ width: '70px' }}
-												/>
-											</Validation>
-										</div>
-										<div className='col-span-12 lg:col-span-2'>
-											<Label htmlFor='weightuom'>
-												Weight Unit of Measure
-											</Label>
-											<Validation
-												isValid={formik.isValid}
-												isTouched={
-													formik.touched.Shiping
-														? formik.touched.Shiping
-																?.WeightUnitofMeasure
-														: undefined
-												}
-												invalidFeedback={
-													formik.errors.Shiping
-														? formik.errors.Shiping.WeightUnitofMeasure
-														: undefined
-												}
-												validFeedback='Good'>
-												<Input
-													id='weightuom'
-													name='Shiping.WeightUnitofMeasure'
-													onChange={formik.handleChange}
-													value={
-														formik.values.Shiping.WeightUnitofMeasure
+													invalidFeedback={
+														formik.errors.Shiping
+															? formik.errors.Shiping.SizeUnitofMesure
+															: undefined
 													}
-													onBlur={formik.handleBlur}
-													style={{ width: '70px' }}
-												/>
-											</Validation>
-										</div>
-										<div className='col-span-12 lg:col-span-1'>
-											<Label htmlFor='noofpackages'>No of Packages</Label>
-											<Validation
-												isValid={formik.isValid}
-												isTouched={
-													formik.touched.Shiping
-														? formik.touched.Shiping?.NoofPackages
-														: undefined
-												}
-												invalidFeedback={
-													formik.errors.Shiping
-														? formik.errors.Shiping.NoofPackages
-														: undefined
-												}
-												validFeedback='Good'>
-												<Input
-													id='noofpkgs'
-													name='Shiping.NoofPackages'
-													onChange={formik.handleChange}
-													value={formik.values.Shiping.NoofPackages}
-													onBlur={formik.handleBlur}
-													style={{ width: '70px' }}
-												/>
-											</Validation>
-										</div>
-										<div className='col-span-12 lg:col-span-1'></div>
-										<div className='col-span-12 lg:col-span-1'>
-											<Label htmlFor='Tracking Number'>Tracking Number</Label>
-											<Validation
-												isValid={formik.isValid}
-												isTouched={
-													formik.touched.Shiping
-														? formik.touched.Shiping?.TrackingNumber
-														: undefined
-												}
-												invalidFeedback={
-													formik.errors.Shiping
-														? formik.errors.Shiping.TrackingNumber
-														: undefined
-												}
-												validFeedback='Good'>
-												<Input
-													id='trackingno'
-													name='Shiping.TrackingNumber'
-													onChange={formik.handleChange}
-													value={formik.values.Shiping.TrackingNumber}
-													onBlur={formik.handleBlur}
-													style={{ width: '70px' }}
-												/>
-											</Validation>
-										</div>
-										<div className='col-span-12 lg:col-span-1'></div>
-										<div className='col-span-12 lg:col-span-2'>
-											<Label htmlFor='delivery_date'>
-												Expected Delivery Date:
-											</Label>
-											<Validation
-												isValid={formik.isValid}
-												isTouched={
-													formik.touched.Shiping
-														? formik.touched.Shiping
-																?.Expecteddeliverydate
-														: undefined
-												}
-												invalidFeedback={
-													formik.errors.Shiping
-														? formik.errors.Shiping.Expecteddeliverydate
-														: undefined
-												}
-												validFeedback='Good'>
-												<Input
-													type='date'
-													id='Expecteddeliverydate'
-													name='Shiping.Expecteddeliverydate'
-													onChange={formik.handleChange}
-													value={
-														formik.values.Shiping.Expecteddeliverydate
+													validFeedback='Good'>
+													<Input
+														id='sizeuom'
+														name='Shiping.SizeUnitofMesure'
+														onChange={formik.handleChange}
+														value={
+															formik.values.Shiping.SizeUnitofMesure
+														}
+														onBlur={formik.handleBlur}
+														style={{ width: '70px' }}
+													/>
+												</Validation>
+											</div>
+											<div className='col-span-12 lg:col-span-2'>
+												<Label htmlFor='weightuom'>
+													Weight Unit of Measure
+												</Label>
+												<Validation
+													isValid={formik.isValid}
+													isTouched={
+														formik.touched.Shiping
+															? formik.touched.Shiping
+																	?.WeightUnitofMeasure
+															: undefined
 													}
-													onBlur={formik.handleBlur}
-													style={{ width: '110px' }}
-												/>
-											</Validation>
-										</div>
-										<div className='col-span-12 lg:col-span-3'>
-											<Label htmlFor='recieving hours'>Recieving Hours</Label>
-											<Validation
-												isValid={formik.isValid}
-												isTouched={
-													formik.touched.Shiping
-														? formik.touched.Shiping?.RecievingHours
-														: undefined
-												}
-												invalidFeedback={
-													formik.errors.Shiping
-														? formik.errors.Shiping.RecievingHours
-														: undefined
-												}
-												validFeedback='Good'>
-												<Input
-													id='recievinghrs'
-													name='Shiping.RecievingHours'
-													onChange={formik.handleChange}
-													value={formik.values.Shiping.RecievingHours}
-													onBlur={formik.handleBlur}
-													style={{ width: '90px' }}
-												/>
-											</Validation>
+													invalidFeedback={
+														formik.errors.Shiping
+															? formik.errors.Shiping
+																	.WeightUnitofMeasure
+															: undefined
+													}
+													validFeedback='Good'>
+													<Input
+														id='weightuom'
+														name='Shiping.WeightUnitofMeasure'
+														onChange={formik.handleChange}
+														value={
+															formik.values.Shiping
+																.WeightUnitofMeasure
+														}
+														onBlur={formik.handleBlur}
+														style={{ width: '70px' }}
+													/>
+												</Validation>
+											</div>
+											<div className='col-span-12 lg:col-span-1'>
+												<Label htmlFor='noofpackages'>No of Packages</Label>
+												<Validation
+													isValid={formik.isValid}
+													isTouched={
+														formik.touched.Shiping
+															? formik.touched.Shiping?.NoofPackages
+															: undefined
+													}
+													invalidFeedback={
+														formik.errors.Shiping
+															? formik.errors.Shiping.NoofPackages
+															: undefined
+													}
+													validFeedback='Good'>
+													<Input
+														id='noofpkgs'
+														name='Shiping.NoofPackages'
+														onChange={formik.handleChange}
+														value={formik.values.Shiping.NoofPackages}
+														onBlur={formik.handleBlur}
+														style={{ width: '70px' }}
+													/>
+												</Validation>
+											</div>
+											<div className='col-span-12 lg:col-span-1'></div>
+											<div className='col-span-12 lg:col-span-1'>
+												<Label htmlFor='Tracking Number'>
+													Tracking Number
+												</Label>
+												<Validation
+													isValid={formik.isValid}
+													isTouched={
+														formik.touched.Shiping
+															? formik.touched.Shiping?.TrackingNumber
+															: undefined
+													}
+													invalidFeedback={
+														formik.errors.Shiping
+															? formik.errors.Shiping.TrackingNumber
+															: undefined
+													}
+													validFeedback='Good'>
+													<Input
+														id='trackingno'
+														name='Shiping.TrackingNumber'
+														onChange={formik.handleChange}
+														value={formik.values.Shiping.TrackingNumber}
+														onBlur={formik.handleBlur}
+														style={{ width: '70px' }}
+													/>
+												</Validation>
+											</div>
+											<div className='col-span-12 lg:col-span-1'></div>
+											<div className='col-span-12 lg:col-span-2'>
+												<Label htmlFor='delivery_date'>
+													Expected Delivery Date:
+												</Label>
+												<Validation
+													isValid={formik.isValid}
+													isTouched={
+														formik.touched.Shiping
+															? formik.touched.Shiping
+																	?.Expecteddeliverydate
+															: undefined
+													}
+													invalidFeedback={
+														formik.errors.Shiping
+															? formik.errors.Shiping
+																	.Expecteddeliverydate
+															: undefined
+													}
+													validFeedback='Good'>
+													<Input
+														type='date'
+														id='Expecteddeliverydate'
+														name='Shiping.Expecteddeliverydate'
+														onChange={formik.handleChange}
+														value={
+															formik.values.Shiping
+																.Expecteddeliverydate
+														}
+														onBlur={formik.handleBlur}
+														style={{ width: '110px' }}
+													/>
+												</Validation>
+											</div>
+											<div className='col-span-12 lg:col-span-3'>
+												<Label htmlFor='recieving hours'>
+													Recieving Hours
+												</Label>
+												<Validation
+													isValid={formik.isValid}
+													isTouched={
+														formik.touched.Shiping
+															? formik.touched.Shiping?.RecievingHours
+															: undefined
+													}
+													invalidFeedback={
+														formik.errors.Shiping
+															? formik.errors.Shiping.RecievingHours
+															: undefined
+													}
+													validFeedback='Good'>
+													<Input
+														id='recievinghrs'
+														name='Shiping.RecievingHours'
+														onChange={formik.handleChange}
+														value={formik.values.Shiping.RecievingHours}
+														onBlur={formik.handleBlur}
+														style={{ width: '90px' }}
+													/>
+												</Validation>
+											</div>
 										</div>
 									</div>
-								</div>
-							)}
-						</Collapse>
+								)}
+							</Collapse>
+						</div>
+						<div className='static-grid' style={{ height: '160px', overflow: 'auto' }}>
+							<div className='order-summary'>
+								{/* Static content for Order Summary */}
+								<h1
+									style={{
+										fontSize: '18px',
+										fontFamily: 'sans-serif',
+										fontWeight: 'bold',
+										textAlign: 'center',
+									}}>
+									Order Summary
+								</h1>
+								<Label
+									htmlFor='Product'
+									style={{
+										fontFamily: 'sans-serif',
+										fontSize: '16px',
+										display: 'inline-block',
+										width: '230px',
+									}}>
+									Total Items:
+								</Label>
+								<span>{data.length}</span>
+								<Label
+									htmlFor='Product'
+									style={{
+										fontFamily: 'sans-serif',
+										fontSize: '16px',
+										display: 'inline-block',
+										width: '230px',
+									}}>
+									Items Total:
+								</Label>
+								<span>{orderTotal}</span>
+								<Label
+									htmlFor='Product'
+									style={{
+										fontFamily: 'sans-serif',
+										fontSize: '16px',
+										display: 'inline-block',
+										width: '230px',
+									}}>
+									Tax:
+								</Label>
+								<span>10$</span>
+								<Label
+									htmlFor='Product'
+									style={{
+										fontFamily: 'sans-serif',
+										fontSize: '16px',
+										display: 'inline-block',
+										width: '230px',
+									}}>
+									Shipping Cost:
+								</Label>
+								<span>10$</span>
+								<hr></hr> {/* Underline */}
+								<Label
+									htmlFor='Product'
+									style={{
+										fontFamily: 'sans-serif',
+										fontSize: '16px',
+										display: 'inline-block',
+										width: '230px',
+									}}>
+									Total
+								</Label>
+								<span>195$</span>
+								{/* Other static content */}
+							</div>
+						</div>
 					</div>
 				</ModalBody>
 				<ModalFooter>
