@@ -470,6 +470,12 @@ const CartPartial: React.FC = () => {
 									id='proceed-to_checkout'
 									onClick={() => {
 										setIsOpen(true);
+										handleState(existingAddress?.countryid);
+										handleCounty(existingAddress?.stateid);
+										handleCity(
+											existingAddress?.stateid,
+											existingAddress?.countyid,
+										);
 									}}>
 									Proceed to Cart
 								</Button>
@@ -618,7 +624,7 @@ const CartPartial: React.FC = () => {
 											className='existing-address'
 											style={{
 												display: showChangeAddress ? 'none' : 'block',
-												color: 'orangered',
+												color: 'black',
 											}}>
 											<div key={existingAddress?.id}>
 												<p>{localStorage.getItem('loggedinname')}</p>
