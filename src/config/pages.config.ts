@@ -258,6 +258,13 @@ export const appPages = {
 				text: 'Facility Page',
 				icon: 'HeroClipboardDocumentCheck',
 			},
+			eventCalendar:{
+				id: 'eventCalendar',
+				to: '/eventCalendar',
+				text: 'Event Calendar',
+				icon: 'HeroClipboardDocumentCheck'
+
+			},
 		},
 	},
 	reservationAppPages: {

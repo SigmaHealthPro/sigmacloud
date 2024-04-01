@@ -11,6 +11,7 @@ import FacilityPage from '../pages/Facility Management/Facilitypage.page';
 import PatientManagement from '../pages/Patient Management/PatientManagement';
 import AddPatient from '../pages/Patient Management/AddPatient';
 import PatientProfile from '../pages/Patient Management/PatientProfile';
+import EventCalendar from '../pages/Facility Management/Events/EventCalendar';
 
 /**
  * UI
@@ -299,6 +300,10 @@ const contentRoutes: RouteProps[] = [
 		path: appPages.PatientManagement.subPages.PatientProfile.to,
 		element:<PatientProfile/>,
 	},
+	// {
+	// 	path:appPages.facilityAppPages.subPages.eventCalendar.to,
+	// 	element:<EventCalendar/>
+	// },
 	/**
 	 * MAIL::END
 	 */
