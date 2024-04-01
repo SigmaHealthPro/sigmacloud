@@ -16,7 +16,8 @@ export type TTab = {
 		| 'Contacts'
 		| 'Sites'
 		| 'Providers'
-		| 'Events';
+		| 'Events'
+		| 'EventCalendar';
 	icon: TIcons;
 };
 export type TTabs = {
@@ -26,7 +27,8 @@ export type TTabs = {
 		| 'Contacts'
 		| 'Sites'
 		| 'Providers'
-		| 'Events']: TTab;
+		| 'Events'
+		| 'EventCalendar']: TTab;
 	};
 		
 export const TAB: TTabs = {
@@ -53,6 +55,10 @@ export const TAB: TTabs = {
 	},
 	Events: {
 		text: 'Events',
+		icon: 'HeroCalendarDays',
+	},
+	EventCalendar: {
+		text: 'EventCalendar',
 		icon: 'HeroCalendarDays',
 	},
 };

@@ -53,6 +53,7 @@ import TextField from '@mui/material/TextField';
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete';
 import PlacesAutocomplete, {geocodeByAddress,getLatLng,} from 'react-places-autocomplete';
 import Alert from '../components/ui/Alert';
+import EventCalendar from './Facility Management/Events/EventCalendar';
 
 
 
@@ -399,6 +400,8 @@ const FacilityProfile = () => {
 								{activeTab === TAB.Sites && <SitesPage id={facilityId} classes={classes} />}
 								{activeTab === TAB.Providers && <Providers classes={classes} />}
 								{activeTab === TAB.Events && <EventsPage classes={classes}/>}
+								{activeTab === TAB.EventCalendar && <EventCalendar/>}
+
 								
 							</div>
 						</div>
