@@ -75,6 +75,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import Select from '../../components/form/Select';
 import { number } from 'prop-types';
 import { fontFamily, width } from '@mui/system';
+import CustomDatecomp from './CustomDatecomp';
 import {
 	DataContextProvider,
 	useDataContext,
@@ -92,6 +93,7 @@ import { indexOf } from 'lodash';
 import themeConfig from '../../config/theme.config';
 import SvgViewColumns from '../../components/icon/heroicons/ViewColumns';
 import { HeroEye } from '../../components/icon/heroicons';
+import { left, right } from '@popperjs/core';
 
 const useStyles = makeStyles({
 	root: {
@@ -106,7 +108,31 @@ const useStyles = makeStyles({
 	},
 });
 type TModalStableSize = 'sm' | 'md' | 'lg' | 'xl' | '2xl';
-
+interface ShipmentAddressModel {
+	username: string;
+	id: string;
+	addressid: string;
+	line1: string;
+	line2: string;
+	suite: string;
+	cityname: string;
+	countyname: string;
+	statename: string;
+	countryname: string;
+	countyid: string;
+	countryid: string;
+	stateid: string;
+	cityid: string;
+	zipCode: string;
+}
+interface Orderitemmodel {
+	id: string;
+	itemid: string;
+	quantity: string;
+	orderitemdesc: string;
+	typeofpackage: string;
+	unitprice: string;
+}
 const OrderManagement: React.FC = () => {
 	var productname = '';
 	var vaccinename = '';
@@ -122,10 +148,12 @@ const OrderManagement: React.FC = () => {
 	const [globalFilter, setGlobalFilter] = useState<string>('');
 	const [loading, setLoading] = useState<boolean>(false); // Track loading state
 	const [rowCountState, setRowCountState] = useState<number>(0); // Total number of items
+	const [shipmentAddress, setShipmentAddress] = useState<ShipmentAddressModel | null>(null);
 	const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
 		page: 0,
 		pageSize: 5,
 	});
+	const [orderitemsData, setorderitemsData] = useState<Orderitemmodel[]>([]);
 	var Itemadded = 0;
 	const [openModal, setOpenModal] = useState(false);
 	const [searchTouched, setSearchTouched] = useState(false);
@@ -279,7 +307,10 @@ const OrderManagement: React.FC = () => {
 	});
 
 	const ordercolumns = [
+		//{ field: 'id', headerName: 'Order ID', width: 250, hide: true }, // Hidden Order ID field
 		{ field: 'product', headerName: 'Product', width: 140 },
+		{ field: 'manufacturername', headerName: 'Manufacturer', width: 250, hide: true }, // Hidden Order ID field
+		//{ field: 'createdBy', headerName: 'CreatedBy', width: 250, hide: true },
 		{ field: 'orderItemDesc', headerName: 'OrderItem Desc', width: 140 },
 		{ field: 'facility', headerName: 'Facility', width: 140 },
 		{ field: 'orderDate', headerName: 'Order Date', width: 140 },
@@ -316,10 +347,29 @@ const OrderManagement: React.FC = () => {
 		},
 	];
 	const handleViewData = async (params: any, event: any) => {
+		const orderid = params.row.id;
+		const postResponse = await axios
+			.post(apiUrl + 'api/Vaccination/getaddressbyorderid?orderid=' + orderid)
+			.then((response) => {
+				setShipmentAddress(response?.data.data);
+				console.log('shipment', response.data.data);
+			})
+			.catch((err) => console.log('Error has occured', err));
+		const itemslist = await axios
+			.post(apiUrl + 'api/Vaccination/getitemsbyorderid?orderid=' + orderid)
+			.then((response) => {
+				setorderitemsData(response?.data.data);
+				console.log('itemsdata', response.data.data);
+			})
+			.catch((err) => console.log('Error has occured', err));
 		event.preventDefault();
 		setEditTouched(false);
 		setViewOrderModal(true);
 		formik.setFieldValue('product', params.row.product);
+		formik.setFieldValue('manufacturername', params.row.manufacturername);
+		formik.setFieldValue('orderDate', params.row.orderDate);
+		formik.setFieldValue('orderTotal', params.row.orderTotal);
+		formik.setFieldValue('CreatedBy', params.row.createdBy);
 		formik.setFieldValue('orderItemDesc', params.row.orderItemDesc);
 		formik.setFieldValue('facility', params.row.facility);
 		formik.setFieldValue('orderDate', params.row.orderDate);
@@ -368,6 +418,7 @@ const OrderManagement: React.FC = () => {
 			.then((response) => {
 				setLoading(true);
 				const { items, totalCount } = response.data;
+				console.log('searchordersdata', response.data);
 
 				if (items.length > paginationModel.pageSize) {
 					console.warn('API returned more items than the requested page size.');
@@ -421,7 +472,7 @@ const OrderManagement: React.FC = () => {
 	type Order = {
 		id: string;
 		createdDate: string;
-		createdBy: string;
+		CreatedBy: string;
 		updatedBy: string;
 		orderId: number;
 		facility: string;
@@ -440,6 +491,7 @@ const OrderManagement: React.FC = () => {
 		ProductId: string;
 		quantity: string;
 		unitPrice: string;
+		manufacturername: string;
 		manufacturer: string;
 		manufacturerid: string;
 	};
@@ -460,7 +512,7 @@ const OrderManagement: React.FC = () => {
 
 	const formik = useFormik({
 		initialValues: {
-			id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+			id: '',
 			orderId: 0,
 			facility: '',
 			facilityId: '',
@@ -479,8 +531,9 @@ const OrderManagement: React.FC = () => {
 			quantity: '',
 			unitPrice: '',
 			createdDate: '2024-01-17T18:25:24.798Z',
-			createdBy: 'string',
+			CreatedBy: '',
 			updatedBy: 'string',
+			manufacturername: '',
 			manufacturer: '',
 			manufacturerid: '',
 		},
@@ -729,109 +782,185 @@ const OrderManagement: React.FC = () => {
 							</Button>
 						</ModalFooter>
 					</Modal>
-					<Modal isOpen={viewOrderModal} setIsOpen={setViewOrderModal}>
-						<ModalHeader> {'Selected Order History'}</ModalHeader>
+					<Modal isOpen={viewOrderModal} size={'xl'} setIsOpen={setViewOrderModal}>
+						<ModalHeader> {'Order Details'}</ModalHeader>
+						<hr></hr>
 						<ModalBody>
 							<div className='col-span-12 lg:col-span-9'>
 								<div className='grid grid-cols-12 gap-4'>
-									<div className='col-span-12'>
+									<div className='col-span-12' style={{ height: '250px' }}>
 										<Card>
 											<CardBody>
-												<div className='grid grid-cols-12 gap-4'>
-													<div className='col-span-12 lg:col-span-6'>
-														<Label htmlFor='Product'>Product </Label>
+												<div className='OrderDet'>
+													<div>
+														<span
+															style={{
+																fontSize: '18px',
+																marginBottom: '5px',
+																paddingBottom: '10px',
+															}}>
+															Order Information
+														</span>
+														<div style={{ height: '15px' }}></div>
 
-														<Input
-															id='product'
-															name='product'
-															value={formik.values.product}
-															onBlur={formik.handleBlur}
-														/>
-													</div>
-													<div className='col-span-12 lg:col-span-6'>
-														<Label htmlFor='OrderitemDesc'>
-															OrderitemDesc
-														</Label>
+														<div style={{ width: '200px' }}>
+															<span
+																style={{
+																	fontSize: '14px',
+																	display: 'inline-block',
+																}}>
+																Buyer:
+															</span>
+															<span
+																style={{
+																	marginLeft: '85px',
+																	textAlign: right,
+																	fontSize: '14px',
+																}}>
+																{' '}
+																{formik.values.CreatedBy}
+															</span>
+														</div>
+														<div></div>
+														<div>
+															<span style={{ fontSize: '14px' }}>
+																Seller:{' '}
+															</span>
+															<span
+																style={{
+																	marginLeft: '85px',
+																	textAlign: right,
+																	fontSize: '14px',
+																}}>
+																{' '}
+																{formik.values.manufacturername}
+															</span>
+														</div>
+														<div></div>
+														<div>
+															<span style={{ fontSize: '14px' }}>
+																Order placed on:{' '}
+															</span>
+															<span
+																style={{
+																	marginLeft: '20px',
+																	textAlign: right,
+																	fontSize: '14px',
+																}}>
+																{' '}
+																<CustomDatecomp
+																	orderDate={
+																		formik.values.orderDate
+																	}></CustomDatecomp>
+															</span>
+														</div>
+														<div></div>
+														<div>
+															<span style={{ fontSize: '14px' }}>
+																Payment Method:{' '}
+															</span>
+															<span
+																style={{
+																	marginLeft: '12px',
+																	textAlign: right,
+																	fontSize: '14px',
+																}}>
+																{' '}
+																PayPal
+															</span>
+														</div>
+														<div></div>
+														<div>
+															<span style={{ fontSize: '14px' }}>
+																Payment date:{' '}
+															</span>
+															<span
+																style={{
+																	marginLeft: '30px',
+																	textAlign: right,
+																	fontSize: '14px',
+																}}>
+																{' '}
+																<CustomDatecomp
+																	orderDate={
+																		formik.values.orderDate
+																	}></CustomDatecomp>
+															</span>
+														</div>
+														<div
+															style={{
+																fontSize: '18px',
+																marginTop: '-145px',
+																marginLeft: '440px',
+																height: '200px',
+																overflow: 'auto',
+															}}>
+															Shipping Information
+															<div style={{ height: '15px' }}></div>
+															<div
+																key={shipmentAddress?.id}
+																style={{ fontSize: '14px' }}>
+																<p style={{ fontSize: '14px' }}>
+																	{shipmentAddress?.username}
+																</p>
+																<p style={{ fontSize: '14px' }}>
+																	{shipmentAddress?.suite}
+																	{'#'}
 
-														<Input
-															id='orderItemDesc'
-															name='orderItemDesc'
-															value={formik.values.orderItemDesc}
-															onBlur={formik.handleBlur}
-														/>
-													</div>
-													<div className='col-span-12 lg:col-span-6'>
-														<Label htmlFor='Facility'>Facility</Label>
+																	{shipmentAddress?.line2}
+																</p>
+																<p style={{ fontSize: '14px' }}>
+																	{shipmentAddress?.line1}
+																</p>
 
-														<Input
-															id='facility'
-															name='facility'
-															value={formik.values.facility}
-															onBlur={formik.handleBlur}
-														/>
-													</div>
-													<div className='col-span-12 lg:col-span-6'>
-														<Label htmlFor='OrderDate'>
-															Order Date
-														</Label>
-
-														<Input
-															id='OrderDate'
-															name='OrderDate'
-															value={
-																formik.values.orderDate
-																	? formik.values.orderDate
-																			.toString()
-																			.split('T')[0]
-																	: ''
-															}
-															onBlur={formik.handleBlur}
-														/>
-													</div>
-													<div className='col-span-12 lg:col-span-6'>
-														<Label htmlFor='Quantity'>Quantity</Label>
-
-														<Input
-															id='quantity'
-															name='quantity'
-															value={formik.values.quantity}
-															onBlur={formik.handleBlur}
-														/>
-													</div>
-													<div className='col-span-12 lg:col-span-6'>
-														<Label htmlFor='UnitPrice'>
-															Unit Price
-														</Label>
-
-														<Input
-															id='unitPrice'
-															name='unitPrice'
-															value={formik.values.unitPrice}
-															onBlur={formik.handleBlur}
-														/>
-													</div>
-													<div className='col-span-12 lg:col-span-6'>
-														<Label htmlFor='OrderTotal'>
+																<p style={{ fontSize: '14px' }}>
+																	{shipmentAddress?.cityname}
+																</p>
+																<p style={{ fontSize: '14px' }}>
+																	{shipmentAddress?.countyname}
+																</p>
+																<p style={{ fontSize: '14px' }}>
+																	{shipmentAddress?.statename}{' '}
+																	{shipmentAddress?.zipCode}
+																</p>
+																<p style={{ fontSize: '14px' }}>
+																	{shipmentAddress?.countryname}
+																</p>
+															</div>
+														</div>
+														<div
+															style={{
+																fontSize: '18px',
+																marginTop: '-200px',
+																marginLeft: '740px',
+																height: '160px',
+																overflow: 'auto',
+															}}>
 															Order Total
-														</Label>
-
-														<Input
-															id='orderTotal'
-															name='orderTotal'
-															value={formik.values.orderTotal}
-															onBlur={formik.handleBlur}
-														/>
-													</div>
-													<div className='col-span-12 lg:col-span-6'>
-														<Label htmlFor='OrderStatus'>
-															Order Status
-														</Label>
-														<Input
-															id='orderStatus'
-															name='orderStatus'
-															value={formik.values.orderStatus}
-															onBlur={formik.handleBlur}
-														/>
+															<div style={{ height: '15px' }}></div>
+															<div style={{ fontSize: '14px' }}>
+																Subtotal:
+																<span
+																	style={{ marginLeft: '70px' }}>
+																	USD {formik.values.orderTotal}
+																</span>
+															</div>
+															<div style={{ fontSize: '14px' }}>
+																Shippingcharges:
+																<span
+																	style={{ marginLeft: '15px' }}>
+																	{' '}
+																	Free
+																</span>
+															</div>
+															<div style={{ fontSize: '14px' }}>
+																Total:
+																<span
+																	style={{ marginLeft: '90px' }}>
+																	USD {formik.values.orderTotal}
+																</span>
+															</div>
+														</div>
 													</div>
 												</div>
 											</CardBody>
@@ -839,16 +968,124 @@ const OrderManagement: React.FC = () => {
 									</div>
 								</div>
 							</div>
+							<hr></hr>
+							<div className='col-span-12' style={{ height: '150px' }}>
+								<span style={{ fontSize: '20px' }}>
+									Item(s) bought from {formik.values.manufacturername}
+								</span>
+								<div>Order Number 13-04666</div>
+								<div style={{ height: '15px' }}> </div>
+								<div className='OrderitemDet'>
+									{orderitemsData.length > 0 &&
+										orderitemsData.map((item) => (
+											<div>
+												<div>
+													<span
+														style={{
+															fontSize: '18px',
+															marginBottom: '5px',
+															paddingBottom: '10px',
+															marginLeft: '20px',
+															fontFamily: 'sans-serif',
+														}}>
+														Quantity
+													</span>
+													<div style={{ height: '15px' }}></div>
+													<div style={{ width: '200px' }}>
+														<span
+															style={{
+																fontSize: '14px',
+																display: 'inline-block',
+																marginLeft: '40px',
+																fontFamily: 'sans-serif',
+															}}>
+															{item?.quantity}
+														</span>
+													</div>
+													<div
+														style={{
+															fontSize: '18px',
+															marginTop: '-60px',
+															marginLeft: '140px',
+															height: '100px',
+															overflow: 'auto',
+														}}>
+														ItemDescription
+														<div style={{ height: '8px' }}></div>
+														<div style={{ width: '200px' }}>
+															<span
+																style={{
+																	fontSize: '14px',
+																	display: 'inline-block',
+																	marginLeft: '2px',
+																	fontFamily: 'sans-serif',
+																}}>
+																{item?.orderitemdesc}
+															</span>
+														</div>
+													</div>
+													<div
+														style={{
+															fontSize: '18px',
+															marginTop: '-100px',
+															marginLeft: '390px',
+															height: '100px',
+															overflow: 'auto',
+															fontFamily: 'sans-serif',
+														}}>
+														TypeofPackage
+														<div style={{ height: '10px' }}></div>
+														<div style={{ width: '200px' }}>
+															<span
+																style={{
+																	fontSize: '14px',
+																	display: 'inline-block',
+																	marginLeft: '15px',
+																	fontFamily: 'sans-serif',
+																}}>
+																{item?.typeofpackage}
+															</span>
+														</div>
+													</div>
+
+													<div
+														style={{
+															fontSize: '18px',
+															marginTop: '-100px',
+															marginLeft: '620px',
+															height: '100px',
+															overflow: 'auto',
+															fontFamily: 'sans-serif',
+														}}>
+														UnitPrice
+														<div style={{ height: '10px' }}></div>
+														<div style={{ width: '200px' }}>
+															<span
+																style={{
+																	fontSize: '14px',
+																	display: 'inline-block',
+																	marginLeft: '15px',
+																}}>
+																{item?.unitprice}
+															</span>
+														</div>
+													</div>
+												</div>
+											</div>
+										))}
+								</div>
+							</div>
 						</ModalBody>
+
 						<ModalFooter>
-							<Button
+							{/* <Button
 								variant='solid'
 								onClick={() => {
 									setViewOrderModal(false);
 									setEditTouched(false);
 								}}>
 								Cancel
-							</Button>
+							</Button> */}
 						</ModalFooter>
 					</Modal>
 				</SubheaderRight>

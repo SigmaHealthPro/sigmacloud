@@ -430,6 +430,12 @@ gh-info__row {
 	justify-content: flex-start;
 	flex-direction: row;
 }
+.OrderDet {
+	display: flex;
+	justify-content: flex-start;
+	flex-direction: column;
+	width: '1000px';
+}
 .static-grid {
 	/* Add styling for the static grid */
 	flex: 1;
@@ -472,4 +478,10 @@ gh-info__row {
 	border: 'none';
 	border-bottom: '14px solid black';
 	margin-bottom: '10px';
+}
+.OrderitemDet {
+	display: flex;
+	justify-content: flex-start;
+	flex-direction: column;
+	width: '1000px';
 }
