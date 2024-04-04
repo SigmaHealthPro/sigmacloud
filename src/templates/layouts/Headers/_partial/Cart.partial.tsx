@@ -377,7 +377,18 @@ const CartPartial: React.FC = () => {
 				)
 				.then((response) => {
 					setExistingAddress(response?.data.data);
-					console.log('existing', response.data.data);
+					formik.setFieldValue('Address.Countryid', existingAddress?.countryid);
+					formik.setFieldValue('Address.Country', existingAddress?.countryname);
+					formik.setFieldValue('Address.Line1', existingAddress?.line1);
+					formik.setFieldValue('Address.Line2', existingAddress?.line2);
+					formik.setFieldValue('Address.Suite', existingAddress?.suite);
+					formik.setFieldValue('Address.State', existingAddress?.statename);
+					formik.setFieldValue('Address.Stateid', existingAddress?.stateid);
+					formik.setFieldValue('Address.County', existingAddress?.countyname);
+					formik.setFieldValue('Address.Countyid', existingAddress?.countyid);
+					formik.setFieldValue('Address.City', existingAddress?.cityname);
+					formik.setFieldValue('Address.Cityid', existingAddress?.cityid);
+					formik.setFieldValue('Address.ZipCode', existingAddress?.zipCode);
 				})
 				.catch((err) => console.log('Error has occured', err));
 		}
