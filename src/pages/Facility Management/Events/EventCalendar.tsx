@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Calendar as BigCalendar, momentLocalizer } from "react-big-calendar";
-import moment from "moment";
+import * as moment from 'moment/moment.js';
+
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import Button, { IButtonProps } from '../../../components/ui/Button';
 import Input from '../../../components/form/Input';
