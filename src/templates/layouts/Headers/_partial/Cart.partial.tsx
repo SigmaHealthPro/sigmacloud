@@ -333,7 +333,7 @@ const CartPartial: React.FC = () => {
 				formik.setFieldValue('orderId', '');
 				formik.setFieldValue('UnitPrice', '');
 				formik.setFieldValue('Product', '');
-
+				removeAllItemsFromCart();
 				// Handle response
 			} catch (error) {
 				console.error('Error: ', error);
@@ -429,6 +429,9 @@ const CartPartial: React.FC = () => {
 	const removeItemFromCart = (productid: string) => {
 		const updatedCartData = cartData.filter((item) => item.productid !== productid);
 		setCartData(updatedCartData);
+	};
+	const removeAllItemsFromCart = () => {
+		setCartData([]); // Assign an empty array to clear all items from the cart
 	};
 
 	const apiUrl = apiconfig.apiHostUrl;
@@ -1581,6 +1584,7 @@ const CartPartial: React.FC = () => {
 						variant='solid'
 						onClick={() => {
 							formik.handleSubmit();
+
 							//addShippment(false);
 						}}>
 						Checkout
