@@ -171,6 +171,7 @@ const CartPartial: React.FC = () => {
 		Status: string;
 	};
 	type Address = {
+		id: string;
 		Line1: string;
 		Line2: string;
 		Suite: string;
@@ -270,6 +271,7 @@ const CartPartial: React.FC = () => {
 			updatedBy: 'system',
 
 			Address: {
+				id: '',
 				City: '',
 				Cityid: '',
 				State: '',
@@ -334,6 +336,8 @@ const CartPartial: React.FC = () => {
 				formik.setFieldValue('UnitPrice', '');
 				formik.setFieldValue('Product', '');
 				removeAllItemsFromCart();
+				toast.success(`Order submitted successfully!`);
+				setIsOpen(false);
 				// Handle response
 			} catch (error) {
 				console.error('Error: ', error);
@@ -377,6 +381,7 @@ const CartPartial: React.FC = () => {
 				)
 				.then((response) => {
 					setExistingAddress(response?.data.data);
+					formik.setFieldValue('Address.id', existingAddress?.id);
 					formik.setFieldValue('Address.Countryid', existingAddress?.countryid);
 					formik.setFieldValue('Address.Country', existingAddress?.countryname);
 					formik.setFieldValue('Address.Line1', existingAddress?.line1);
@@ -551,7 +556,7 @@ const CartPartial: React.FC = () => {
 								icon='HeroShoppingCart'
 								rightIcon='HeroShoppingCart'
 								onClick={() => toggleAccordion('showItems')}
-								variant='outline'
+								variant='solid'
 								style={{
 									marginBottom: '4px',
 									textAlign: 'left',
@@ -624,7 +629,7 @@ const CartPartial: React.FC = () => {
 								icon='HeroAtSymbol'
 								rightIcon='HeroAtSymbol'
 								onClick={() => toggleAccordion('showBillingAddress')}
-								variant='outline'
+								variant='solid'
 								style={{
 									marginBottom: '4px',
 									textAlign: 'left',
@@ -1009,7 +1014,7 @@ const CartPartial: React.FC = () => {
 								icon='HeroCreditCard'
 								rightIcon='HeroCreditCard'
 								onClick={() => toggleAccordion('showPaymentInfo')}
-								variant='outline'
+								variant='solid'
 								style={{
 									marginBottom: '4px',
 									textAlign: 'left',
@@ -1056,7 +1061,7 @@ const CartPartial: React.FC = () => {
 								icon='HeroTruck'
 								rightIcon='HeroTruck'
 								onClick={() => toggleAccordion('showShippingDetails')}
-								variant='outline'
+								variant='solid'
 								style={{
 									marginBottom: '4px',
 
