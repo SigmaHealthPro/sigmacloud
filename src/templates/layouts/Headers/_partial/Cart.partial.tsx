@@ -495,6 +495,55 @@ const CartPartial: React.FC = () => {
 											existingAddress?.stateid,
 											existingAddress?.countyid,
 										);
+										formik.setFieldValue('Address.id', existingAddress?.id);
+										formik.setFieldValue(
+											'Address.Countryid',
+											existingAddress?.countryid,
+										);
+										formik.setFieldValue(
+											'Address.Country',
+											existingAddress?.countryname,
+										);
+										formik.setFieldValue(
+											'Address.Line1',
+											existingAddress?.line1,
+										);
+										formik.setFieldValue(
+											'Address.Line2',
+											existingAddress?.line2,
+										);
+										formik.setFieldValue(
+											'Address.Suite',
+											existingAddress?.suite,
+										);
+										formik.setFieldValue(
+											'Address.State',
+											existingAddress?.statename,
+										);
+										formik.setFieldValue(
+											'Address.Stateid',
+											existingAddress?.stateid,
+										);
+										formik.setFieldValue(
+											'Address.County',
+											existingAddress?.countyname,
+										);
+										formik.setFieldValue(
+											'Address.Countyid',
+											existingAddress?.countyid,
+										);
+										formik.setFieldValue(
+											'Address.City',
+											existingAddress?.cityname,
+										);
+										formik.setFieldValue(
+											'Address.Cityid',
+											existingAddress?.cityid,
+										);
+										formik.setFieldValue(
+											'Address.ZipCode',
+											existingAddress?.zipCode,
+										);
 									}}>
 									Proceed to Cart
 								</Button>
@@ -654,7 +703,6 @@ const CartPartial: React.FC = () => {
 													{existingAddress?.line2}
 												</p>
 												<p>{existingAddress?.line1}</p>
-
 												<p>{existingAddress?.cityname}</p>
 												<p>{existingAddress?.countyname}</p>
 												<p>
