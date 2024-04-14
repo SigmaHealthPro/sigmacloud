@@ -95,6 +95,8 @@ import SvgViewColumns from '../../components/icon/heroicons/ViewColumns';
 import { HeroEye } from '../../components/icon/heroicons';
 import { left, right } from '@popperjs/core';
 
+var TotalOrder = 0;
+
 const useStyles = makeStyles({
 	root: {
 		// Increase specificity by repeating the class
@@ -375,8 +377,15 @@ const OrderManagement: React.FC = () => {
 		formik.setFieldValue('orderDate', params.row.orderDate);
 		formik.setFieldValue('quantity', params.row.quantity);
 		formik.setFieldValue('unitPrice', params.row.unitPrice);
+		formik.setFieldValue('TaxAmount', params.row.taxAmount);
+		formik.setFieldValue('DiscountAmount', params.row.discountAmount);
 		formik.setFieldValue('orderTotal', params.row.orderTotal);
 		formik.setFieldValue('orderStatus', params.row.orderStatus);
+		TotalOrder =
+			parseInt(params.row.orderTotal) +
+			parseInt(params.row.taxAmount) -
+			parseInt(params.row.discountAmount);
+		formik.setFieldValue('GrandTotal', TotalOrder);
 	};
 
 	const handleRowClick = (params: GridRowParams) => {
@@ -483,6 +492,7 @@ const OrderManagement: React.FC = () => {
 		orderDate: string;
 		orderStatus: string;
 		orderTotal: string;
+		GrandTotal: string;
 		TaxAmount: string;
 		TermsConditionsId: string;
 		orderItemDesc: string;
@@ -522,6 +532,7 @@ const OrderManagement: React.FC = () => {
 			orderDate: '',
 			orderStatus: '',
 			orderTotal: '',
+			GrandTotal: '',
 			TaxAmount: '',
 			TermsConditionsId: generatedGUID,
 			orderItemDesc: '',
@@ -783,7 +794,20 @@ const OrderManagement: React.FC = () => {
 						</ModalFooter>
 					</Modal>
 					<Modal isOpen={viewOrderModal} size={'xl'} setIsOpen={setViewOrderModal}>
-						<ModalHeader> {'Order Details'}</ModalHeader>
+						<ModalHeader style={{ fontWeight: 'bold', fontSize: '24px' }}>
+							{' '}
+							{'Order Details'}
+						</ModalHeader>
+						<p style={{ marginLeft: '10px' }}>
+							{'Ordered on'}{' '}
+							<CustomDatecomp orderDate={formik.values.orderDate}></CustomDatecomp>
+							<Button
+								variant='outline'
+								icon='HeroPrinter'
+								style={{ marginLeft: '650px' }}>
+								View or Print Invoice
+							</Button>
+						</p>
 						<hr></hr>
 						<ModalBody>
 							<div className='col-span-12 lg:col-span-9'>
@@ -798,6 +822,7 @@ const OrderManagement: React.FC = () => {
 																fontSize: '18px',
 																marginBottom: '5px',
 																paddingBottom: '10px',
+																fontWeight: 'bold',
 															}}>
 															Order Information
 														</span>
@@ -837,23 +862,7 @@ const OrderManagement: React.FC = () => {
 															</span>
 														</div>
 														<div></div>
-														<div>
-															<span style={{ fontSize: '14px' }}>
-																Order placed on:{' '}
-															</span>
-															<span
-																style={{
-																	marginLeft: '20px',
-																	textAlign: right,
-																	fontSize: '14px',
-																}}>
-																{' '}
-																<CustomDatecomp
-																	orderDate={
-																		formik.values.orderDate
-																	}></CustomDatecomp>
-															</span>
-														</div>
+
 														<div></div>
 														<div>
 															<span style={{ fontSize: '14px' }}>
@@ -890,12 +899,14 @@ const OrderManagement: React.FC = () => {
 														<div
 															style={{
 																fontSize: '18px',
-																marginTop: '-145px',
+																marginTop: '-125px',
 																marginLeft: '440px',
 																height: '200px',
 																overflow: 'auto',
 															}}>
-															Shipping Information
+															<p style={{ fontWeight: 'bold' }}>
+																Shipping Address
+															</p>
 															<div style={{ height: '15px' }}></div>
 															<div
 																key={shipmentAddress?.id}
@@ -936,28 +947,44 @@ const OrderManagement: React.FC = () => {
 																height: '160px',
 																overflow: 'auto',
 															}}>
-															Order Total
+															<p style={{ fontWeight: 'bold' }}>
+																Order Summary
+															</p>
 															<div style={{ height: '15px' }}></div>
 															<div style={{ fontSize: '14px' }}>
-																Subtotal:
+																Item(s) Subtotal:
 																<span
-																	style={{ marginLeft: '70px' }}>
-																	USD {formik.values.orderTotal}
+																	style={{ marginLeft: '50px' }}>
+																	{formik.values.orderTotal}$
 																</span>
 															</div>
 															<div style={{ fontSize: '14px' }}>
-																Shippingcharges:
+																Shipping & Handling:
 																<span
-																	style={{ marginLeft: '15px' }}>
+																	style={{ marginLeft: '25px' }}>
 																	{' '}
 																	Free
 																</span>
 															</div>
 															<div style={{ fontSize: '14px' }}>
-																Total:
+																Tax Amount:
 																<span
-																	style={{ marginLeft: '90px' }}>
-																	USD {formik.values.orderTotal}
+																	style={{ marginLeft: '80px' }}>
+																	{formik.values.TaxAmount}
+																</span>
+															</div>
+															<div style={{ fontSize: '14px' }}>
+																Discount:
+																<span
+																	style={{ marginLeft: '95px' }}>
+																	{formik.values.DiscountAmount}
+																</span>
+															</div>
+															<div style={{ fontSize: '14px' }}>
+																Grand Total:
+																<span
+																	style={{ marginLeft: '80px' }}>
+																	{formik.values.GrandTotal}$
 																</span>
 															</div>
 														</div>
@@ -973,7 +1000,7 @@ const OrderManagement: React.FC = () => {
 								<span style={{ fontSize: '20px' }}>
 									Item(s) bought from {formik.values.manufacturername}
 								</span>
-								<div>Order Number 13-04666</div>
+
 								<div style={{ height: '15px' }}> </div>
 								<div className='OrderitemDet'>
 									{orderitemsData.length > 0 &&
