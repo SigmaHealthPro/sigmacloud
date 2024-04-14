@@ -1103,17 +1103,6 @@ const OrderManagement: React.FC = () => {
 								</div>
 							</div>
 						</ModalBody>
-
-						<ModalFooter>
-							{/* <Button
-								variant='solid'
-								onClick={() => {
-									setViewOrderModal(false);
-									setEditTouched(false);
-								}}>
-								Cancel
-							</Button> */}
-						</ModalFooter>
 					</Modal>
 				</SubheaderRight>
 			</Subheader>
