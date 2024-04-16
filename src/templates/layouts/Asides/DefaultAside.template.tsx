@@ -57,6 +57,12 @@ const DefaultAsideTemplate = () => {
 						to={appPages.PatientManagement.to}
 						icon={appPages.PatientManagement.icon}
 					/>
+							{/* Inventory Management  */}
+					<NavItem
+						text={appPages.InventoryManagement.text}
+						to={appPages.InventoryManagement.to}
+						icon={appPages.InventoryManagement.icon}
+					/>
 					{/* Vaccine Management */}
 					<NavCollapse
 						text={appPages.crmAppPages.text}

@@ -3,6 +3,7 @@ import productsDb from '../mocks/db/products.db';
 import usersDb from '../mocks/db/users.db';
 import rolesDb from '../mocks/db/roles.db';
 import projectsDb from '../mocks/db/projects.db';
+import InventoryManagement from '../pages/Inventory/InventoryManagement';
 
 export const examplePages = {
 	examplesPage: {
@@ -128,6 +129,14 @@ export const appPages = {
 			},
 		},
 	},
+	InventoryManagement: {
+		id: 'inventoryManagement',
+		to: '/inventory-management',
+		text: 'Inventory Management',
+		icon: 'HeroEnvelope'
+	},
+
+
 	PatientManagement: {
 		id: 'patientManagement',
 		to: '/patient-management',
