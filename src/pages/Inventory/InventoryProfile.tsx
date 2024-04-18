@@ -202,7 +202,7 @@
                             </Grid>
                         </Grid> */}
     
-                        <Grid container spacing={2} marginTop={3}>
+                        <Grid container spacing={2} marginTop={1}>
                             <Grid item xs={12}>
                                 <Paper style={{ padding: '8px' }}>
                                     <Typography variant='subtitle2' fontWeight={600} color={'#597b9f'}>
@@ -216,15 +216,15 @@
                             </Grid>
                         </Grid>
     
-                        <Grid container spacing={2} marginTop={3}>
+                        <Grid container spacing={2} marginTop={1}>
                             <Grid item xs={12}>
                                 <Paper elevation={3} style={{ padding: '8px' }}>
                                     <Typography variant='subtitle2' fontWeight={600} color={'#597b9f'}>
-                                        Allergies
+                                    Quantity Remaining
                                     </Typography>
                                     <Divider />
                                     <Typography variant='caption' color={'gray'}>
-                                        No allergies Found.
+                                    {inventoryData ?.quantityRemaining }
                                     </Typography>
                                 </Paper>
                             </Grid>
