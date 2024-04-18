@@ -9,7 +9,8 @@ import App from './App/App';
 
 import './i18n';
 import './styles/index.css';
-import { store } from './components/redux/store';
+import store from './components/redux/store';
+
 import { Provider } from 'react-redux';
 import 'react-date-range/dist/styles.css'; // main style file
 import 'react-date-range/dist/theme/default.css';

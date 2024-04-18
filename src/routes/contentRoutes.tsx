@@ -13,6 +13,7 @@ import AddPatient from '../pages/Patient Management/AddPatient';
 import PatientProfile from '../pages/Patient Management/PatientProfile';
 import EventCalendar from '../pages/Facility Management/Events/EventCalendar';
 import InventoryManagement from '../pages/Inventory/InventoryManagement';
+import InventoryProfile from '../pages/Inventory/InventoryProfile';
 
 /**
  * UI
@@ -304,6 +305,10 @@ const contentRoutes: RouteProps[] = [
 	{
 		path: appPages.InventoryManagement.to,
 		element:<InventoryManagement/>,
+	},
+	{
+		path: appPages.InventoryManagement.subPages.InventoryProfile.to,
+		element:<InventoryProfile/>,
 	},
 	// {
 	// 	path:appPages.facilityAppPages.subPages.eventCalendar.to,

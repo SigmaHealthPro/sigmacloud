@@ -42,6 +42,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../components/redux/store';
 import { setUserProfile } from '../../components/redux/reducers/profileReducer';
+import { setInventory } from '../../components/redux/reducers/InventoryReducer';
+
 import toast, { Toaster } from 'react-hot-toast';
 import Select from '../../components/form/Select';
 import popUp from '../../components/popup/popup';
@@ -140,9 +142,9 @@ const InventoryManagement = () => {
 									/>
 								</Popconfirm>
 								<div>
-						<Link to={`../${appPages.PatientManagement.subPages.PatientProfile.to}`}>
+						<Link to={`../${appPages.InventoryManagement.subPages.InventoryProfile.to}`}>
 							<AntButton 	icon={
-						<VisibilityIcon  />	}  onClick={()=>{dispatch(setUserProfile((params.row)))}}
+						<VisibilityIcon  />	}  onClick={()=>{dispatch(setInventory((params.row)))}}
 							/>
 													{/* <VisibilityIcon  />	}  onClick={()=>{debugger;dispatch(setUserProfile((params.row)))}} */}
 

@@ -4,6 +4,7 @@ import usersDb from '../mocks/db/users.db';
 import rolesDb from '../mocks/db/roles.db';
 import projectsDb from '../mocks/db/projects.db';
 import InventoryManagement from '../pages/Inventory/InventoryManagement';
+import InventoryProfile from '../pages/Inventory/InventoryProfile';
 
 export const examplePages = {
 	examplesPage: {
@@ -133,7 +134,15 @@ export const appPages = {
 		id: 'inventoryManagement',
 		to: '/inventory-management',
 		text: 'Inventory Management',
-		icon: 'HeroEnvelope'
+		icon: 'HeroEnvelope',
+		subPages: {
+			InventoryProfile:{
+				id:'inventoryProfile',
+				to:'/inventoryProfile',
+				text:'Inventory Profile',
+				icon:'HeroClipboardDocumentCheck',
+			},
+		}
 	},
 
 
