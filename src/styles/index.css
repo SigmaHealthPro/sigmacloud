@@ -477,7 +477,7 @@ gh-info__row {
 .hr {
 	border: 'none';
 	border-bottom: '14px solid black';
-	margin-bottom: '10px';
+	/* margin-bottom: '10px'; */
 }
 .OrderitemDet {
 	display: flex;

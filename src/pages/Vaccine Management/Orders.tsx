@@ -11,6 +11,8 @@ import Input from '../../components/form/Input';
 import CartPartial from '../../templates/layouts/Headers/_partial/Cart.partial';
 import { TUser } from '../../mocks/db/users.db';
 import DefaultHeaderRightCommon from '../../templates/layouts/Headers/_common/DefaultHeaderRight.common';
+import { PDFViewer } from '@react-pdf/renderer';
+import { InvoiceDocument } from './InvoiceDocument';
 import {
 	createColumnHelper,
 	getCoreRowModel,
@@ -76,6 +78,8 @@ import Select from '../../components/form/Select';
 import { number } from 'prop-types';
 import { fontFamily, width } from '@mui/system';
 import CustomDatecomp from './CustomDatecomp';
+import ReactDOMServer from 'react-dom/server';
+import { format } from 'date-fns';
 import {
 	DataContextProvider,
 	useDataContext,
@@ -109,6 +113,7 @@ const useStyles = makeStyles({
 		},
 	},
 });
+
 type TModalStableSize = 'sm' | 'md' | 'lg' | 'xl' | '2xl';
 interface ShipmentAddressModel {
 	username: string;
@@ -148,6 +153,9 @@ const OrderManagement: React.FC = () => {
 	const classes = useStyles();
 	const [Orders, setOrders] = useState<any[]>([]);
 	const [globalFilter, setGlobalFilter] = useState<string>('');
+	const [globalFilterOrder, setGlobalFilterOrder] = useState<any>('');
+	const [OrderItemdes, setOrderItemDes] = useState<string>('');
+	const [OrderItemPrice, setOrderItemPrice] = useState<string>('');
 	const [loading, setLoading] = useState<boolean>(false); // Track loading state
 	const [rowCountState, setRowCountState] = useState<number>(0); // Total number of items
 	const [shipmentAddress, setShipmentAddress] = useState<ShipmentAddressModel | null>(null);
@@ -174,7 +182,7 @@ const OrderManagement: React.FC = () => {
 	const { setData } = useDataContext();
 	const [viewOrderModal, setViewOrderModal] = useState(false);
 	const [localData, setLocalData] = useState<TUser | null>(null);
-
+	const [showInvoice, setShowInvoice] = React.useState<boolean>(false);
 	const handleQuantityChange = (quantity: number) => {
 		setSelectedQuantity(quantity);
 	};
@@ -313,13 +321,13 @@ const OrderManagement: React.FC = () => {
 		{ field: 'product', headerName: 'Product', width: 140 },
 		{ field: 'manufacturername', headerName: 'Manufacturer', width: 250, hide: true }, // Hidden Order ID field
 		//{ field: 'createdBy', headerName: 'CreatedBy', width: 250, hide: true },
-		{ field: 'orderItemDesc', headerName: 'OrderItem Desc', width: 140 },
+		{ field: 'orderItemDesc', headerName: 'OrderItemDesc', width: 140 },
 		{ field: 'facility', headerName: 'Facility', width: 140 },
-		{ field: 'orderDate', headerName: 'Order Date', width: 140 },
+		{ field: 'orderDate', headerName: 'OrderDate', width: 140 },
 		{ field: 'quantity', headerName: 'Quantity', width: 140 },
-		{ field: 'unitPrice', headerName: 'Unit Price', width: 140 },
-		{ field: 'orderTotal', headerName: 'Order Total', width: 140 },
-		{ field: 'orderStatus', headerName: 'Order Status', width: 140 },
+		{ field: 'unitPrice', headerName: 'UnitPrice', width: 140 },
+		{ field: 'orderTotal', headerName: 'OrderTotal', width: 140 },
+		{ field: 'orderStatus', headerName: 'OrderStatus', width: 140 },
 		{
 			field: 'actions',
 			headerName: 'Actions',
@@ -349,19 +357,20 @@ const OrderManagement: React.FC = () => {
 		},
 	];
 	const handleViewData = async (params: any, event: any) => {
+		setShowInvoice(false);
 		const orderid = params.row.id;
 		const postResponse = await axios
 			.post(apiUrl + 'api/Vaccination/getaddressbyorderid?orderid=' + orderid)
 			.then((response) => {
 				setShipmentAddress(response?.data.data);
-				console.log('shipment', response.data.data);
 			})
 			.catch((err) => console.log('Error has occured', err));
 		const itemslist = await axios
 			.post(apiUrl + 'api/Vaccination/getitemsbyorderid?orderid=' + orderid)
 			.then((response) => {
 				setorderitemsData(response?.data.data);
-				console.log('itemsdata', response.data.data);
+				setOrderItemDes(response.data.data.orderitemdesc);
+				setOrderItemPrice(response.data.data.unitprice);
 			})
 			.catch((err) => console.log('Error has occured', err));
 		event.preventDefault();
@@ -374,7 +383,10 @@ const OrderManagement: React.FC = () => {
 		formik.setFieldValue('CreatedBy', params.row.createdBy);
 		formik.setFieldValue('orderItemDesc', params.row.orderItemDesc);
 		formik.setFieldValue('facility', params.row.facility);
-		formik.setFieldValue('orderDate', params.row.orderDate);
+		formik.setFieldValue(
+			'orderDate',
+			<CustomDatecomp orderDate={params.row.orderDate}></CustomDatecomp>,
+		);
 		formik.setFieldValue('quantity', params.row.quantity);
 		formik.setFieldValue('unitPrice', params.row.unitPrice);
 		formik.setFieldValue('TaxAmount', params.row.taxAmount);
@@ -386,6 +398,7 @@ const OrderManagement: React.FC = () => {
 			parseInt(params.row.taxAmount) -
 			parseInt(params.row.discountAmount);
 		formik.setFieldValue('GrandTotal', TotalOrder);
+		formik.setFieldValue('ShipmentDate', params.row.ShipmentDate);
 	};
 
 	const handleRowClick = (params: GridRowParams) => {
@@ -414,7 +427,7 @@ const OrderManagement: React.FC = () => {
 	const listOrders = () => {
 		setLoading(true);
 		const requestData = {
-			keyword: globalFilter || '',
+			keyword: globalFilterOrder || '',
 			pagenumber: paginationModel.page + 1,
 			pagesize: paginationModel.pageSize,
 			date_of_order: '',
@@ -427,12 +440,11 @@ const OrderManagement: React.FC = () => {
 			.then((response) => {
 				setLoading(true);
 				const { items, totalCount } = response.data;
-				console.log('searchordersdata', response.data);
 
 				if (items.length > paginationModel.pageSize) {
 					console.warn('API returned more items than the requested page size.');
 				}
-				//console.log(items);
+
 				setOrders(items);
 				const totalRowCount = response.data.totalCount; // Assuming API returns totalCount
 				setRowCountState((prevRowCountState) =>
@@ -445,15 +457,35 @@ const OrderManagement: React.FC = () => {
 				setLoading(false); // End loading
 			});
 	};
+	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setGlobalFilterOrder(e.target.value);
+		if (e.target.value !== '') {
+			const searchDataFilter = Orders.filter(
+				(item: any) =>
+					item?.Product.startsWith(e.target.value) ||
+					item?.Manufacturer.startsWith(e.target.value) ||
+					item?.OrderItemDesc.startsWith(e.target.value) ||
+					item?.Facility.startsWith(e.target.value) ||
+					item?.OrderDate.startsWith(e.target.value) ||
+					item?.Quantity.startsWith(e.target.value) ||
+					item?.UnitPrice.startsWith(e.target.value) ||
+					item?.OrderTotal.startsWith(e.target.value) ||
+					item?.OrderStatus.startsWith(e.target.value),
+			);
+			setOrders(searchDataFilter);
+		} else {
+			listOrders();
+		}
+	};
 
 	useEffect(() => {
-		console.log('selectedorgid', localStorage.getItem('organizationidlogged'));
+		//console.log('selectedorgid', localStorage.getItem('organizationidlogged'));
 		const storedData = localStorage.getItem('apiData');
 		if (storedData) {
 			setLocalData(JSON.parse(storedData));
 		}
 		listOrders();
-	}, [globalFilter, paginationModel]);
+	}, [globalFilterOrder, paginationModel]);
 	let jurdid = localStorage.getItem('juridictionidlogged')?.toString();
 
 	const listData = () => {
@@ -504,10 +536,14 @@ const OrderManagement: React.FC = () => {
 		manufacturername: string;
 		manufacturer: string;
 		manufacturerid: string;
+		ShipmentDate: string;
 	};
 	const reset = () => {
 		formik.setFieldValue('orderItemDesc', '');
 		formik.setFieldValue('facility', '');
+		formik.setFieldValue('manufacturername', '');
+		formik.setFieldValue('manufacturer', '');
+		formik.setFieldValue('manufacturerid', '');
 		formik.setFieldValue('product', '');
 		formik.setFieldValue('OrderItemStatus', '');
 		formik.setFieldValue('unitPrice', '');
@@ -534,6 +570,7 @@ const OrderManagement: React.FC = () => {
 			orderTotal: '',
 			GrandTotal: '',
 			TaxAmount: '',
+			ShipmentDate: '',
 			TermsConditionsId: generatedGUID,
 			orderItemDesc: '',
 			OrderItemStatus: '',
@@ -586,10 +623,77 @@ const OrderManagement: React.FC = () => {
 		},
 
 		onSubmit: async (values: Order) => {
-			//console.log('Request Payload: ', values);
+			console.log('Request Payload: ', values);
 		},
 	});
+	const yourOrderInfo = {
+		OrderPlaced: formik.values.orderDate,
+		manufacturername: formik.values.manufacturername,
+		orderTotal: formik.values.GrandTotal,
+		ShipmentDate: formik.values.ShipmentDate,
+		OrderItemDesc: OrderItemdes,
+		Price: OrderItemPrice,
+	};
 
+	const handlePrintInvoice = () => {
+		const formikValues = {
+			OrderPlaced: formik.values.orderDate,
+			manufacturername: formik.values.manufacturername,
+			orderTotal: formik.values.GrandTotal,
+			ShipmentDate: formik.values.orderDate,
+			OrderItemDesc: OrderItemdes,
+			Price: OrderItemPrice,
+			// Add other Formik values as needed
+		};
+
+		const pdfContent = ReactDOMServer.renderToStaticMarkup(
+			<PDFViewer style={{ width: '100%', height: '100vh' }}>
+				<InvoiceDocument formikValues={formikValues} />
+			</PDFViewer>,
+		);
+		const dataUrl = `data:application/pdf;base64,${btoa(pdfContent)}`;
+
+		const newWindow = window.open();
+		if (newWindow) {
+			newWindow.document.write('<html><head><title>Order Invoice</title></head><body>');
+			newWindow.document.write(
+				'<div style="text-align:center;margin-bottom:20px;">Order Invoice</div>',
+			);
+			// Use <object> to embed the PDF content
+			newWindow.document.write(
+				`<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+				 <div style="text-align:center;">
+				   <canvas id="pdfViewer" style="width:800px; height:600px;"></canvas>
+				 </div>
+				 <script>
+				   const pdfData = atob('${btoa(pdfContent)}');
+				   pdfjsLib.getDocument({ data: pdfData }).promise.then(pdf => {
+					 pdf.getPage(1).then(page => {
+					   const canvas = document.getElementById('pdfViewer');
+					   const context = canvas.getContext('2d');
+					   const viewport = page.getViewport({ scale: 1.5 });
+					   canvas.width = viewport.width;
+					   canvas.height = viewport.height;
+					   const renderContext = {
+						 canvasContext: context,
+						 viewport: viewport,
+					   };
+					   page.render(renderContext);
+					 });
+				   });
+				 </script>
+				 </body></html>`,
+			);
+			newWindow.document.close();
+		}
+
+		// Now you can handle the PDF content as needed, such as displaying it in a modal or opening it in a new window
+	};
+	const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+		if (e.key === 'Enter') {
+			listOrders();
+		}
+	};
 	return (
 		<PageWrapper name='Order List'>
 			<Subheader>
@@ -598,20 +702,22 @@ const OrderManagement: React.FC = () => {
 					<FieldWrap
 						firstSuffix={<Icon className='mx-2' icon='HeroMagnifyingGlass' />}
 						lastSuffix={
-							globalFilter && (
+							globalFilterOrder && (
 								<Icon
 									icon='HeroXMark'
 									color='red'
 									className='mx-2 cursor-pointer'
-									onClick={() => setGlobalFilter('')}
+									onClick={() => setGlobalFilterOrder('')}
 								/>
 							)
 						}>
 						<Input
-							id='globalFilter'
-							name='globalFilter'
+							id='globalFilterOrder'
+							name='globalFilterOrder'
 							placeholder='Search...'
-							value={globalFilter}
+							value={globalFilterOrder}
+							onChange={handleInputChange}
+							onKeyDown={handleKeyDown}
 						/>
 					</FieldWrap>
 				</SubheaderLeft>
@@ -625,6 +731,7 @@ const OrderManagement: React.FC = () => {
 							setNewOrderModal(true);
 							reset();
 							listData();
+							setFilteredVaccine([]);
 						}}>
 						Order Vaccine
 					</Button>
@@ -672,6 +779,19 @@ const OrderManagement: React.FC = () => {
 																			'facilityId',
 																			event.target.value,
 																		);
+																		formik.setFieldValue(
+																			'manufacturername',
+																			'',
+																		);
+																		formik.setFieldValue(
+																			'manufacturerid',
+																			'',
+																		);
+																		formik.setFieldValue(
+																			'manufacturer',
+																			'',
+																		);
+																		setFilteredVaccine([]);
 																	}}
 																	onBlur={formik.handleBlur}
 																	placeholder='Select Facility'>
@@ -799,14 +919,15 @@ const OrderManagement: React.FC = () => {
 							{'Order Details'}
 						</ModalHeader>
 						<p style={{ marginLeft: '10px' }}>
-							{'Ordered on'}{' '}
-							<CustomDatecomp orderDate={formik.values.orderDate}></CustomDatecomp>
+							{'Ordered on'} {formik.values.orderDate}
 							<Button
 								variant='outline'
 								icon='HeroPrinter'
-								style={{ marginLeft: '650px' }}>
+								style={{ marginLeft: '635px' }}
+								onClick={handlePrintInvoice}>
 								View or Print Invoice
 							</Button>
+							{/* Render PDF viewer and invoice document when showInvoice is true */}
 						</p>
 						<hr></hr>
 						<ModalBody>
@@ -890,10 +1011,7 @@ const OrderManagement: React.FC = () => {
 																	fontSize: '14px',
 																}}>
 																{' '}
-																<CustomDatecomp
-																	orderDate={
-																		formik.values.orderDate
-																	}></CustomDatecomp>
+																{formik.values.orderDate}
 															</span>
 														</div>
 														<div
@@ -969,15 +1087,15 @@ const OrderManagement: React.FC = () => {
 															<div style={{ fontSize: '14px' }}>
 																Tax Amount:
 																<span
-																	style={{ marginLeft: '80px' }}>
-																	{formik.values.TaxAmount}
+																	style={{ marginLeft: '75px' }}>
+																	{formik.values.TaxAmount}$
 																</span>
 															</div>
 															<div style={{ fontSize: '14px' }}>
 																Discount:
 																<span
 																	style={{ marginLeft: '95px' }}>
-																	{formik.values.DiscountAmount}
+																	{formik.values.DiscountAmount}$
 																</span>
 															</div>
 															<div style={{ fontSize: '14px' }}>

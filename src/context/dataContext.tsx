@@ -12,7 +12,7 @@ export const DataContext = createContext<DataContextValue | undefined>(undefined
 
 export const useDataContext = () => {
 	const context = useContext(DataContext);
-	console.log('Context value:', context);
+	// console.log('Context value:', context);
 	if (!context) {
 		throw new Error('useDataContext must be used within a DataContextProvider');
 	}

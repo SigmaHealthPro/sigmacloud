@@ -76,6 +76,11 @@ interface UserAddressModel {
 	cityid: string;
 	zipCode: string;
 }
+const generateRandomOrderId = () => {
+	// Generate a random number between 100000 and 999999
+	const randomNumber = Math.floor(100000 + Math.random() * 900000);
+	return `PO${randomNumber}`;
+};
 
 const CartPartial: React.FC = () => {
 	const contextValue = useContext(DataContext);
@@ -122,6 +127,7 @@ const CartPartial: React.FC = () => {
 	generatedGUID = uuidv4();
 
 	var totalprice = 0;
+	const RandomOrderId = generateRandomOrderId();
 	type Vaccine = {
 		product: string;
 		vaccine: string;
@@ -206,6 +212,16 @@ const CartPartial: React.FC = () => {
 		return total.toString();
 	};
 	const orderTotal: string = calculateOrderTotal(orderItems);
+	const calculateGrandTotal = (orderItems: OrderItem[], tax: number): string => {
+		// Calculate order total using the existing function
+		const orderTotal: number = parseFloat(calculateOrderTotal(orderItems));
+
+		// Calculate grand total by adding tax to the order total
+		const grandTotal: number = orderTotal + tax;
+
+		// Return the grand total as a string
+		return grandTotal.toString();
+	};
 	const currentDate = new Date();
 	const currentDateFormatted = currentDate.toISOString();
 	const [isOpen, setIsOpen] = useState(false);
@@ -335,7 +351,7 @@ const CartPartial: React.FC = () => {
 				formik.setFieldValue('orderId', '');
 				formik.setFieldValue('UnitPrice', '');
 				formik.setFieldValue('Product', '');
-				removeAllItemsFromCart();
+				setCartData([]);
 				toast.success(`Order submitted successfully!`);
 				setIsOpen(false);
 				// Handle response
@@ -435,10 +451,6 @@ const CartPartial: React.FC = () => {
 		const updatedCartData = cartData.filter((item) => item.productid !== productid);
 		setCartData(updatedCartData);
 	};
-	const removeAllItemsFromCart = () => {
-		setCartData([]); // Assign an empty array to clear all items from the cart
-	};
-
 	const apiUrl = apiconfig.apiHostUrl;
 	var selectedstateid = '';
 	let manufacturerName = '';
@@ -566,7 +578,7 @@ const CartPartial: React.FC = () => {
 					<div className='grid grid-cols-12 gap-16'>
 						<div className='col-span-12 flex lg:col-span-6'>
 							<Label htmlFor={`order_id`} style={{ fontSize: '13px' }}>
-								Order ID: {'PO123489'}
+								Order ID: {RandomOrderId}
 							</Label>
 							<Label htmlFor={`order_date`} style={{ fontSize: '13px' }}>
 								Order Date:
@@ -581,11 +593,6 @@ const CartPartial: React.FC = () => {
 							</Label>
 							<Label htmlFor={`Manufacturer_name`} style={{ fontSize: '13px' }}>
 								{manufacturerName}
-							</Label>
-						</div>
-						<div className='col-span-12 flex lg:col-span-3'>
-							<Label htmlFor={`Manufacturer_address`} style={{ fontSize: '13px' }}>
-								{'GSK 2929 Walnut Street Ste. 1700 Philadelphia, PA 19104'}
 							</Label>
 						</div>
 					</div>
@@ -1146,6 +1153,7 @@ const CartPartial: React.FC = () => {
 														value={formik.values.Shiping.ShipmentDate}
 														onBlur={formik.handleBlur}
 														style={{ width: '120px' }}
+														min={new Date().toISOString().split('T')[0]}
 													/>
 												</Validation>
 											</div>
@@ -1521,6 +1529,7 @@ const CartPartial: React.FC = () => {
 														}
 														onBlur={formik.handleBlur}
 														style={{ width: '110px' }}
+														min={new Date().toISOString().split('T')[0]}
 													/>
 												</Validation>
 											</div>
@@ -1556,74 +1565,75 @@ const CartPartial: React.FC = () => {
 								)}
 							</Collapse>
 						</div>
-						<div className='static-grid' style={{ height: '160px', overflow: 'auto' }}>
+						<div className='static-grid' style={{ height: '220px', overflow: 'auto' }}>
 							<div className='order-summary'>
 								{/* Static content for Order Summary */}
 								<h1
 									style={{
 										fontSize: '18px',
-										fontFamily: 'sans-serif',
 										fontWeight: 'bold',
 										textAlign: 'center',
 									}}>
 									Order Summary
 								</h1>
+								<hr></hr>
+								<div style={{ height: '20px' }}></div>
 								<Label
 									htmlFor='Product'
 									style={{
-										fontFamily: 'sans-serif',
-										fontSize: '16px',
+										fontSize: '14px',
 										display: 'inline-block',
 										width: '230px',
 									}}>
 									Total Items:
 								</Label>
 								<span>{data.length}</span>
+								<div style={{ height: '5px' }}></div>
 								<Label
 									htmlFor='Product'
 									style={{
-										fontFamily: 'sans-serif',
-										fontSize: '16px',
+										fontSize: '14px',
 										display: 'inline-block',
 										width: '230px',
 									}}>
 									Items Total:
 								</Label>
-								<span>{orderTotal}</span>
+								<span>{orderTotal}$</span>
+								<div style={{ height: '5px' }}></div>
 								<Label
 									htmlFor='Product'
 									style={{
-										fontFamily: 'sans-serif',
-										fontSize: '16px',
+										fontSize: '14px',
 										display: 'inline-block',
 										width: '230px',
 									}}>
 									Tax:
 								</Label>
 								<span>10$</span>
+								<div style={{ height: '5px' }}></div>
 								<Label
 									htmlFor='Product'
 									style={{
-										fontFamily: 'sans-serif',
-										fontSize: '16px',
+										fontSize: '14px',
 										display: 'inline-block',
 										width: '230px',
 									}}>
 									Shipping Cost:
 								</Label>
-								<span>10$</span>
+								<span>Free</span>
+								<div style={{ height: '5px' }}></div>
 								<hr></hr> {/* Underline */}
+								<div style={{ height: '12px' }}></div>
 								<Label
 									htmlFor='Product'
 									style={{
-										fontFamily: 'sans-serif',
-										fontSize: '16px',
+										fontSize: '14px',
 										display: 'inline-block',
 										width: '230px',
 									}}>
-									Total
+									Grand Total
 								</Label>
-								<span>195$</span>
+								<span>{calculateGrandTotal(orderItems, 10)}$</span>
 								{/* Other static content */}
 							</div>
 						</div>
@@ -1640,7 +1650,7 @@ const CartPartial: React.FC = () => {
 
 							//addShippment(false);
 						}}>
-						Checkout
+						Submit Order
 					</Button>
 				</ModalFooter>
 			</Modal>
