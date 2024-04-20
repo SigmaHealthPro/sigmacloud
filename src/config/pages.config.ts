@@ -136,15 +136,14 @@ export const appPages = {
 		text: 'Inventory Management',
 		icon: 'HeroEnvelope',
 		subPages: {
-			InventoryProfile:{
-				id:'inventoryProfile',
-				to:'/inventoryProfile',
-				text:'Inventory Profile',
-				icon:'HeroClipboardDocumentCheck',
+			InventoryProfile: {
+				id: 'inventoryProfile',
+				to: '/inventoryProfile',
+				text: 'Inventory Profile',
+				icon: 'HeroClipboardDocumentCheck',
 			},
-		}
+		},
 	},
-
 
 	PatientManagement: {
 		id: 'patientManagement',
@@ -152,17 +151,17 @@ export const appPages = {
 		text: 'Patient Management',
 		icon: 'HeroEnvelope',
 		subPages: {
-			AddPatient:{
-				id:'addPatient',
-				to:'/pages/patient-Management/addPatient',
-				text:'AddPatient',
-				icon:'HeroQueueList',
+			AddPatient: {
+				id: 'addPatient',
+				to: '/pages/patient-Management/addPatient',
+				text: 'AddPatient',
+				icon: 'HeroQueueList',
 			},
-			PatientProfile:{
-				id:'patientProfile',
-				to:'/patientProfile',
-				text:'atient Profile',
-				icon:'HeroClipboardDocumentCheck',
+			PatientProfile: {
+				id: 'patientProfile',
+				to: '/patientProfile',
+				text: 'atient Profile',
+				icon: 'HeroClipboardDocumentCheck',
 			},
 		},
 	},
@@ -177,6 +176,20 @@ export const appPages = {
 				to: '/crm/dashboard',
 				text: 'CRM Dashboard',
 				icon: 'HeroUserCircle',
+			},
+			OrdersPage: {
+				id: 'OrdersPage',
+				to: '/pages/Vaccine-Management/Orders',
+				text: 'Orders',
+				icon: 'HeroShoppingCart',
+				subPages: {
+					AddOrder: {
+						id: 'addOrder',
+						to: '/pages/Vaccine-Management/addOrder',
+						text: 'AddOrder',
+						icon: 'HeroQueueList',
+					},
+				},
 			},
 			customerPage: {
 				id: 'customerPage',
@@ -276,12 +289,11 @@ export const appPages = {
 				text: 'Facility Page',
 				icon: 'HeroClipboardDocumentCheck',
 			},
-			eventCalendar:{
+			eventCalendar: {
 				id: 'eventCalendar',
 				to: '/eventCalendar',
 				text: 'Event Calendar',
-				icon: 'HeroClipboardDocumentCheck'
-
+				icon: 'HeroClipboardDocumentCheck',
 			},
 		},
 	},

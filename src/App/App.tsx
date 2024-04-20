@@ -8,6 +8,7 @@ import ContentRouter from '../components/router/ContentRouter';
 import FooterRouter from '../components/router/FooterRouter';
 import useFontSize from '../hooks/useFontSize';
 import getOS from '../Services/utils/getOS.util';
+import { DataContextProvider } from '../context/dataContext';
 
 const App = () => {
 	getOS();
@@ -19,12 +20,14 @@ const App = () => {
 		<>
 			<style>{`:root {font-size: ${fontSize}px}`}</style>
 			<div data-component-name='App' className='flex grow flex-col'>
-				<AsideRouter />
-				<Wrapper>
-					<HeaderRouter />
-					<ContentRouter />
-					<FooterRouter />
-				</Wrapper>
+				<DataContextProvider>
+					<AsideRouter />
+					<Wrapper>
+						<HeaderRouter />
+						<ContentRouter />
+						<FooterRouter />
+					</Wrapper>
+				</DataContextProvider>
 			</div>
 		</>
 	);

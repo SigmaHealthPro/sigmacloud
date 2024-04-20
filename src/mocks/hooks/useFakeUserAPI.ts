@@ -11,7 +11,7 @@ const useFakeUserAPI = (username: string) => {
 	const getCheckUser = (userNameOrMail: string, password: string) => {
 		username = userNameOrMail;
 		const apiUrl = apiconfig.apiHostUrl;
-		console.log('apiurl' + apiUrl);
+		//console.log('apiurl=' + apiUrl);
 		return new Promise((resolve, reject) => {
 			fetch(
 				apiUrl +
@@ -38,13 +38,17 @@ const useFakeUserAPI = (username: string) => {
 				.then((data) => {
 					resolve(data);
 					setResponse(data as TUser);
+					console.log('loggedindata:', data);
 					localStorage.setItem('apiData', JSON.stringify(data));
 					localStorage.setItem('birthdate', JSON.stringify(data.birthdate));
-					localStorage.setItem('loggedinname', data.userName);
-					console.log(data.userName);
+					localStorage.setItem('userid', data.UserId);
+					localStorage.setItem('loggedinid', data.id);
+					localStorage.setItem('loggedinname', data.username);
 					localStorage.setItem('position', data.position);
 					localStorage.setItem('facilityname', data.facility);
 					localStorage.setItem('juridictionname', data.juridiction);
+					localStorage.setItem('juridictionidlogged', data.juridictionid);
+					localStorage.setItem('organizationidlogged', data.organizationid);
 				})
 				.catch((error) => {
 					reject(error.message);
