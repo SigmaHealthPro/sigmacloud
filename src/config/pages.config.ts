@@ -69,9 +69,9 @@ export const appPages = {
 		},
 	},
 	salesAppPages: {
-		id: 'salesApp',
-		to: '/sales',
-		text: 'Enrollment Request',
+		id: 'Admin',
+		to: '/admin',
+		text: 'Admin',
 		icon: 'HeroBanknotes',
 		subPages: {
 			salesDashboardPage: {
@@ -81,15 +81,15 @@ export const appPages = {
 				icon: 'HeroRectangleGroup',
 			},
 			productPage: {
-				id: 'productPage',
-				to: '/sales/product',
-				text: 'Products',
+				id: 'deDuplication',
+				to: '/admin/deduplication',
+				text: 'DeDuplication',
 				icon: 'HeroRectangleStack',
 				subPages: {
 					listPage: {
-						id: 'productsListPage',
-						to: '/sales/product/list',
-						text: 'Products List',
+						id: 'deDuplication',
+						to: '/admin/deduplication/list',
+						text: 'De Duplication Management',
 						icon: 'HeroQueueList',
 					},
 					editPage: {
