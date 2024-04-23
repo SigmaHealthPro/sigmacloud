@@ -194,7 +194,7 @@ const InventoryManagement = () => {
 
 		try {
 			const response = await axios.put(
-				'https://localhost:7155/api/Inventory/deleteinventory',
+				'https://dev-api-iis-sigmacloud.azurewebsites.net/api/Inventory/deleteinventory',
 				formData, // Send the form data
 				{
 					headers: { 'Content-Type': 'multipart/form-data' }, // This matches the expected content type
@@ -246,7 +246,7 @@ const InventoryManagement = () => {
 			   siteName: '',
 		   };
 		axios
-		.post('https://localhost:7155/api/Inventory/searchInventory', requestData)
+		.post('https://dev-api-iis-sigmacloud.azurewebsites.net/api/Inventory/searchInventory', requestData)
 			.then((response) => {
 				setLoading(true);
 				const { items, totalCount } = response.data;
@@ -284,21 +284,21 @@ const InventoryManagement = () => {
 
 	useEffect(() => {
 		async function callInitial() {
-			axios.get('https://localhost:7155/api/Vaccination/getallfacilities')
+			axios.get('https://dev-api-iis-sigmacloud.azurewebsites.net/api/Vaccination/getallfacilities')
 			.then(response => {
 				setFacility(response.data);
 			})
 			.catch(error => {
 				console.error('Error fetching Facility:', error);
 			});
-			axios.get('https://localhost:7155/api/Site/AllSites')
+			axios.get('https://dev-api-iis-sigmacloud.azurewebsites.net/api/Site/AllSites')
 			.then(response => {
 			  setSiteOptions(response.data);
 			})
 			.catch(error => {
 			  console.error('Error fetching sites:', error);
 			});
-			axios.get('https://localhost:7155/api/Vaccination/getallproducts')
+			axios.get('https://dev-api-iis-sigmacloud.azurewebsites.net/api/Vaccination/getallproducts')
 			.then(response => {
 			  setProduct(response.data);
 			})
@@ -418,7 +418,7 @@ const InventoryManagement = () => {
 			console.log('Request Payload: ', values);
 			try {
 				const postResponse = await axios.post(
-					'https://localhost:7155/api/Inventory/createInventory',
+					'https://dev-api-iis-sigmacloud.azurewebsites.net/api/Inventory/createInventory',
 					  { ...values },
 					
 					{

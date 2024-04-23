@@ -65,7 +65,7 @@ const EventCalendar: React.FC = () => {
 	const handleSubmitEvent = async () => {
 		try {
 			const response = await axios.post(
-				'https://localhost:7155/api/Event/createEvent',
+				'https://dev-api-iis-sigmacloud.azurewebsites.net/api/Event/createEvent',
 				eventForm,
 			);
 			console.log(response.data);
@@ -77,7 +77,7 @@ const EventCalendar: React.FC = () => {
 	};
 	useEffect(() => {
 		axios
-			.get('https://localhost:7155/api/Provider/AllProviders')
+			.get('https://dev-api-iis-sigmacloud.azurewebsites.net/api/Provider/AllProviders')
 			.then((response) => {
 				setProviderOptions(response.data);
 			})
@@ -87,7 +87,7 @@ const EventCalendar: React.FC = () => {
 
 		// Fetch site options
 		axios
-			.get('https://localhost:7155/api/Site/AllSites')
+			.get('https://dev-api-iis-sigmacloud.azurewebsites.net/api/Site/AllSites')
 			.then((response) => {
 				setSiteOptions(response.data);
 			})
@@ -103,7 +103,7 @@ const EventCalendar: React.FC = () => {
 
 	const fetchEventData = async () => {
 		try {
-			const response = await fetch('https://localhost:7155/api/Event/searchevent', {
+			const response = await fetch('https://dev-api-iis-sigmacloud.azurewebsites.net/api/Event/searchevent', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',

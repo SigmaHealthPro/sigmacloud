@@ -246,7 +246,7 @@ const PatientManagement = () => {
 
 		try {
 			const response = await axios.put(
-				'https://localhost:7155/api/Patients/deletepatient',
+				'https://dev-api-iis-sigmacloud.azurewebsites.net/api/Patients/deletepatient',
 				formData, // Send the form data
 				{
 					headers: { 'Content-Type': 'multipart/form-data' }, // This matches the expected content type
@@ -313,7 +313,7 @@ const PatientManagement = () => {
 		};
 
 		axios
-			.post('https://localhost:7155/api/Patients/searchpatient', requestData)
+			.post('https://dev-api-iis-sigmacloud.azurewebsites.net/api/Patients/searchpatient', requestData)
 			.then((response) => {
 				setLoading(true);
 				const { items, totalCount } = response.data;
@@ -630,7 +630,7 @@ const PatientManagement = () => {
 			console.log('Request Payload: ', values);
 			try {
 				const postResponse = await axios.post(
-					'https://localhost:7155/api/Patients/createpatient',
+					'https://dev-api-iis-sigmacloud.azurewebsites.net/api/Patients/createpatient',
 					  { ...values, address: SelectedAddressId },
 					
 					{
