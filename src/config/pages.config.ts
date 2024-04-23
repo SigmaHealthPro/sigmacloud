@@ -3,6 +3,7 @@ import productsDb from '../mocks/db/products.db';
 import usersDb from '../mocks/db/users.db';
 import rolesDb from '../mocks/db/roles.db';
 import projectsDb from '../mocks/db/projects.db';
+import { register } from 'module';
 
 export const examplePages = {
 	examplesPage: {
@@ -143,7 +144,13 @@ export const appPages = {
 			PatientProfile:{
 				id:'patientProfile',
 				to:'/patientProfile',
-				text:'atient Profile',
+				text:'patient Profile',
+				icon:'HeroClipboardDocumentCheck',
+			},
+			RegisterEvent:{
+				id:'registerEvent',
+				to:'/registerEvent',
+				text:'Register Event ',
 				icon:'HeroClipboardDocumentCheck',
 			},
 		},

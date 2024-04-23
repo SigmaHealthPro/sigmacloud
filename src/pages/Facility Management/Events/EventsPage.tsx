@@ -7,6 +7,7 @@ import axios from 'axios';
 import Modal, { ModalHeader, ModalBody, ModalFooter, ModalFooterChild } from '../../../components/ui/Modal';
 import { makeStyles } from '@mui/styles';
 import AddEvent from './AddEvent';
+import FilterComponent from '../../FilterComponent';
 
 
 const EventsPage = ({...props}) => {
@@ -63,6 +64,7 @@ const EventsPage = ({...props}) => {
       
   return (
     <>
+    <FilterComponent  />
 	<AddEvent/>
 	<div style={{ height: 400, width: '100%' }}>
 	<DataGrid

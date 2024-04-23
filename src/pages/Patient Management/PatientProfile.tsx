@@ -6,6 +6,7 @@ import Label from '../../components/form/Label';
 import PageWrapper from '../../components/layouts/PageWrapper/PageWrapper';
 import Subheader from '../../components/layouts/Subheader/Subheader';
 import { Grid, Paper, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import { Divider } from '@mui/material';
 import CallIcon from '@mui/icons-material/Call';
 import MailIcon from '@mui/icons-material/Mail';
@@ -29,6 +30,8 @@ import { patientApi } from '../../Apis/patientsApi';
 import { useSelector } from 'react-redux';
 
 import { RootState } from '../../components/redux/store';
+import { Link } from 'react-router-dom';
+import { appPages } from '../../config/pages.config';
 interface Patient {
     firstName: string;
     lastName: string;
@@ -41,10 +44,19 @@ interface Patient {
 
 
 function PatientProfile() {
+	const navigate = useNavigate();
 	const profileData = useSelector((state: RootState) => state.profile.value);
 	console.log("Count value",profileData)
 	const [patientData, setPatientData] = useState<Patient | null>(null);
+	
 
+  // Function to handle button click
+  const handleButtonClick = () => {
+	navigate(appPages.PatientManagement.subPages.RegisterEvent.to, {
+		state: { userName: profileData ? `${profileData.firstName} ${profileData.lastName}` : 'Anonymous' }
+	});
+};
+  
 
 useEffect(() => {
 	
@@ -88,6 +100,18 @@ console.log("Patient Data:", patientData);
 						<DownloadIcon />
 						CCDA
 					</Button>
+					<Link to={`${appPages.PatientManagement.subPages.RegisterEvent.to}`}>
+					<Button
+						variant='contained'
+						color='success'
+						size='small'
+						style={{ marginRight: '10px' }}
+						onClick={handleButtonClick}>
+						<CalendarMonthIcon />
+						
+						Register Event
+					</Button>
+					</Link>
 					<Button
 						variant='contained'
 						color='success'
