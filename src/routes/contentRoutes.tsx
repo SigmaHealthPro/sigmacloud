@@ -174,7 +174,7 @@ const contentRoutes: RouteProps[] = [
 	},
 	{
 		path: appPages.salesAppPages.subPages.productPage.subPages.listPage.to,
-		element: <ProductListPage />,
+		element: <DeDuplicationManagement />,
 	},
 	{
 		path: `${appPages.salesAppPages.subPages.productPage.subPages.editPageLink.to}/:id`,
