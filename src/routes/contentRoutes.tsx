@@ -16,6 +16,7 @@ import EventCalendar from '../pages/Facility Management/Events/EventCalendar';
 import InventoryManagement from '../pages/Inventory/InventoryManagement';
 import InventoryProfile from '../pages/Inventory/InventoryProfile';
 import AddOrder from '../pages/Vaccine Management/AddOrder';
+import DeDuplicationManagement from '../pages/Admin/DeDuplicationManagement';
 
 /**
  * UI
