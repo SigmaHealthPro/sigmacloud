@@ -15,7 +15,7 @@ const useFakeUserAPI = (username: string) => {
 		return new Promise((resolve, reject) => {
 			fetch(
 				apiUrl +
-					'api/User/Authenticate/Authenticate?username=' +
+					'api/User/Authenticate?username=' +
 					username +
 					'&password=' +
 					password,

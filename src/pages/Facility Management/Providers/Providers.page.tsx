@@ -31,7 +31,7 @@ const Providers = ({...props}) => {
     }, []);
     const fetchProviderData = async () => {
         try {
-        const response = await fetch('https://localhost:7155/api/Provider/searchprovider', {
+        const response = await fetch('https://dev-api-iis-sigmacloud.azurewebsites.net/api/Provider/searchprovider', {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json',

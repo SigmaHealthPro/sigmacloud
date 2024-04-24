@@ -47,6 +47,9 @@ import Select from '../../components/form/Select';
 import popUp from '../../components/popup/popup';
 import PatientProfile from './PatientProfile';
 import { Autocomplete, TextField } from '@mui/material';
+import { environment } from '../../Environment/environment';
+import endpoint from '../../config/endpoint';
+import { get } from 'lodash';
 
 
 interface LovMasterType {
@@ -246,7 +249,7 @@ const PatientManagement = () => {
 
 		try {
 			const response = await axios.put(
-				'https://localhost:7155/api/Patients/deletepatient',
+				environment.Base_API_URL+endpoint.deletepatient,
 				formData, // Send the form data
 				{
 					headers: { 'Content-Type': 'multipart/form-data' }, // This matches the expected content type
@@ -313,7 +316,7 @@ const PatientManagement = () => {
 		};
 
 		axios
-			.post('https://localhost:7155/api/Patients/searchpatient', requestData)
+			.post(environment.Base_API_URL+endpoint.searchpatient, requestData)
 			.then((response) => {
 				setLoading(true);
 				const { items, totalCount } = response.data;
@@ -351,17 +354,17 @@ const PatientManagement = () => {
 
 	useEffect(() => {
 		async function callInitial() {
-			await patientApi('/api/MasterData/Countries', 'GET')
+			await axios.get(environment.Base_API_URL+endpoint.Countries)
 				.then((response) => {
 					setCountryData(response?.data);
 				})
 				.catch((err) => console.log('Error has occured', err));
-			await patientApi('/api/MasterData/States', 'GET')
+			await axios.get(environment.Base_API_URL+endpoint.States)
 				.then((response) => {
 					setStateData(response?.data);
 				})
 				.catch((err) => console.log('Error has occured', err));
-			await patientApi('/api/MasterData/getlovmasterbylovtype?lovtype=Gender', 'GET')
+			await axios.get(environment.Base_API_URL+endpoint.Gender)
 				.then((response) => {
 					setGenderData(response?.data);
 				})
@@ -378,7 +381,7 @@ const PatientManagement = () => {
 		const fetchAddressTypes = async () => {
 		  try {
 			const response = await axios.get(
-			  'https://dev-api-iis-sigmacloud.azurewebsites.net/api/MasterData/getlovmasterbylovtype?lovtype=AddressType'
+				environment.Base_API_URL+endpoint.AddressType
 			);
 	
 			console.log('Address Types API Response:', response);
@@ -409,7 +412,7 @@ const PatientManagement = () => {
 		const fetchAddresses = async () => {
 		  try {
 			const response = await axios.post(
-			  'https://dev-api-iis-sigmacloud.azurewebsites.net/api/Addresses/get-addresses',
+			  environment.Base_API_URL+endpoint.addresses,
 			  {
 				identifier: inputValue,
 				recordCount: 1000,
@@ -523,9 +526,9 @@ const PatientManagement = () => {
 
 	const handleCity = async (state: any) => {
 		console.log('Selected State ID', state);
-		const response = await patientApi(
-			`/api/MasterData/getcitiesbystateid?stateid=${state}`,
-			'GET',
+		const response = await axios.get(
+			environment.Base_API_URL+endpoint.getcitiesbystateid+`?stateid=${state}`,
+			
 		)
 			.then((resp) => setFilteredCity(resp?.data))
 			.catch((err) => console.log('err', err));
@@ -630,7 +633,7 @@ const PatientManagement = () => {
 			console.log('Request Payload: ', values);
 			try {
 				const postResponse = await axios.post(
-					'https://localhost:7155/api/Patients/createpatient',
+					environment.Base_API_URL+endpoint.createpatient,
 					  { ...values, address: SelectedAddressId },
 					
 					{
