@@ -49,6 +49,9 @@ import Select from '../../components/form/Select';
 import popUp from '../../components/popup/popup';
 // import InventoryProfile from './InventoryProfile';
 import { Autocomplete, TextField } from '@mui/material';
+import { environment } from '../../Environment/environment';
+import apiconfig from '../../config/apiconfig';
+import endpoint from '../../config/endpoint';
 
 const useStyles = makeStyles({
 	root: {
@@ -194,7 +197,7 @@ const InventoryManagement = () => {
 
 		try {
 			const response = await axios.put(
-				'https://dev-api-iis-sigmacloud.azurewebsites.net/api/Inventory/deleteinventory',
+				environment.Base_API_URL+endpoint.deleteinventory,
 				formData, // Send the form data
 				{
 					headers: { 'Content-Type': 'multipart/form-data' }, // This matches the expected content type
@@ -246,7 +249,7 @@ const InventoryManagement = () => {
 			   siteName: '',
 		   };
 		axios
-		.post('https://dev-api-iis-sigmacloud.azurewebsites.net/api/Inventory/searchInventory', requestData)
+		.post(environment.Base_API_URL+endpoint.searchInventory, requestData)
 			.then((response) => {
 				setLoading(true);
 				const { items, totalCount } = response.data;
@@ -284,26 +287,26 @@ const InventoryManagement = () => {
 
 	useEffect(() => {
 		async function callInitial() {
-			axios.get('https://dev-api-iis-sigmacloud.azurewebsites.net/api/Vaccination/getallfacilities')
+			axios.get(environment.Base_API_URL+endpoint.getallfacilities)
 			.then(response => {
 				setFacility(response.data);
 			})
 			.catch(error => {
 				console.error('Error fetching Facility:', error);
 			});
-			axios.get('https://dev-api-iis-sigmacloud.azurewebsites.net/api/Site/AllSites')
+			axios.get(environment.Base_API_URL+endpoint.AllSites)
 			.then(response => {
 			  setSiteOptions(response.data);
 			})
 			.catch(error => {
 			  console.error('Error fetching sites:', error);
 			});
-			axios.get('https://dev-api-iis-sigmacloud.azurewebsites.net/api/Vaccination/getallproducts')
+			axios.get(environment.Base_API_URL+endpoint.getallproducts)
 			.then(response => {
 			  setProduct(response.data);
 			})
 			.catch(error => {
-			  console.error('Error fetching sites:', error);
+			  console.error('Error fetching Product:', error);
 			});
 		}
 		callInitial();
@@ -418,7 +421,7 @@ const InventoryManagement = () => {
 			console.log('Request Payload: ', values);
 			try {
 				const postResponse = await axios.post(
-					'https://dev-api-iis-sigmacloud.azurewebsites.net/api/Inventory/createInventory',
+					environment.Base_API_URL+endpoint.createInventory,
 					  { ...values },
 					
 					{
