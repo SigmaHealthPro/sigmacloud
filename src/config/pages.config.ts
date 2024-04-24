@@ -88,8 +88,8 @@ export const appPages = {
 				subPages: {
 					listPage: {
 						id: 'deDuplication',
-						to: '/admin/deduplication/list',
-						text: 'De Duplication Management',
+						to: '/admin/deduplication/patientdeduplication',
+						text: 'Patient DeDuplication',
 						icon: 'HeroQueueList',
 					},
 					editPage: {
