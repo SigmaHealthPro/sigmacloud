@@ -1,5 +1,5 @@
 import axios from "axios";
-const baseURI = 'https://localhost:7155';
+const baseURI = 'https://dev-api-iis-sigmacloud.azurewebsites.net/api/';
 
 export const patientApi = async (url: String, type: String, data?: any) => {
     try {

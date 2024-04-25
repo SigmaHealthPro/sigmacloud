@@ -35,7 +35,7 @@ const AddProvider = () => {
         };
     const handleSubmitProvider = async () => {
         try {
-        const response = await axios.post('https://localhost:7155/api/Provider/createprovider', providerForm);
+        const response = await axios.post('https://dev-api-iis-sigmacloud.azurewebsites.net/api/Provider/createprovider', providerForm);
         console.log(response.data);
         setIsProviderModalOpen(false); // Close modal on success
         // Optionally, fetch the updated providers list here

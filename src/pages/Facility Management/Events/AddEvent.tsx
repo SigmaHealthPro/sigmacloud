@@ -36,7 +36,7 @@ const AddEvent = () => {
     
       const handleSubmitEvent = async () => {
         try {
-          const response = await axios.post('https://localhost:7155/api/Event/createEvent', eventForm);
+          const response = await axios.post('https://dev-api-iis-sigmacloud.azurewebsites.net/api/Event/createEvent', eventForm);
           console.log(response.data);
           setIsEventModalOpen(false); // Close modal on success
           // Optionally, fetch the updated events list here
@@ -47,7 +47,7 @@ const AddEvent = () => {
       };
       useEffect(() => {
         
-        axios.get('https://localhost:7155/api/Provider/AllProviders')
+        axios.get('https://dev-api-iis-sigmacloud.azurewebsites.net/api/Provider/AllProviders')
         .then(response => {
           setProviderOptions(response.data);
         })
@@ -56,7 +56,7 @@ const AddEvent = () => {
         });
     
       // Fetch site options
-      axios.get('https://localhost:7155/api/Site/AllSites')
+      axios.get('https://dev-api-iis-sigmacloud.azurewebsites.net/api/Site/AllSites')
         .then(response => {
           setSiteOptions(response.data);
         })

@@ -17,7 +17,7 @@ const EventsPage = ({...props}) => {
         }, []);
     const fetchEventData = async () => {
         try {
-          const response = await fetch('https://localhost:7155/api/Event/searchevent', {
+          const response = await fetch('https://dev-api-iis-sigmacloud.azurewebsites.net/api/Event/searchevent', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

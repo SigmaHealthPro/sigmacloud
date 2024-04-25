@@ -17,6 +17,8 @@ import { makeStyles } from '@mui/styles';
 import Select from '../../../components/form/Select';
 import { Provider, Site } from '../../../interface/facility.interface';
 import { useNavigate } from 'react-router';
+import { environment } from '../../../Environment/environment';
+import endpoint from '../../../config/endpoint';
 const localizer = momentLocalizer(moment);
 
 interface EventData {
@@ -65,7 +67,7 @@ const EventCalendar: React.FC = () => {
 	const handleSubmitEvent = async () => {
 		try {
 			const response = await axios.post(
-				'https://localhost:7155/api/Event/createEvent',
+				environment.Base_API_URL+endpoint.createEvent,
 				eventForm,
 			);
 			console.log(response.data);
@@ -77,7 +79,7 @@ const EventCalendar: React.FC = () => {
 	};
 	useEffect(() => {
 		axios
-			.get('https://localhost:7155/api/Provider/AllProviders')
+			.get(environment.Base_API_URL+endpoint.AllProviders)
 			.then((response) => {
 				setProviderOptions(response.data);
 			})
@@ -87,13 +89,15 @@ const EventCalendar: React.FC = () => {
 
 		// Fetch site options
 		axios
-			.get('https://localhost:7155/api/Site/AllSites')
+			.get(environment.Base_API_URL+endpoint.AllSites)
 			.then((response) => {
 				setSiteOptions(response.data);
 			})
 			.catch((error) => {
 				console.error('Error fetching sites:', error);
 			});
+
+		
 	}, []);
 	const [eventData, setEventData] = useState<Event[]>([]);
 
@@ -103,34 +107,32 @@ const EventCalendar: React.FC = () => {
 
 	const fetchEventData = async () => {
 		try {
-			const response = await fetch('https://localhost:7155/api/Event/searchevent', {
-				method: 'POST',
+			const response = await axios.post(environment.Base_API_URL+endpoint.searchevent, {
+				keyword: null,
+				pagenumber: 1,
+				pagesize: 10,
+				eventName: null,
+				eventDate: null,
+				vaccineName: null,
+				providerName: null,
+				siteName: null,
+				orderby: null,
+			}, {
 				headers: {
 					'Content-Type': 'application/json',
 					accept: '*/*',
 				},
-				body: JSON.stringify({
-					keyword: null,
-					pagenumber: 1,
-					pagesize: 10,
-					eventName: null,
-					eventDate: null,
-					vaccineName: null,
-					providerName: null,
-					siteName: null,
-					orderby: null,
-				}),
 			});
-			if (!response.ok) {
+			if (response.status !== 200) {
 				throw new Error('Network response was not ok');
 			}
-			const data = await response.json();
+			const data = response.data;
 			setEventData(data);
 		} catch (error) {
 			console.error('There was a problem fetching the data: ', error);
 		}
 	};
-
+	
 	const handleDateClick = (slotInfo: any) => {
 		setIsEventModalOpen(true);
 

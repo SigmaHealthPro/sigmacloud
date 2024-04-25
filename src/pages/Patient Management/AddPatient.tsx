@@ -160,7 +160,7 @@ function AddPatient() {
 		onSubmit: async (values: Patient) => {
 			console.log("Request Payload: ", values);
 			try {
-				const postResponse = await axios.post("https://localhost:7155/api/Patients/createpatient", values, {
+				const postResponse = await axios.post("https://dev-api-iis-sigmacloud.azurewebsites.net/api/Patients/createpatient", values, {
 					headers: { 'Content-Type': 'application/json' },
 				});
 				toast.success("Patient added successfully!");
