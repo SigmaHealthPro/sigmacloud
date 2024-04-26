@@ -23,6 +23,7 @@ import {
 	MoreVert as MoreVertIcon,
 	Edit as EditIcon,
 	Delete as DeleteIcon,
+	Api,
 } from '@mui/icons-material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 
@@ -47,9 +48,9 @@ import Select from '../../components/form/Select';
 import popUp from '../../components/popup/popup';
 import PatientProfile from './PatientProfile';
 import { Autocomplete, TextField } from '@mui/material';
-import { environment } from '../../Environment/environment';
 import endpoint from '../../config/endpoint';
 import { get } from 'lodash';
+import apiconfig from '../../config/apiconfig';
 
 
 interface LovMasterType {
@@ -249,7 +250,7 @@ const PatientManagement = () => {
 
 		try {
 			const response = await axios.put(
-				environment.Base_API_URL+endpoint.deletepatient,
+				apiconfig.apiHostUrl+endpoint.deletepatient,
 				formData, // Send the form data
 				{
 					headers: { 'Content-Type': 'multipart/form-data' }, // This matches the expected content type
@@ -316,7 +317,7 @@ const PatientManagement = () => {
 		};
 
 		axios
-			.post(environment.Base_API_URL+endpoint.searchpatient, requestData)
+			.post(apiconfig.apiHostUrl+endpoint.searchpatient, requestData)
 			.then((response) => {
 				setLoading(true);
 				const { items, totalCount } = response.data;
@@ -354,17 +355,17 @@ const PatientManagement = () => {
 
 	useEffect(() => {
 		async function callInitial() {
-			await axios.get(environment.Base_API_URL+endpoint.Countries)
+			await axios.get(apiconfig.apiHostUrl+endpoint.Countries)
 				.then((response) => {
 					setCountryData(response?.data);
 				})
 				.catch((err) => console.log('Error has occured', err));
-			await axios.get(environment.Base_API_URL+endpoint.States)
+			await axios.get(apiconfig.apiHostUrl+endpoint.States)
 				.then((response) => {
 					setStateData(response?.data);
 				})
 				.catch((err) => console.log('Error has occured', err));
-			await axios.get(environment.Base_API_URL+endpoint.Gender)
+			await axios.get(apiconfig.apiHostUrl+endpoint.Gender)
 				.then((response) => {
 					setGenderData(response?.data);
 				})
@@ -381,7 +382,7 @@ const PatientManagement = () => {
 		const fetchAddressTypes = async () => {
 		  try {
 			const response = await axios.get(
-				environment.Base_API_URL+endpoint.AddressType
+				apiconfig.apiHostUrl+endpoint.AddressType
 			);
 	
 			console.log('Address Types API Response:', response);
@@ -412,7 +413,7 @@ const PatientManagement = () => {
 		const fetchAddresses = async () => {
 		  try {
 			const response = await axios.post(
-			  environment.Base_API_URL+endpoint.addresses,
+				apiconfig.apiHostUrl+endpoint.addresses,
 			  {
 				identifier: inputValue,
 				recordCount: 1000,
@@ -527,7 +528,7 @@ const PatientManagement = () => {
 	const handleCity = async (state: any) => {
 		console.log('Selected State ID', state);
 		const response = await axios.get(
-			environment.Base_API_URL+endpoint.getcitiesbystateid+`?stateid=${state}`,
+			apiconfig.apiHostUrl+endpoint.getcitiesbystateid+`?stateid=${state}`,
 			
 		)
 			.then((resp) => setFilteredCity(resp?.data))
@@ -633,7 +634,7 @@ const PatientManagement = () => {
 			console.log('Request Payload: ', values);
 			try {
 				const postResponse = await axios.post(
-					environment.Base_API_URL+endpoint.createpatient,
+					apiconfig.apiHostUrl+endpoint.createpatient,
 					  { ...values, address: SelectedAddressId },
 					
 					{
