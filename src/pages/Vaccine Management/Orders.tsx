@@ -1114,9 +1114,50 @@ const OrderManagement: React.FC = () => {
 								</div>
 							</div>
 							<hr></hr>
-							<div className='col-span-12' style={{ height: '150px' }}>
+							<div className='col-span-12' style={{ height: 'auto' }}>
 								<span style={{ fontSize: '20px' }}>
 									Item(s) bought from {formik.values.manufacturername}
+								</span>
+								<div style={{ height: '15px' }}></div>
+								<span
+									style={{
+										fontSize: '18px',
+										marginBottom: '5px',
+										paddingBottom: '10px',
+										marginLeft: '20px',
+										fontFamily: 'sans-serif',
+									}}>
+									Quantity
+								</span>
+								<span
+									style={{
+										fontSize: '18px',
+										marginBottom: '5px',
+										paddingBottom: '10px',
+										marginLeft: '50px',
+										fontFamily: 'sans-serif',
+									}}>
+									ItemDescription
+								</span>
+								<span
+									style={{
+										fontSize: '18px',
+										marginBottom: '5px',
+										paddingBottom: '10px',
+										marginLeft: '100px',
+										fontFamily: 'sans-serif',
+									}}>
+									TypeofPackage
+								</span>
+								<span
+									style={{
+										fontSize: '18px',
+										marginBottom: '5px',
+										paddingBottom: '10px',
+										marginLeft: '130px',
+										fontFamily: 'sans-serif',
+									}}>
+									UnitPrice
 								</span>
 
 								<div style={{ height: '15px' }}> </div>
@@ -1125,18 +1166,8 @@ const OrderManagement: React.FC = () => {
 										orderitemsData.map((item) => (
 											<div>
 												<div>
-													<span
-														style={{
-															fontSize: '18px',
-															marginBottom: '5px',
-															paddingBottom: '10px',
-															marginLeft: '20px',
-															fontFamily: 'sans-serif',
-														}}>
-														Quantity
-													</span>
-													<div style={{ height: '15px' }}></div>
-													<div style={{ width: '200px' }}>
+													<div style={{ height: '8px' }}></div>
+													<div style={{ width: '1000px' }}>
 														<span
 															style={{
 																fontSize: '14px',
@@ -1146,74 +1177,33 @@ const OrderManagement: React.FC = () => {
 															}}>
 															{item?.quantity}
 														</span>
-													</div>
-													<div
-														style={{
-															fontSize: '18px',
-															marginTop: '-60px',
-															marginLeft: '140px',
-															height: '100px',
-															overflow: 'auto',
-														}}>
-														ItemDescription
-														<div style={{ height: '8px' }}></div>
-														<div style={{ width: '200px' }}>
-															<span
-																style={{
-																	fontSize: '14px',
-																	display: 'inline-block',
-																	marginLeft: '2px',
-																	fontFamily: 'sans-serif',
-																}}>
-																{item?.orderitemdesc}
-															</span>
-														</div>
-													</div>
-													<div
-														style={{
-															fontSize: '18px',
-															marginTop: '-100px',
-															marginLeft: '390px',
-															height: '100px',
-															overflow: 'auto',
-															fontFamily: 'sans-serif',
-														}}>
-														TypeofPackage
-														<div style={{ height: '10px' }}></div>
-														<div style={{ width: '200px' }}>
-															<span
-																style={{
-																	fontSize: '14px',
-																	display: 'inline-block',
-																	marginLeft: '15px',
-																	fontFamily: 'sans-serif',
-																}}>
-																{item?.typeofpackage}
-															</span>
-														</div>
-													</div>
-
-													<div
-														style={{
-															fontSize: '18px',
-															marginTop: '-100px',
-															marginLeft: '620px',
-															height: '100px',
-															overflow: 'auto',
-															fontFamily: 'sans-serif',
-														}}>
-														UnitPrice
-														<div style={{ height: '10px' }}></div>
-														<div style={{ width: '200px' }}>
-															<span
-																style={{
-																	fontSize: '14px',
-																	display: 'inline-block',
-																	marginLeft: '15px',
-																}}>
-																{item?.unitprice}
-															</span>
-														</div>
+														<span
+															style={{
+																fontSize: '14px',
+																display: 'inline-block',
+																marginLeft: '100px',
+																width: '150px',
+																fontFamily: 'sans-serif',
+															}}>
+															{item?.orderitemdesc}
+														</span>
+														<span
+															style={{
+																fontSize: '14px',
+																display: 'inline-block',
+																marginLeft: '80px',
+																fontFamily: 'sans-serif',
+															}}>
+															{item?.typeofpackage}
+														</span>
+														<span
+															style={{
+																fontSize: '14px',
+																display: 'inline-block',
+																marginLeft: '200px',
+															}}>
+															{item?.unitprice}
+														</span>
 													</div>
 												</div>
 											</div>

@@ -484,4 +484,5 @@ gh-info__row {
 	justify-content: flex-start;
 	flex-direction: column;
 	width: '1000px';
+	height: auto;
 }
