@@ -747,7 +747,7 @@ const CartPartial: React.FC = () => {
 																name='Address.Country'
 																style={{ color: 'black' }}
 																value={
-																	formik.values.Address.Country ||
+																	//formik.values.Address.Country
 																	existingAddress?.countryid
 																}
 																onChange={(event) => {
@@ -883,7 +883,7 @@ const CartPartial: React.FC = () => {
 																name='Address.State'
 																style={{ color: 'black' }}
 																value={
-																	formik.values.Address.State ||
+																	//formik.values.Address.State ||
 																	existingAddress?.stateid
 																}
 																onChange={(event) => {
@@ -940,7 +940,7 @@ const CartPartial: React.FC = () => {
 																name='Address.County'
 																style={{ color: 'black' }}
 																value={
-																	formik.values.Address.County ||
+																	//formik.values.Address.County ||
 																	existingAddress?.countyid
 																}
 																onChange={(event) => {
@@ -998,7 +998,7 @@ const CartPartial: React.FC = () => {
 																name='Address.City'
 																style={{ color: 'black' }}
 																value={
-																	formik.values.Address.City ||
+																	//formik.values.Address.City ||
 																	existingAddress?.cityid
 																}
 																onChange={(event) => {
