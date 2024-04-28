@@ -17,8 +17,8 @@ import { makeStyles } from '@mui/styles';
 import Select from '../../../components/form/Select';
 import { Provider, Site } from '../../../interface/facility.interface';
 import { useNavigate } from 'react-router';
-import { environment } from '../../../Environment/environment';
 import endpoint from '../../../config/endpoint';
+import apiconfig from '../../../config/apiconfig';
 const localizer = momentLocalizer(moment);
 
 interface EventData {
@@ -67,7 +67,7 @@ const EventCalendar: React.FC = () => {
 	const handleSubmitEvent = async () => {
 		try {
 			const response = await axios.post(
-				environment.Base_API_URL+endpoint.createEvent,
+				apiconfig.apiHostUrl+endpoint.createEvent,
 				eventForm,
 			);
 			console.log(response.data);
@@ -79,7 +79,7 @@ const EventCalendar: React.FC = () => {
 	};
 	useEffect(() => {
 		axios
-			.get(environment.Base_API_URL+endpoint.AllProviders)
+			.get(apiconfig.apiHostUrl+endpoint.AllProviders)
 			.then((response) => {
 				setProviderOptions(response.data);
 			})
@@ -89,7 +89,7 @@ const EventCalendar: React.FC = () => {
 
 		// Fetch site options
 		axios
-			.get(environment.Base_API_URL+endpoint.AllSites)
+			.get(apiconfig.apiHostUrl+endpoint.AllSites)
 			.then((response) => {
 				setSiteOptions(response.data);
 			})
@@ -107,7 +107,7 @@ const EventCalendar: React.FC = () => {
 
 	const fetchEventData = async () => {
 		try {
-			const response = await axios.post(environment.Base_API_URL+endpoint.searchevent, {
+			const response = await axios.post(apiconfig.apiHostUrl+endpoint.searchevent, {
 				keyword: null,
 				pagenumber: 1,
 				pagesize: 10,

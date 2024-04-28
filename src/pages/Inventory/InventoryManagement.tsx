@@ -49,7 +49,6 @@ import Select from '../../components/form/Select';
 import popUp from '../../components/popup/popup';
 // import InventoryProfile from './InventoryProfile';
 import { Autocomplete, TextField } from '@mui/material';
-import { environment } from '../../Environment/environment';
 import apiconfig from '../../config/apiconfig';
 import endpoint from '../../config/endpoint';
 
@@ -197,7 +196,7 @@ const InventoryManagement = () => {
 
 		try {
 			const response = await axios.put(
-				environment.Base_API_URL+endpoint.deleteinventory,
+				apiconfig.apiHostUrl+endpoint.deleteinventory,
 				formData, // Send the form data
 				{
 					headers: { 'Content-Type': 'multipart/form-data' }, // This matches the expected content type
@@ -249,7 +248,7 @@ const InventoryManagement = () => {
 			   siteName: '',
 		   };
 		axios
-		.post(environment.Base_API_URL+endpoint.searchInventory, requestData)
+		.post(apiconfig.apiHostUrl+endpoint.searchInventory, requestData)
 			.then((response) => {
 				setLoading(true);
 				const { items, totalCount } = response.data;
@@ -287,21 +286,21 @@ const InventoryManagement = () => {
 
 	useEffect(() => {
 		async function callInitial() {
-			axios.get(environment.Base_API_URL+endpoint.getallfacilities)
+			axios.get(apiconfig.apiHostUrl+endpoint.getallfacilities)
 			.then(response => {
 				setFacility(response.data);
 			})
 			.catch(error => {
 				console.error('Error fetching Facility:', error);
 			});
-			axios.get(environment.Base_API_URL+endpoint.AllSites)
+			axios.get(apiconfig.apiHostUrl+endpoint.AllSites)
 			.then(response => {
 			  setSiteOptions(response.data);
 			})
 			.catch(error => {
 			  console.error('Error fetching sites:', error);
 			});
-			axios.get(environment.Base_API_URL+endpoint.getallproducts)
+			axios.get(apiconfig.apiHostUrl+endpoint.getallproducts)
 			.then(response => {
 			  setProduct(response.data);
 			})
@@ -421,7 +420,7 @@ const InventoryManagement = () => {
 			console.log('Request Payload: ', values);
 			try {
 				const postResponse = await axios.post(
-					environment.Base_API_URL+endpoint.createInventory,
+					apiconfig.apiHostUrl+endpoint.createInventory,
 					  { ...values },
 					
 					{
