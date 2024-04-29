@@ -10,7 +10,7 @@ export type TColors =
 	| 'amber'
 	// | 'yellow'
 	| 'lime'
-	// | 'green'
+	| 'green'
 	| 'emerald'
 	// | 'teal'
 	// | 'cyan'
@@ -34,6 +34,7 @@ export const arrColors: TColors[] = [
 	'emerald',
 	'sky',
 	'blue',
+	'green',
 	'violet',
 ];
 

@@ -42,7 +42,7 @@ const themeConfig: TThemeConfigs = {
 	projectName: 'Sigma Health Pro',
 	language: 'en',
 	theme: DARK_MODE.SYSTEM,
-	themeColor: 'blue',
+	themeColor: 'green',
 	themeColorShade: '500',
 	rounded: 'rounded-lg',
 	borderWidth: 'border-2',
