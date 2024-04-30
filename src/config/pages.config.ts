@@ -87,9 +87,15 @@ export const appPages = {
 				icon: 'HeroRectangleStack',
 				subPages: {
 					listPage: {
-						id: 'deDuplication',
+						id: 'deDuplicationolddata',
 						to: '/admin/deduplication/patientdeduplication',
-						text: 'Patient DeDuplication',
+						text: 'Duplicate Patient List',
+						icon: 'HeroQueueList',
+					},
+					newpatientlist: {  // Add listPage1 here
+						id: 'newpatientlist',
+						to: '/admin/deduplication/newpatientlist',
+						text: 'New Patient List',
 						icon: 'HeroQueueList',
 					},
 					editPage: {
