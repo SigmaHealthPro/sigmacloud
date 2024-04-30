@@ -3,13 +3,14 @@ import axios from 'axios';
 import { DataGrid, GridToolbarContainer,GridCellParams,GridRowParams } from '@mui/x-data-grid';
 import PageWrapper from '../../components/layouts/PageWrapper/PageWrapper';
 import Container from '../../components/layouts/Container/Container';
-import Card, { CardBody } from '../../components/ui/Card';
+import Card, { CardBody, CardHeader, CardHeaderChild, CardTitle } from '../../components/ui/Card';
 import apiconfig from '../../config/apiconfig'; // Make sure this import is correct
 import { EditOutlined, DeleteOutlined, SwapOutlined  } from '@ant-design/icons';
 import { MoreVert as MoreVertIcon, Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { Button as AntButton, Popconfirm, Space } from 'antd';
 import Button from '../../components/ui/Button';
 import Modal, { ModalBody, ModalHeader, ModalFooter } from '../../components/ui/Modal';
+import Label from '../../components/form/Label';
 // Define the interface for patient duplicate data
 
 const DeDuplicationManagement = () => {
@@ -45,14 +46,53 @@ const DeDuplicationManagement = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
     const [compareModalVisible, setCompareModalVisible] = useState(false);
-    const [compareData, setCompareData] = useState([]);
+    const [comparisonDataleft, setComparisonDataleft] = useState({
+        id: '',
+        duplicatePersonId: '',
+        personType: '',
+        firstName: '',
+        lastName: '',
+        gender: '',
+        createdDate: '',
+        updatedDate: '',
+        createdBy: '',
+        updatedBy: '',
+        dateOfBirth: '',
+        middleName: '',
+        motherFirstName: '',
+        motherLastName: '',
+        motherMaidenLastName: '',
+        birthOrder: '',
+        birthStateId: '',
+    });
+    const [comparisonDataRight, setcomparisonDataRight] = useState({
+        id: '',
+        duplicatePersonId: '',
+        personType: '',
+        firstName: '',
+        lastName: '',
+        gender: '',
+        createdDate: '',
+        updatedDate: '',
+        createdBy: '',
+        updatedBy: '',
+        dateOfBirth: '',
+        middleName: '',
+        motherFirstName: '',
+        motherLastName: '',
+        motherMaidenLastName: '',
+        birthOrder: '',
+        birthStateId: '',
+    });
+
 
     useEffect(() => {
         const fetchPatientDuplicateData = async () => {
             setLoading(true);
             try {
-                const response = await axios.get(apiconfig.apiHostUrl+'api/MasterData/getlistofpatientduplicatedata', {});
+                const response = await axios.get(apiconfig.apiHostUrl + 'api/MasterData/getlistofpatientduplicatedata');
                 if (response.data && response.data.status === 'Success') {
+                    // Bind the dataList to state
                     setPatientDuplicateData(response.data.dataList);
                 } else {
                     setError('Error: Unable to fetch data');
@@ -63,18 +103,51 @@ const DeDuplicationManagement = () => {
                 setLoading(false);
             }
         };
-
+    
         fetchPatientDuplicateData();
     }, []);
     
+    
     const handleCompare = (id: string, duplicatePersonId: string) => {
-        // Implement comparison logic using the id and duplicatePersonId
-        console.log(`Comparing records with id: ${id} and duplicate person id: ${duplicatePersonId}`);
         
-        // Open the compare modal popup
+        console.log(`Comparing records with id: ${id} and duplicate person id: ${duplicatePersonId}`);
         setCompareModalVisible(true);
+        fetchPatientDuplicateDataById(id);
+        fetchPersonsById(duplicatePersonId);
     };
-    type ComparisonData = {
+    const fetchPatientDuplicateDataById = async (id: string) => {
+        try {
+            // Fetch data from the API
+            const response = await axios.get(`${apiconfig.apiHostUrl}api/MasterData/getlistofpatientduplicatedatabyid?Id=${id}`);
+                
+            if (response.data.status=== "Success" && response.data) {
+                setComparisonDataleft(response.data.data);
+               
+            } else {
+                
+                console.error('Error: Unable to fetch or process data.');
+            }
+        } catch (error) {
+            console.error('Error: Unable to fetch data.', error);
+        }
+    };
+    const fetchPersonsById= async (id: string) => {
+        try {
+            // Fetch data from the API
+            const response = await axios.get(`${apiconfig.apiHostUrl}api/User/getpersonsbyid?Id=${id}`);
+                
+            if (response.data.status=== "Success" && response.data) {
+                setcomparisonDataRight(response.data.data);
+               
+            } else {
+                
+                console.error('Error: Unable to fetch or process data.');
+            }
+        } catch (error) {
+            console.error('Error: Unable to fetch data.', error);
+        }
+    };
+    type FormData = {
         id: string;
         duplicatePersonId: string;
         personType: string;
@@ -92,62 +165,290 @@ const DeDuplicationManagement = () => {
         motherMaidenLastName: string;
         birthOrder: string;
         birthStateId: string;
-        [key: string]: string; // Index signature to allow accessing properties by string keys
     };
-    
-    // Data for comparison
-    const comparisonData: ComparisonData = {
-        id: '123',
-        duplicatePersonId: '456',
-        personType: 'Patient',
-        firstName: 'John',
-        lastName: 'Doe',
-        gender: 'Male',
-        createdDate: '2022-04-01',
-        updatedDate: '2022-04-05',
-        createdBy: 'Admin',
-        updatedBy: 'User',
-        dateOfBirth: '1990-01-01',
-        middleName: 'Allen',
-        motherFirstName: 'Alice',
-        motherLastName: 'Doe',
-        motherMaidenLastName: 'Smith',
-        birthOrder: '1',
-        birthStateId: 'NY',
-    };
-    
 
-    // Fields to display as label-field pairs
-    const fieldsToDisplay = [
-        'id',
-        'duplicatePersonId',
-        'personType',
-        'firstName',
-        'lastName',
-        'gender',
-        'createdDate',
-        'updatedDate',
-        'createdBy',
-        'updatedBy',
-        'dateOfBirth',
-        'middleName',
-        'motherFirstName',
-        'motherLastName',
-        'motherMaidenLastName',
-        'birthOrder',
-        'birthStateId',
-    ];
-
-    // Function to render label-field pairs
-    const renderLabelFieldPairs = () => {
-        return fieldsToDisplay.map(field => (
-            <div className="mb-4" key={field}>
-                <label className="block text-sm font-medium text-gray-700">{field}</label>
-                <div className="mt-1">{comparisonData[field]}</div>
+   
+    const ModalLeftSide: React.FC<{ data: FormData }> = ({ data }) => {
+        return (
+            <div className='col-span-12 lg:col-span-9'>
+                <div className='grid grid-cols-12 gap-4'>
+                    <div className='col-span-12'>
+                        <div className='col-span-12'>
+                            <Card>
+                            <div className="mb-4 pr-4 border-b">
+                                    <h2 className="text-xl font-bold mb-2">New Data</h2>
+                                </div>
+                                    <div className='grid grid-cols-12 gap-4'>
+                                        <div className='col-span-12 lg:col-span-6'>
+                                            <Label htmlFor='personTypeNewData'>
+                                                <strong>Person Type:</strong>
+                                            </Label>
+                                            <Label htmlFor='personTypeNewData'>
+                                                {data.personType}
+                                            </Label>
+                                        </div>
+                                        <div className='col-span-12 lg:col-span-6'>
+                                            <Label htmlFor='firstNameNewData'>
+                                                <strong>First Name:</strong>
+                                            </Label>
+                                            <Label htmlFor='firstNameNewData'>
+                                                {data.firstName}
+                                            </Label>
+                                        </div>
+                                        <div className='col-span-12 lg:col-span-6'>
+                                            <Label htmlFor='lastNameNewData'>
+                                                <strong>Last Name:</strong>
+                                            </Label>
+                                            <Label htmlFor='lastNameNewData'>
+                                                {data.lastName}
+                                            </Label>
+                                        </div>
+                                        <div className='col-span-12 lg:col-span-6'>
+                                            <Label htmlFor='genderNewData'>
+                                                <strong>Gender:</strong>
+                                            </Label>
+                                            <Label htmlFor='genderNewData'>
+                                                {data.gender}
+                                            </Label>
+                                        </div>
+                                        <div className='col-span-12 lg:col-span-6'>
+                                            <Label htmlFor='createdDateNewData'>
+                                                <strong>Created Date:</strong>
+                                            </Label>
+                                            <Label htmlFor='createdDateNewData'>
+                                                {data.createdDate}
+                                            </Label>
+                                        </div>
+                                        <div className='col-span-12 lg:col-span-6'>
+                                            <Label htmlFor='updatedDateNewData'>
+                                                <strong>Updated Date:</strong>
+                                            </Label>
+                                            <Label htmlFor='updatedDateNewData'>
+                                                {data.updatedDate}
+                                            </Label>
+                                        </div>
+                                        <div className='col-span-12 lg:col-span-6'>
+                                            <Label htmlFor='createdByNewData'>
+                                                <strong>Created By:</strong>
+                                            </Label>
+                                            <Label htmlFor='createdByNewData'>
+                                                {data.createdBy}
+                                            </Label>
+                                        </div>
+                                        <div className='col-span-12 lg:col-span-6'>
+                                            <Label htmlFor='updatedByNewData'>
+                                                <strong>Updated By:</strong>
+                                            </Label>
+                                            <Label htmlFor='updatedByNewData'>
+                                                {data.updatedBy}
+                                            </Label>
+                                        </div>
+                                        <div className='col-span-12 lg:col-span-6'>
+                                            <Label htmlFor='dateOfBirthNewData'>
+                                                <strong>Date of Birth:</strong>
+                                            </Label>
+                                            <Label htmlFor='dateOfBirthNewData'>
+                                                {data.dateOfBirth}
+                                            </Label>
+                                        </div>
+                                        <div className='col-span-12 lg:col-span-6'>
+                                            <Label htmlFor='middleNameNewData'>
+                                                <strong>Middle Name:</strong>
+                                            </Label>
+                                            <Label htmlFor='middleNameNewData'>
+                                                {data.middleName}
+                                            </Label>
+                                        </div>
+                                        <div className='col-span-12 lg:col-span-6'>
+                                            <Label htmlFor='motherFirstNameNewData'>
+                                                <strong>Mother First Name:</strong>
+                                            </Label>
+                                            <Label htmlFor='motherFirstNameNewData'>
+                                                {data.motherFirstName}
+                                            </Label>
+                                        </div>
+                                        <div className='col-span-12 lg:col-span-6'>
+                                            <Label htmlFor='motherLastNameNewData'>
+                                                <strong>Mother Last Name:</strong>
+                                            </Label>
+                                            <Label htmlFor='motherLastNameNewData'>
+                                                {data.motherLastName}
+                                            </Label>
+                                        </div>
+                                        <div className='col-span-12 lg:col-span-6'>
+                                            <Label htmlFor='motherMaidenLastNameNewData'>
+                                                <strong>Mother Maiden Last Name:</strong>
+                                            </Label>
+                                            <Label htmlFor='motherMaidenLastNameNewData'>
+                                                {data.motherMaidenLastName}
+                                            </Label>
+                                        </div>
+                                        <div className='col-span-12 lg:col-span-6'>
+                                            <Label htmlFor='birthOrderNewData'>
+                                                <strong>Birth Order:</strong>
+                                            </Label>
+                                            <Label htmlFor='birthOrderNewData'>
+                                                {data.birthOrder}
+                                            </Label>
+                                        </div>
+                                        <div className='col-span-12 lg:col-span-6'>
+                                            <Label htmlFor='birthStateIdNewData'>
+                                                <strong>Birth State ID:</strong>
+                                            </Label>
+                                            <Label htmlFor='birthStateIdNewData'>
+                                                {data.birthStateId}
+                                            </Label>
+                                        </div>
+                                    </div>
+                                
+                            </Card>
+                        </div>
+                    </div>
+                </div>
             </div>
-        ));
+        );
     };
-
+    const ModalRightSide: React.FC<{ data: FormData }> = ({ data }) => {
+        return (
+            <div className='col-span-12 lg:col-span-9'>
+                <div className='grid grid-cols-12 gap-4'>
+                    <div className='col-span-12'>
+                        <div className='col-span-12'>
+                            <Card>
+                                
+                                    <div className="mb-4 pr-4 border-b"> {/* Add border-b class to draw a bottom border */}
+                                        <h2 className="text-xl font-bold mb-2">Old Data</h2>
+                                    </div>
+                                    <div className='grid grid-cols-12 gap-4'>
+                                        <div className='col-span-12 lg:col-span-6'>
+                                            <Label htmlFor='personTypeOldData'>
+                                                <strong>Person Type:</strong>
+                                            </Label>
+                                            <Label htmlFor='personTypeOldData'>
+                                                {data.personType}
+                                            </Label>
+                                        </div>
+                                        <div className='col-span-12 lg:col-span-6'>
+                                            <Label htmlFor='firstNameOldData'>
+                                                <strong>First Name:</strong>
+                                            </Label>
+                                            <Label htmlFor='firstNameOldData'>
+                                                {data.firstName}
+                                            </Label>
+                                        </div>
+                                        <div className='col-span-12 lg:col-span-6'>
+                                            <Label htmlFor='lastNameOldData'>
+                                                <strong>Last Name:</strong>
+                                            </Label>
+                                            <Label htmlFor='lastNameOldData'>
+                                                {data.lastName}
+                                            </Label>
+                                        </div>
+                                        <div className='col-span-12 lg:col-span-6'>
+                                            <Label htmlFor='genderOldData'>
+                                                <strong>Gender:</strong>
+                                            </Label>
+                                            <Label htmlFor='genderOldData'>
+                                                {data.gender}
+                                            </Label>
+                                        </div>
+                                        <div className='col-span-12 lg:col-span-6'>
+                                            <Label htmlFor='createdDateOldData'>
+                                                <strong>Created Date:</strong>
+                                            </Label>
+                                            <Label htmlFor='createdDateOldData'>
+                                                {data.createdDate}
+                                            </Label>
+                                        </div>
+                                        <div className='col-span-12 lg:col-span-6'>
+                                            <Label htmlFor='updatedDateOldData'>
+                                                <strong>Updated Date:</strong>
+                                            </Label>
+                                            <Label htmlFor='updatedDateOldData'>
+                                                {data.updatedDate}
+                                            </Label>
+                                        </div>
+                                        <div className='col-span-12 lg:col-span-6'>
+                                            <Label htmlFor='createdByOldData'>
+                                                <strong>Created By:</strong>
+                                            </Label>
+                                            <Label htmlFor='createdByOldData'>
+                                                {data.createdBy}
+                                            </Label>
+                                        </div>
+                                        <div className='col-span-12 lg:col-span-6'>
+                                            <Label htmlFor='updatedByOldData'>
+                                                <strong>Updated By:</strong>
+                                            </Label>
+                                            <Label htmlFor='updatedByOldData'>
+                                                {data.updatedBy}
+                                            </Label>
+                                        </div>
+                                        <div className='col-span-12 lg:col-span-6'>
+                                            <Label htmlFor='dateOfBirthOldData'>
+                                                <strong>Date of Birth:</strong>
+                                            </Label>
+                                            <Label htmlFor='dateOfBirthOldData'>
+                                                {data.dateOfBirth}
+                                            </Label>
+                                        </div>
+                                        <div className='col-span-12 lg:col-span-6'>
+                                            <Label htmlFor='middleNameOldData'>
+                                                <strong>Middle Name:</strong>
+                                            </Label>
+                                            <Label htmlFor='middleNameOldData'>
+                                                {data.middleName}
+                                            </Label>
+                                        </div>
+                                        <div className='col-span-12 lg:col-span-6'>
+                                            <Label htmlFor='motherFirstNameOldData'>
+                                                <strong>Mother First Name:</strong>
+                                            </Label>
+                                            <Label htmlFor='motherFirstNameOldData'>
+                                                {data.motherFirstName}
+                                            </Label>
+                                        </div>
+                                        <div className='col-span-12 lg:col-span-6'>
+                                            <Label htmlFor='motherLastNameOldData'>
+                                                <strong>Mother Last Name:</strong>
+                                            </Label>
+                                            <Label htmlFor='motherLastNameOldData'>
+                                                {data.motherLastName}
+                                            </Label>
+                                        </div>
+                                        <div className='col-span-12 lg:col-span-6'>
+                                            <Label htmlFor='motherMaidenLastNameOldData'>
+                                                <strong>Mother Maiden Last Name:</strong>
+                                            </Label>
+                                            <Label htmlFor='motherMaidenLastNameOldData'>
+                                                {data.motherMaidenLastName}
+                                            </Label>
+                                        </div>
+                                        <div className='col-span-12 lg:col-span-6'>
+                                            <Label htmlFor='birthOrderOldData'>
+                                                <strong>Birth Order:</strong>
+                                            </Label>
+                                            <Label htmlFor='birthOrderOldData'>
+                                                {data.birthOrder}
+                                            </Label>
+                                        </div>
+                                        <div className='col-span-12 lg:col-span-6'>
+                                            <Label htmlFor='birthStateIdOldData'>
+                                                <strong>Birth State ID:</strong>
+                                            </Label>
+                                            <Label htmlFor='birthStateIdOldData'>
+                                                {data.birthStateId}
+                                            </Label>
+                                        </div>
+                                    </div>
+                                
+                            </Card>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    };
     return (
         <PageWrapper name='List'>
             <Container>
@@ -155,13 +456,13 @@ const DeDuplicationManagement = () => {
                 <Modal isOpen={compareModalVisible} setIsOpen={setCompareModalVisible}>
             <ModalBody>
             <div className="grid grid-cols-12 gap-4">
-                    {/* Left side with label-field pairs */}
-                    <div className="col-span-6">
-                        {renderLabelFieldPairs()}
+                 
+                    <div className="col-span-6 pr-4 border-r">
+                    <ModalLeftSide data={comparisonDataleft} />
                     </div>
-                    {/* Right side for additional content */}
+                   
                     <div className="col-span-6">
-                        {/* Additional content on the right side */}
+                    <ModalRightSide data={comparisonDataRight} />
                     </div>
                 </div>
             </ModalBody>
