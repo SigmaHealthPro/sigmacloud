@@ -17,6 +17,7 @@ import InventoryManagement from '../pages/Inventory/InventoryManagement';
 import InventoryProfile from '../pages/Inventory/InventoryProfile';
 import AddOrder from '../pages/Vaccine Management/AddOrder';
 import DeDuplicationManagement from '../pages/Admin/DeDuplicationManagement';
+import DeDuplicationPatientNewData from '../pages/Admin/DeDuplicationPatientNewData';
 
 /**
  * UI
@@ -175,6 +176,10 @@ const contentRoutes: RouteProps[] = [
 	{
 		path: appPages.salesAppPages.subPages.productPage.subPages.listPage.to,
 		element: <DeDuplicationManagement />,
+	},
+	{
+		path: appPages.salesAppPages.subPages.productPage.subPages.newpatientlist.to,
+		element: <DeDuplicationPatientNewData />,
 	},
 	{
 		path: `${appPages.salesAppPages.subPages.productPage.subPages.editPageLink.to}/:id`,

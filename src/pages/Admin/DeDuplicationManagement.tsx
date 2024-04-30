@@ -467,9 +467,20 @@ const DeDuplicationManagement = () => {
                 </div>
             </ModalBody>
           
-            <ModalFooter>
-                <Button variant='solid' onClick={() => setCompareModalVisible(false)}>Close</Button>
-            </ModalFooter>
+            <ModalFooter className="flex justify-between items-center">
+            <div>
+            <Button variant='solid' onClick={() => setCompareModalVisible(false)}>Close</Button>
+        </div>
+        <div className="button-container" style={{ display: 'flex', gap: '10px' }}>
+            <Button variant='solid' icon='HeroClipboardDocumentCheck'>
+                Keep Record
+            </Button>
+            <Button variant='solid' icon='HeroArchiveBoxXMark'>
+                Not Required
+            </Button>
+        </div>
+      
+    </ModalFooter>
             </Modal>
                     <CardBody className='overflow-auto'>
                         <div style={{ height: 400, width: '100%' }}>
