@@ -18,6 +18,7 @@ import InventoryProfile from '../pages/Inventory/InventoryProfile';
 import AddOrder from '../pages/Vaccine Management/AddOrder';
 import DeDuplicationManagement from '../pages/Admin/DeDuplicationManagement';
 import DeDuplicationPatientNewData from '../pages/Admin/DeDuplicationPatientNewData';
+import UserList from '../pages/Admin/User/UserList';
 
 /**
  * UI
@@ -187,7 +188,7 @@ const contentRoutes: RouteProps[] = [
 	},
 	{
 		path: appPages.salesAppPages.subPages.categoryPage.subPages.listPage.to,
-		element: <CategoryListPage />,
+		element: <UserList />,
 	},
 	{
 		path: `${appPages.salesAppPages.subPages.categoryPage.subPages.editPageLink.to}/:id`,

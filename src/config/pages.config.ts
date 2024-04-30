@@ -113,14 +113,14 @@ export const appPages = {
 			categoryPage: {
 				id: 'categoryPage',
 				to: '/sales/category',
-				text: 'Category',
-				icon: 'HeroSquare2Stack',
+				text: 'Users',
+				icon: 'HeroUserGroup',
 				subPages: {
 					listPage: {
-						id: 'categoryListPage',
-						to: '/sales/category/list',
-						text: 'Category List',
-						icon: 'HeroQueueList',
+						id: 'userListPage',
+						to: '/admin/user/userlist',
+						text: 'Users List',
+						icon: 'HeroUsers',
 					},
 					editPage: {
 						id: 'productPage',

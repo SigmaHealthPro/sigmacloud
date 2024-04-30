@@ -70,6 +70,12 @@ const DeDuplicationPatientNewData = () => {
                                 columns={patientNewDataColumns}
                                 checkboxSelection
                                 onRowSelectionModelChange={handleSelectionChange}
+                                sx={{
+                                    '& .MuiDataGrid-columnHeaders': { backgroundColor: '#e5e7eb' },
+                                    '& .MuiDataGrid-columnHeaderTitle': {
+                                        fontWeight: 'bold', // Bolding the column headers
+                                    },
+                                }}
                             />
                         </div>
                     </CardBody>

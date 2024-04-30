@@ -488,7 +488,12 @@ const DeDuplicationManagement = () => {
                                 rows={patientDuplicateData}
                                 columns={contactNumbpatientDuplicateDataColumns}
                                 checkboxSelection
-                                
+                                sx={{
+                                    '& .MuiDataGrid-columnHeaders': { backgroundColor: '#e5e7eb' },
+                                    '& .MuiDataGrid-columnHeaderTitle': {
+                                        fontWeight: 'bold', // Bolding the column headers
+                                    },
+                                }}
                             />
                         </div>
                     </CardBody>
