@@ -74,13 +74,19 @@ export const appPages = {
 		text: 'Admin',
 		icon: 'HeroCommandLine',
 		subPages: {
-			
+			salesDashboardPage: {
+				id: 'salesDashboardPage',
+				to: '/',
+				text: 'Dashboard',
+				icon: 'HeroRectangleGroup',
+			},
 			adminPage: {
 				id: 'deDuplication',
 				to: '/admin/deduplication',
 				text: 'DeDuplication',
 				icon: 'DuoCode',
 				subPages: {
+					
 					duplicatePatientData: {
 						id: 'duplicatePatientData',
 						to: '/admin/deduplication/duplicatepatientdata',

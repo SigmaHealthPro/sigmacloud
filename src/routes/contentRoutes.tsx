@@ -170,6 +170,10 @@ const contentRoutes: RouteProps[] = [
 	/**
 	 * Admin::BEGIN
 	 */
+	{
+		path: appPages.adminAppPages.subPages.salesDashboardPage.to,
+		element: <SalesDashboardPage />,
+	},
 
 	{
 		path: appPages.adminAppPages.subPages.adminPage.subPages.duplicatePatientData.to,
