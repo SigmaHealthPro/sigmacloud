@@ -37,6 +37,9 @@ const DefaultAsideTemplate = () => {
 								{...appPages.salesAppPages.subPages.productPage.subPages.listPage}
 							/>
 							<NavItem
+								{...appPages.salesAppPages.subPages.productPage.subPages.newpatientlist}
+							/>
+							<NavItem
 								{...appPages.salesAppPages.subPages.productPage.subPages.editPage}
 							/>
 						</NavCollapse>
