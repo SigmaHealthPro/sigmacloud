@@ -101,15 +101,7 @@ const ExamplesPage = () => {
 
 	return (
 		<PageWrapper>
-			<Subheader>
-				<SubheaderLeft>
-					<Link
-						className='font-bold text-blue-500'
-						to={appPages.salesAppPages.subPages.productPage.subPages.listPage.to}>
-						{appPages.salesAppPages.subPages.productPage.subPages.listPage.text}
-					</Link>
-				</SubheaderLeft>
-			</Subheader>
+			
 			<Container>
 				<div className='grid grid-cols-12 gap-4'>
 					<div className='col-span-12 gap-4'>

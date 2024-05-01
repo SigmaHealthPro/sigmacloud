@@ -42,7 +42,7 @@ import TableTemplate, {
 
 const columnHelper = createColumnHelper<TProduct>();
 
-const editLinkPath = `../${appPages.salesAppPages.subPages.productPage.subPages.editPageLink.to}/`;
+const editLinkPath = ``;
 
 const columns = [
 	columnHelper.accessor('image', {

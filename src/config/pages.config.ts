@@ -68,11 +68,11 @@ export const appPages = {
 			},
 		},
 	},
-	salesAppPages: {
-		id: 'salesApp',
-		to: '/sales',
-		text: 'Enrollment Request',
-		icon: 'HeroBanknotes',
+	adminAppPages: {
+		id: 'Admin',
+		to: '/admin',
+		text: 'Admin',
+		icon: 'HeroCommandLine',
 		subPages: {
 			salesDashboardPage: {
 				id: 'salesDashboardPage',
@@ -80,52 +80,41 @@ export const appPages = {
 				text: 'Dashboard',
 				icon: 'HeroRectangleGroup',
 			},
-			productPage: {
-				id: 'productPage',
-				to: '/sales/product',
-				text: 'Products',
-				icon: 'HeroRectangleStack',
+			adminPage: {
+				id: 'deDuplication',
+				to: '/admin/deduplication',
+				text: 'DeDuplication',
+				icon: 'DuoCode',
 				subPages: {
-					listPage: {
-						id: 'productsListPage',
-						to: '/sales/product/list',
-						text: 'Products List',
+					
+					duplicatePatientData: {
+						id: 'duplicatePatientData',
+						to: '/admin/deduplication/duplicatepatientdata',
+						text: 'Duplicate Patient Data',
 						icon: 'HeroQueueList',
 					},
-					editPage: {
-						id: 'productPage',
-						to: `/sales/product/${productsDb[0].id}`,
-						text: `Product #${productsDb[0].id}`,
-						icon: 'HeroTicket',
+					newPatientData: {  
+						id: 'newPatientData',
+						to: '/admin/deduplication/newpatientdata',
+						text: 'New Patient Data',
+						icon: 'HeroQueueList',
 					},
-					editPageLink: {
-						id: 'editPageLink',
-						to: '/sales/product',
-					},
+					
 				},
 			},
-			categoryPage: {
-				id: 'categoryPage',
-				to: '/sales/category',
-				text: 'Category',
-				icon: 'HeroSquare2Stack',
+			userManagementPage: {
+				id: 'userManagementPage',
+				to: '/admin/user/usermanagement',
+				text: 'Users',
+				icon: 'HeroUserGroup',
 				subPages: {
-					listPage: {
-						id: 'categoryListPage',
-						to: '/sales/category/list',
-						text: 'Category List',
-						icon: 'HeroQueueList',
+					userManagementListPage: {
+						id: 'userManagementListPage',
+						to: '/admin/user/usermanagement',
+						text: 'Users Management',
+						icon: 'HeroUsers',
 					},
-					editPage: {
-						id: 'productPage',
-						to: `/sales/category/${categoriesDb[0].id}`,
-						text: `Category #${categoriesDb[0].id}`,
-						icon: 'HeroStop',
-					},
-					editPageLink: {
-						id: 'editPageLink',
-						to: '/sales/category',
-					},
+					
 				},
 			},
 		},

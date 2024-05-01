@@ -16,6 +16,9 @@ import EventCalendar from '../pages/Facility Management/Events/EventCalendar';
 import InventoryManagement from '../pages/Inventory/InventoryManagement';
 import InventoryProfile from '../pages/Inventory/InventoryProfile';
 import AddOrder from '../pages/Vaccine Management/AddOrder';
+import DeDuplicationManagement from '../pages/Admin/DeDuplicationManagement';
+import DeDuplicationPatientNewData from '../pages/Admin/DeDuplicationPatientNewData';
+import UserList from '../pages/Admin/User/UserList';
 
 /**
  * UI
@@ -119,7 +122,7 @@ const SalesDashboardPage = lazy(
 const ProductListPage = lazy(
 	() => import('../pages/sales/products/ProductListPage/ProductList.page'),
 );
-const ProductPage = lazy(() => import('../pages/sales/products/ProductPage/Product.page'));
+
 const CategoryListPage = lazy(
 	() => import('../pages/sales/categories/CategoryListPage/CategoryList.page'),
 );
@@ -165,30 +168,29 @@ const UnderConstructionPage = lazy(() => import('../pages/UnderConstruction.page
 
 const contentRoutes: RouteProps[] = [
 	/**
-	 * SALES::BEGIN
+	 * Admin::BEGIN
 	 */
 	{
-		path: appPages.salesAppPages.subPages.salesDashboardPage.to,
+		path: appPages.adminAppPages.subPages.salesDashboardPage.to,
 		element: <SalesDashboardPage />,
 	},
+
 	{
-		path: appPages.salesAppPages.subPages.productPage.subPages.listPage.to,
-		element: <ProductListPage />,
+		path: appPages.adminAppPages.subPages.adminPage.subPages.duplicatePatientData.to,
+		element: <DeDuplicationManagement />,
 	},
 	{
-		path: `${appPages.salesAppPages.subPages.productPage.subPages.editPageLink.to}/:id`,
-		element: <ProductPage />,
+		path: appPages.adminAppPages.subPages.adminPage.subPages.newPatientData.to,
+		element: <DeDuplicationPatientNewData />,
 	},
+	
 	{
-		path: appPages.salesAppPages.subPages.categoryPage.subPages.listPage.to,
-		element: <CategoryListPage />,
+		path: appPages.adminAppPages.subPages.userManagementPage.subPages.userManagementListPage.to,
+		element: <UserList />,
 	},
-	{
-		path: `${appPages.salesAppPages.subPages.categoryPage.subPages.editPageLink.to}/:id`,
-		element: <CategoryPage />,
-	},
+	
 	/**
-	 * SALES::END
+	 * Admin::END
 	 */
 
 	/**

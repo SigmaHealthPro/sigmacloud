@@ -36,7 +36,7 @@ import Input from '../../../../components/form/Input';
 
 const columnHelper = createColumnHelper<TCategory>();
 
-const editLinkPath = `../${appPages.salesAppPages.subPages.categoryPage.subPages.editPageLink.to}/`;
+const editLinkPath = ``;
 
 const columns = [
 	columnHelper.accessor('name', {
