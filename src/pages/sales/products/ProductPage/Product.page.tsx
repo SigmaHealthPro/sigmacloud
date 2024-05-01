@@ -61,7 +61,7 @@ const ProductPage = () => {
 			<Subheader>
 				<SubheaderLeft>
 					<Link
-						to={`../${appPages.salesAppPages.subPages.productPage.subPages.listPage.to}`}>
+						to={``}>
 						<Button icon='HeroArrowLeft' className='!px-0'>
 							Back to List
 						</Button>

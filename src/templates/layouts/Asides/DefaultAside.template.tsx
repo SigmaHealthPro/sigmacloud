@@ -23,36 +23,32 @@ const DefaultAsideTemplate = () => {
 			<AsideBody>
 				<Nav className='font-[SecondFamily]'>
 					{/* dashboard */}
-					<NavItem {...appPages.salesAppPages.subPages.salesDashboardPage} />
+				
 					{/* enrollment */}
 					<NavCollapse
-						text={appPages.salesAppPages.text}
-						to={appPages.salesAppPages.to}
-						icon={appPages.salesAppPages.icon}>
+						text={appPages.adminAppPages.text}
+						to={appPages.adminAppPages.to}
+						icon={appPages.adminAppPages.icon}>
 						<NavCollapse
-							text={appPages.salesAppPages.subPages.productPage.text}
-							to={appPages.salesAppPages.subPages.productPage.to}
-							icon={appPages.salesAppPages.subPages.productPage.icon}>
+							text={appPages.adminAppPages.subPages.adminPage.text}
+							to={appPages.adminAppPages.subPages.adminPage.to}
+							icon={appPages.adminAppPages.subPages.adminPage.icon}>
 							<NavItem
-								{...appPages.salesAppPages.subPages.productPage.subPages.listPage}
+								{...appPages.adminAppPages.subPages.adminPage.subPages.duplicatePatientData}
 							/>
 							<NavItem
-								{...appPages.salesAppPages.subPages.productPage.subPages.newpatientlist}
+								{...appPages.adminAppPages.subPages.adminPage.subPages.newPatientData}
 							/>
-							<NavItem
-								{...appPages.salesAppPages.subPages.productPage.subPages.editPage}
-							/>
+							
 						</NavCollapse>
 						<NavCollapse
-							text={appPages.salesAppPages.subPages.categoryPage.text}
-							to={appPages.salesAppPages.subPages.categoryPage.to}
-							icon={appPages.salesAppPages.subPages.categoryPage.icon}>
+							text={appPages.adminAppPages.subPages.userManagementPage.text}
+							to={appPages.adminAppPages.subPages.userManagementPage.to}
+							icon={appPages.adminAppPages.subPages.userManagementPage.icon}>
 							<NavItem
-								{...appPages.salesAppPages.subPages.categoryPage.subPages.listPage}
+								{...appPages.adminAppPages.subPages.userManagementPage.subPages.userManagementListPage}
 							/>
-							<NavItem
-								{...appPages.salesAppPages.subPages.categoryPage.subPages.editPage}
-							/>
+							
 						</NavCollapse>
 					</NavCollapse>
 					{/* Patient Management  */}

@@ -122,7 +122,7 @@ const SalesDashboardPage = lazy(
 const ProductListPage = lazy(
 	() => import('../pages/sales/products/ProductListPage/ProductList.page'),
 );
-const ProductPage = lazy(() => import('../pages/sales/products/ProductPage/Product.page'));
+
 const CategoryListPage = lazy(
 	() => import('../pages/sales/categories/CategoryListPage/CategoryList.page'),
 );
@@ -168,34 +168,25 @@ const UnderConstructionPage = lazy(() => import('../pages/UnderConstruction.page
 
 const contentRoutes: RouteProps[] = [
 	/**
-	 * SALES::BEGIN
+	 * Admin::BEGIN
 	 */
+
 	{
-		path: appPages.salesAppPages.subPages.salesDashboardPage.to,
-		element: <SalesDashboardPage />,
-	},
-	{
-		path: appPages.salesAppPages.subPages.productPage.subPages.listPage.to,
+		path: appPages.adminAppPages.subPages.adminPage.subPages.duplicatePatientData.to,
 		element: <DeDuplicationManagement />,
 	},
 	{
-		path: appPages.salesAppPages.subPages.productPage.subPages.newpatientlist.to,
+		path: appPages.adminAppPages.subPages.adminPage.subPages.newPatientData.to,
 		element: <DeDuplicationPatientNewData />,
 	},
+	
 	{
-		path: `${appPages.salesAppPages.subPages.productPage.subPages.editPageLink.to}/:id`,
-		element: <ProductPage />,
-	},
-	{
-		path: appPages.salesAppPages.subPages.categoryPage.subPages.listPage.to,
+		path: appPages.adminAppPages.subPages.userManagementPage.subPages.userManagementListPage.to,
 		element: <UserList />,
 	},
-	{
-		path: `${appPages.salesAppPages.subPages.categoryPage.subPages.editPageLink.to}/:id`,
-		element: <CategoryPage />,
-	},
+	
 	/**
-	 * SALES::END
+	 * Admin::END
 	 */
 
 	/**

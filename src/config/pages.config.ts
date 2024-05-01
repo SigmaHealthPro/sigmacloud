@@ -68,70 +68,47 @@ export const appPages = {
 			},
 		},
 	},
-	salesAppPages: {
+	adminAppPages: {
 		id: 'Admin',
 		to: '/admin',
 		text: 'Admin',
-		icon: 'HeroBanknotes',
+		icon: 'HeroCommandLine',
 		subPages: {
-			salesDashboardPage: {
-				id: 'salesDashboardPage',
-				to: '/',
-				text: 'Dashboard',
-				icon: 'HeroRectangleGroup',
-			},
-			productPage: {
+			
+			adminPage: {
 				id: 'deDuplication',
 				to: '/admin/deduplication',
 				text: 'DeDuplication',
-				icon: 'HeroRectangleStack',
+				icon: 'DuoCode',
 				subPages: {
-					listPage: {
-						id: 'deDuplicationolddata',
-						to: '/admin/deduplication/patientdeduplication',
-						text: 'Duplicate Patient List',
+					duplicatePatientData: {
+						id: 'duplicatePatientData',
+						to: '/admin/deduplication/duplicatepatientdata',
+						text: 'Duplicate Patient Data',
 						icon: 'HeroQueueList',
 					},
-					newpatientlist: {  // Add listPage1 here
-						id: 'newpatientlist',
-						to: '/admin/deduplication/newpatientlist',
-						text: 'New Patient List',
+					newPatientData: {  
+						id: 'newPatientData',
+						to: '/admin/deduplication/newpatientdata',
+						text: 'New Patient Data',
 						icon: 'HeroQueueList',
 					},
-					editPage: {
-						id: 'productPage',
-						to: `/sales/product/${productsDb[0].id}`,
-						text: `Product #${productsDb[0].id}`,
-						icon: 'HeroTicket',
-					},
-					editPageLink: {
-						id: 'editPageLink',
-						to: '/sales/product',
-					},
+					
 				},
 			},
-			categoryPage: {
-				id: 'categoryPage',
-				to: '/sales/category',
+			userManagementPage: {
+				id: 'userManagementPage',
+				to: '/admin/user/usermanagement',
 				text: 'Users',
 				icon: 'HeroUserGroup',
 				subPages: {
-					listPage: {
-						id: 'userListPage',
-						to: '/admin/user/userlist',
-						text: 'Users List',
+					userManagementListPage: {
+						id: 'userManagementListPage',
+						to: '/admin/user/usermanagement',
+						text: 'Users Management',
 						icon: 'HeroUsers',
 					},
-					editPage: {
-						id: 'productPage',
-						to: `/sales/category/${categoriesDb[0].id}`,
-						text: `Category #${categoriesDb[0].id}`,
-						icon: 'HeroStop',
-					},
-					editPageLink: {
-						id: 'editPageLink',
-						to: '/sales/category',
-					},
+					
 				},
 			},
 		},
