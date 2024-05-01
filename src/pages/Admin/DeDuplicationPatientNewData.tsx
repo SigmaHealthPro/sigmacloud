@@ -6,6 +6,7 @@ import Container from '../../components/layouts/Container/Container';
 import Card, { CardBody } from '../../components/ui/Card';
 import apiconfig from '../../config/apiconfig'; // Make sure this import is correct
 import Button from '../../components/ui/Button';
+import toast, { Toaster } from 'react-hot-toast';
 
 const DeDuplicationPatientNewData = () => {
     const patientNewDataColumns = [
@@ -46,16 +47,19 @@ const DeDuplicationPatientNewData = () => {
     const handleSelectionChange = (selection:any) => {
         setIsAnyCheckboxChecked(selection.length > 0);
     };
-  
+    const handleSuccess = () => {
+        toast.success('Record kept successfully!'); // Display for 3 seconds
+      };
     return (
         <PageWrapper name='List'>
+            		<Toaster />
             <Container>
                 <Card className='h-full'>
                 <CardBody className='overflow-auto'>
     {isAnyCheckboxChecked && (
         <div className="button-container" style={{ marginBottom: '10px' }}>
             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
-                <Button variant='solid' icon='HeroClipboardDocumentCheck'>
+                <Button variant='solid' onClick={handleSuccess} icon='HeroClipboardDocumentCheck'>
                     Keep Record
                 </Button>
                 <Button variant='solid' icon='HeroArchiveBoxXMark'>
