@@ -19,6 +19,7 @@ import AddOrder from '../pages/Vaccine Management/AddOrder';
 import DeDuplicationManagement from '../pages/Admin/DeDuplicationManagement';
 import DeDuplicationPatientNewData from '../pages/Admin/DeDuplicationPatientNewData';
 import UserList from '../pages/Admin/User/UserList';
+import OrdersList from '../pages/Admin/Orders/OrdersList';
 
 /**
  * UI
@@ -183,12 +184,15 @@ const contentRoutes: RouteProps[] = [
 		path: appPages.adminAppPages.subPages.adminPage.subPages.newPatientData.to,
 		element: <DeDuplicationPatientNewData />,
 	},
-	
+
 	{
 		path: appPages.adminAppPages.subPages.userManagementPage.subPages.userManagementListPage.to,
 		element: <UserList />,
 	},
-	
+	{
+		path: appPages.adminAppPages.subPages.Revieworders.subPages.reviewOrdersData.to,
+		element: <OrdersList />,
+	},
 	/**
 	 * Admin::END
 	 */

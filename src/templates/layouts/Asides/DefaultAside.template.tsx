@@ -34,21 +34,26 @@ const DefaultAsideTemplate = () => {
 							to={appPages.adminAppPages.subPages.adminPage.to}
 							icon={appPages.adminAppPages.subPages.adminPage.icon}>
 							<NavItem
-								{...appPages.adminAppPages.subPages.adminPage.subPages.duplicatePatientData}
+								{...appPages.adminAppPages.subPages.adminPage.subPages
+									.duplicatePatientData}
 							/>
 							<NavItem
-								{...appPages.adminAppPages.subPages.adminPage.subPages.newPatientData}
+								{...appPages.adminAppPages.subPages.adminPage.subPages
+									.newPatientData}
 							/>
-							
+							<NavItem
+								{...appPages.adminAppPages.subPages.Revieworders.subPages
+									.reviewOrdersData}
+							/>
 						</NavCollapse>
 						<NavCollapse
 							text={appPages.adminAppPages.subPages.userManagementPage.text}
 							to={appPages.adminAppPages.subPages.userManagementPage.to}
 							icon={appPages.adminAppPages.subPages.userManagementPage.icon}>
 							<NavItem
-								{...appPages.adminAppPages.subPages.userManagementPage.subPages.userManagementListPage}
+								{...appPages.adminAppPages.subPages.userManagementPage.subPages
+									.userManagementListPage}
 							/>
-							
 						</NavCollapse>
 					</NavCollapse>
 					{/* Patient Management  */}
@@ -57,7 +62,7 @@ const DefaultAsideTemplate = () => {
 						to={appPages.PatientManagement.to}
 						icon={appPages.PatientManagement.icon}
 					/>
-							{/* Inventory Management  */}
+					{/* Inventory Management  */}
 					<NavItem
 						text={appPages.InventoryManagement.text}
 						to={appPages.InventoryManagement.to}

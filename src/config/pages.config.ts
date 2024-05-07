@@ -86,20 +86,18 @@ export const appPages = {
 				text: 'DeDuplication',
 				icon: 'DuoCode',
 				subPages: {
-					
 					duplicatePatientData: {
 						id: 'duplicatePatientData',
 						to: '/admin/deduplication/duplicatepatientdata',
 						text: 'Duplicate Patient Data',
 						icon: 'HeroQueueList',
 					},
-					newPatientData: {  
+					newPatientData: {
 						id: 'newPatientData',
 						to: '/admin/deduplication/newpatientdata',
 						text: 'New Patient Data',
 						icon: 'HeroQueueList',
 					},
-					
 				},
 			},
 			userManagementPage: {
@@ -114,7 +112,20 @@ export const appPages = {
 						text: 'Users Management',
 						icon: 'HeroUsers',
 					},
-					
+				},
+			},
+			Revieworders: {
+				id: 'Revieworders',
+				to: '/admin/Orders',
+				text: 'ReviewOrders',
+				icon: 'HeroShoppingCart',
+				subPages: {
+					reviewOrdersData: {
+						id: 'reviewOrders',
+						to: '/admin/Orders/OrdersList',
+						text: 'Review Orders',
+						icon: 'HeroCheck',
+					},
 				},
 			},
 		},
