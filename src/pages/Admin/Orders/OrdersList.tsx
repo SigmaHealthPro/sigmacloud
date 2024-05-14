@@ -127,7 +127,7 @@ const OrdersList: React.FC = () => {
 			<GridToolbarContainer className='flex w-full items-center justify-between'>
 				<CardHeader>
 					<CardHeaderChild>
-						<CardTitle>All Orders</CardTitle>
+						<CardTitle>Review Orders</CardTitle>
 					</CardHeaderChild>
 				</CardHeader>
 				<GridPagination />

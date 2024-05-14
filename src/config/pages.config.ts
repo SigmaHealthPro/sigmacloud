@@ -117,14 +117,14 @@ export const appPages = {
 			Revieworders: {
 				id: 'Revieworders',
 				to: '/admin/Orders',
-				text: 'ReviewOrders',
+				text: 'ManageOrders',
 				icon: 'HeroShoppingCart',
 				subPages: {
 					reviewOrdersData: {
 						id: 'reviewOrders',
 						to: '/admin/Orders/OrdersList',
 						text: 'Review Orders',
-						icon: 'HeroCheck',
+						icon: 'HeroShoppingCart',
 					},
 				},
 			},

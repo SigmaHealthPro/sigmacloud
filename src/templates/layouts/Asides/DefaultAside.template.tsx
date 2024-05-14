@@ -41,6 +41,11 @@ const DefaultAsideTemplate = () => {
 								{...appPages.adminAppPages.subPages.adminPage.subPages
 									.newPatientData}
 							/>
+						</NavCollapse>
+						<NavCollapse
+							text={appPages.adminAppPages.subPages.Revieworders.text}
+							to={appPages.adminAppPages.subPages.Revieworders.to}
+							icon={appPages.adminAppPages.subPages.Revieworders.icon}>
 							<NavItem
 								{...appPages.adminAppPages.subPages.Revieworders.subPages
 									.reviewOrdersData}
