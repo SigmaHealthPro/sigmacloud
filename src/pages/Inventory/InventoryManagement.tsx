@@ -51,6 +51,10 @@ import popUp from '../../components/popup/popup';
 import { Autocomplete, TextField } from '@mui/material';
 import apiconfig from '../../config/apiconfig';
 import endpoint from '../../config/endpoint';
+interface Fundingsource {
+	id: string;
+	fundingsource: string;
+}
 
 const useStyles = makeStyles({
 	root: {
@@ -68,6 +72,14 @@ const InventoryManagement = () => {
 	const [siteOptions, setSiteOptions] = useState([]);
 	const [facility, setFacility] = useState([]);
 	const [product, setProduct] = useState([]);
+	const [fundingsource, setFundingsource] = useState<Fundingsource[]>([]);
+
+	// Sample options for the fundingsource state
+	const options: Fundingsource[] = [
+		{ id: 'public', fundingsource: 'Public' },
+		{ id: 'private', fundingsource: 'Private' },
+	];
+	const [lotnumber, setLotnumber] = useState([]);
 	const [filteredState, setFilteredState] = useState([]);
 	const [filteredCity, setFilteredCity] = useState([]);
 
@@ -76,8 +88,12 @@ const InventoryManagement = () => {
 	const navigate = useNavigate();
 	const [editTouched, setEditTouched] = useState(false);
 	const [editData, setEditData] = useState<any>([]);
-	const dispatch = useDispatch()
-  
+	const dispatch = useDispatch();
+	// Function to update the fundingsource state
+	const handleSetFundingsource = (options: Fundingsource[]) => {
+		setFundingsource(options);
+	};
+
 	let generatedGUID: string;
 	generatedGUID = uuidv4();
 	const handleEditData = async (params: any, event: any) => {
@@ -94,7 +110,7 @@ const InventoryManagement = () => {
 		formik.setFieldValue('facility', params.row.facilityId);
 		formik.setFieldValue('product', params.row.productId);
 		formik.setFieldValue('site', params.row.siteId);
-		 formik.setFieldValue('isEdit', true);
+		formik.setFieldValue('isEdit', true);
 	};
 
 	const columns = [
@@ -107,9 +123,6 @@ const InventoryManagement = () => {
 		{ field: 'quantityRemaining', headerName: 'Quantity Remaining', width: 100 },
 		{ field: 'unitOfTemp', headerName: 'Unit Of Temp', width: 100 },
 		{ field: 'tempRecorded', headerName: 'Temp Recorded', width: 100 },
-
-
-
 
 		{
 			field: 'actions',
@@ -144,14 +157,17 @@ const InventoryManagement = () => {
 									/>
 								</Popconfirm>
 								<div>
-						<Link to={`../${appPages.InventoryManagement.subPages.InventoryProfile.to}`}>
-							<AntButton 	icon={
-						<VisibilityIcon  />	}  onClick={()=>{dispatch(setInventory((params.row)))}}
-							/>
-													{/* <VisibilityIcon  />	}  onClick={()=>{debugger;dispatch(setUserProfile((params.row)))}} */}
-
-							</Link>
-					</div>
+									<Link
+										to={`../${appPages.InventoryManagement.subPages.InventoryProfile.to}`}>
+										<AntButton
+											icon={<VisibilityIcon />}
+											onClick={() => {
+												dispatch(setInventory(params.row));
+											}}
+										/>
+										{/* <VisibilityIcon  />	}  onClick={()=>{debugger;dispatch(setUserProfile((params.row)))}} */}
+									</Link>
+								</div>
 							</Space>
 						</div>
 					</div>
@@ -160,8 +176,8 @@ const InventoryManagement = () => {
 		},
 	];
 	const classes = useStyles();
-    const [inventory, setInventories] = useState<any[]>([]);
-    const [loading, setLoading] = useState<boolean>(false);
+	const [inventory, setInventories] = useState<any[]>([]);
+	const [loading, setLoading] = useState<boolean>(false);
 	const [globalFilter, setGlobalFilter] = useState<string>('');
 	const [rowCountState, setRowCountState] = useState<number>(0); // Total number of items
 	const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
@@ -174,6 +190,9 @@ const InventoryManagement = () => {
 	const handleRowClick = (params: GridRowParams) => {
 		navigate(`${appPages.InventoryManagement.to}/${params.id}`);
 	};
+	useEffect(() => {
+		setFundingsource(options);
+	}, []);
 
 	function removeDublicates(array: any[], key: any) {
 		const seen = new Set();
@@ -196,7 +215,7 @@ const InventoryManagement = () => {
 
 		try {
 			const response = await axios.put(
-				apiconfig.apiHostUrl+endpoint.deleteinventory,
+				apiconfig.apiHostUrl + endpoint.deleteinventory,
 				formData, // Send the form data
 				{
 					headers: { 'Content-Type': 'multipart/form-data' }, // This matches the expected content type
@@ -235,20 +254,20 @@ const InventoryManagement = () => {
 	const listInventory = () => {
 		setLoading(true);
 		const requestData = {
-			   keyword: globalFilter || '',
-			   pagenumber: paginationModel.page + 1,
-			   pagesize: paginationModel.pageSize,
-			   facilityName: '',
-			   inventoryId: 0,
-			   inventorctId: '',
-			   quantityDate: '',
-			   produyRemaining: '',
-			   tempRecorded: '',
-			   unitOfTemp: '',
-			   siteName: '',
-		   };
+			keyword: globalFilter || '',
+			pagenumber: paginationModel.page + 1,
+			pagesize: paginationModel.pageSize,
+			facilityName: '',
+			inventoryId: 0,
+			inventorctId: '',
+			quantityDate: '',
+			produyRemaining: '',
+			tempRecorded: '',
+			unitOfTemp: '',
+			siteName: '',
+		};
 		axios
-		.post(apiconfig.apiHostUrl+endpoint.searchInventory, requestData)
+			.post(apiconfig.apiHostUrl + endpoint.searchInventory, requestData)
 			.then((response) => {
 				setLoading(true);
 				const { items, totalCount } = response.data;
@@ -286,27 +305,30 @@ const InventoryManagement = () => {
 
 	useEffect(() => {
 		async function callInitial() {
-			axios.get(apiconfig.apiHostUrl+endpoint.getallfacilities)
-			.then(response => {
-				setFacility(response.data);
-			})
-			.catch(error => {
-				console.error('Error fetching Facility:', error);
-			});
-			axios.get(apiconfig.apiHostUrl+endpoint.AllSites)
-			.then(response => {
-			  setSiteOptions(response.data);
-			})
-			.catch(error => {
-			  console.error('Error fetching sites:', error);
-			});
-			axios.get(apiconfig.apiHostUrl+endpoint.getallproducts)
-			.then(response => {
-			  setProduct(response.data);
-			})
-			.catch(error => {
-			  console.error('Error fetching Product:', error);
-			});
+			axios
+				.get(apiconfig.apiHostUrl + endpoint.getallfacilities)
+				.then((response) => {
+					setFacility(response.data);
+				})
+				.catch((error) => {
+					console.error('Error fetching Facility:', error);
+				});
+			axios
+				.get(apiconfig.apiHostUrl + endpoint.AllSites)
+				.then((response) => {
+					setSiteOptions(response.data);
+				})
+				.catch((error) => {
+					console.error('Error fetching sites:', error);
+				});
+			axios
+				.get(apiconfig.apiHostUrl + endpoint.getallproducts)
+				.then((response) => {
+					setProduct(response.data);
+				})
+				.catch((error) => {
+					console.error('Error fetching Product:', error);
+				});
 		}
 		callInitial();
 	}, []);
@@ -326,10 +348,12 @@ const InventoryManagement = () => {
 		facilityId: string;
 		facility: string;
 		product: string;
+		lotnumber: string;
+		fundingsource: string;
 		user: string;
 		site: string;
 		siteId: string;
-		isEdit:boolean;
+		isEdit: boolean;
 	};
 
 	const openModal = () => {
@@ -369,7 +393,7 @@ const InventoryManagement = () => {
 			createdDate: '2024-01-17T18:25:24.798Z',
 			createdBy: 'string',
 			updatedBy: 'string',
-			inventoryId: 0 ,
+			inventoryId: 0,
 			inventoryDate: '',
 			productId: generatedGUID,
 			quantityRemaining: '',
@@ -379,10 +403,12 @@ const InventoryManagement = () => {
 			facilityId: generatedGUID,
 			facility: '',
 			product: '',
+			lotnumber: '',
+			fundingsource: '',
 			user: '5465ed1a-1fe4-4f88-998f-711955fff422',
 			site: '',
-			siteId: generatedGUID,	
-			isEdit: false
+			siteId: generatedGUID,
+			isEdit: false,
 		},
 
 		validate: (values: Inventory) => {
@@ -393,6 +419,12 @@ const InventoryManagement = () => {
 			}
 			if (!values.product) {
 				errors.product = 'Required';
+			}
+			if (!values.lotnumber) {
+				errors.lotnumber = 'Required';
+			}
+			if (!values.fundingsource) {
+				errors.fundingsource = 'Required';
 			}
 			if (!values.site) {
 				errors.site = 'Required';
@@ -415,14 +447,13 @@ const InventoryManagement = () => {
 			return errors;
 		},
 
-
 		onSubmit: async (values: Inventory) => {
 			console.log('Request Payload: ', values);
 			try {
 				const postResponse = await axios.post(
-					apiconfig.apiHostUrl+endpoint.createInventory,
-					  { ...values },
-					
+					apiconfig.apiHostUrl + endpoint.createInventory,
+					{ ...values },
+
 					{
 						headers: { 'Content-Type': 'application/json' },
 					},
@@ -439,6 +470,8 @@ const InventoryManagement = () => {
 				formik.setFieldValue('unitOfTemp', '');
 				formik.setFieldValue('facility', '');
 				formik.setFieldValue('product', '');
+				formik.setFieldValue('lotnumber', '');
+				formik.setFieldValue('fundingsource', '');
 				formik.setFieldValue('site', '');
 			} catch (error) {
 				console.error('Error: ', error);
@@ -448,372 +481,490 @@ const InventoryManagement = () => {
 
 	return (
 		<div>
-		<PageWrapper name='Customer List'>
-		<Subheader>
-			<Toaster />
-			<SubheaderLeft>
-				<FieldWrap
-					firstSuffix={<Icon className='mx-2' icon='HeroMagnifyingGlass' />}
-					lastSuffix={
-						globalFilter && (
-							<Icon
-								icon='HeroXMark'
-								color='red'
-								className='mx-2 cursor-pointer'
-								onClick={() => setGlobalFilter('')}
+			<PageWrapper name='Customer List'>
+				<Subheader>
+					<Toaster />
+					<SubheaderLeft>
+						<FieldWrap
+							firstSuffix={<Icon className='mx-2' icon='HeroMagnifyingGlass' />}
+							lastSuffix={
+								globalFilter && (
+									<Icon
+										icon='HeroXMark'
+										color='red'
+										className='mx-2 cursor-pointer'
+										onClick={() => setGlobalFilter('')}
+									/>
+								)
+							}>
+							<Input
+								id='globalFilter'
+								name='globalFilter'
+								placeholder='Search...'
+								value={globalFilter}
+								onChange={handleInputChange} // Modified to use the new handler
 							/>
-						)
-					}>
-					<Input
-						id='globalFilter'
-						name='globalFilter'
-						placeholder='Search...'
-						value={globalFilter}
-						onChange={handleInputChange} // Modified to use the new handler
-					/>
-				</FieldWrap>
-			</SubheaderLeft>
-			<SubheaderRight>
-				{/* <Link to={`${appPages.PatientManagement.subPages.AddPatient.to}`}> */}
-				<Button
-					variant='solid'
-					icon='HeroPlus'
-					onClick={() => {
-						openModal();
-						setEditTouched(false);
-						reset();
-					}}
-					>
-					New Inventory
-				</Button>
-				<Modal isOpen={newInventoryModal} setIsOpen={setNewInventoryModal}>
-					<ModalHeader>
-						{' '}
-						{!editTouched ? 'Add New Inventory' : 'Modification'}
-					</ModalHeader>
-					<ModalBody>
-						<div className='col-span-12 lg:col-span-9'>
-							<div className='grid grid-cols-12 gap-4'>
-								<div className='col-span-12'>
-									<Card>
-										<CardBody>
-											<div className='grid grid-cols-12 gap-4'>
-												<div className='col-span-12 lg:col-span-6'>
-													<Label htmlFor='facility'>
-													Facility Name{' '}
-													</Label>
-													<Validation
-														isValid={formik.isValid}
-														isTouched={formik.touched.facility}
-														invalidFeedback={
-															formik.errors.facility
-														}
-														validFeedback='Good'>
-												<FieldWrap
-															style={{ color: 'black' }}
-															lastSuffix={
-																<Icon
-																	icon='HeroChevronDown'
-																	className='mx-2'
-																/>
-															}>
-															<Select
-																id='facility'
-																name='facility'
-																style={{ color: 'black' }}
-																value={formik.values.facility}
-																onChange={(event) => {
-																	formik.handleChange(event);
-																	// handleState(
-																	// 	event.target.value,
-																	// );
-																}}
-																onBlur={formik.handleBlur}
-																placeholder='Select Facility'>
-																{/* <option value={''}> Select</option> */}
-																{facility?.map(
-																	(setfacility: any) => (
-																		<option
-																			style={{
-																				color: 'black',
-																			}}
-																			id={setfacility?.id}
-																			key={setfacility?.id}
-																			value={setfacility?.id}>
-																			{
-																				setfacility.facilityName
-																			}
-																		</option>
-																	),
-																)}
-															</Select>
-														</FieldWrap>
-													</Validation>
-												</div>
-												<div className='col-span-12 lg:col-span-6'>
-													<Label htmlFor='product'>
-													Product
-													</Label>
-													<Validation
-														isValid={formik.isValid}
-														isTouched={formik.touched.product}
-														invalidFeedback={
-															formik.errors.product
-														}
-														validFeedback='Good'>
-														<FieldWrap
-															style={{ color: 'black' }}
-															lastSuffix={
-																<Icon
-																	icon='HeroChevronDown'
-																	className='mx-2'
-																/>
-															}>
-															<Select
-																id='product'
-																name='product'
-																style={{ color: 'black' }}
-																value={formik.values.product}
-																onChange={(event) => {
-																	formik.handleChange(event);
-																	// handleState(
-																	// 	event.target.value,
-																	// );
-																}}
-																onBlur={formik.handleBlur}
-																placeholder='Select Product'>
-																{/* <option value={''}> Select</option> */}
-																{product?.map(
-																	(setproduct: any) => (
-																		<option
-																			style={{
-																				color: 'black',
-																			}}
-																			id={setproduct?.id}
-																			key={setproduct?.id}
-																			value={setproduct?.id}>
-																			{
-																				setproduct.productName
-																			}
-																		</option>
-																	),
-																)}
-															</Select>
-														</FieldWrap>
-														</Validation>
-												</div>
-												<div className='col-span-12 lg:col-span-6'>
-													<Label htmlFor='site'>Site Name</Label>
-													<Validation
-														isValid={formik.isValid}
-														isTouched={formik.touched.site}
-														invalidFeedback={formik.errors.site}
-														validFeedback='Good'>
-														<FieldWrap
-															style={{ color: 'black' }}
-															lastSuffix={
-																<Icon
-																	icon='HeroChevronDown'
-																	className='mx-2'
-																/>
-															}>
-															<Select
-																id='site'
-																name='site'
-																style={{ color: 'black' }}
-																value={formik.values.site}
-																onChange={(event) => {
-																	formik.handleChange(event);
-																	// handleState(
-																	// 	event.target.value,
-																	// );
-																}}
-																onBlur={formik.handleBlur}
-																placeholder='Select site'>
-																{/* <option value={''}> Select</option> */}
-																{siteOptions?.map(
-																	(setsite: any) => (
-																		<option
-																			style={{
-																				color: 'black',
-																			}}
-																			id={setsite?.id}
-																			key={setsite?.id}
-																			value={setsite?.id}>
-																			{
-																				setsite?.siteName
-																			}
-																		</option>
-																	),
-																)}
-															</Select>
-														</FieldWrap>
-													</Validation>
-												</div>
-										
-												<div className='col-span-12 lg:col-span-6'>
-													<Label htmlFor='inventoryDate'>
-													Inventory Date
-													</Label>
-													<Validation
-														isValid={formik.isValid}
-														isTouched={formik.touched.inventoryDate}
-														invalidFeedback={
-															formik.errors.inventoryDate
-														}
-														validFeedback='Good'>
-														<Input
-															type='date'
-															id='inventoryDate'
-															name='inventoryDate'
-															onChange={formik.handleChange}
-															value={formik.values.inventoryDate}
-															onBlur={formik.handleBlur}
-														/>
-													</Validation>
-												</div>
-												<div className='col-span-12 lg:col-span-6'>
-													<Label htmlFor='expirationDate'>
-													Expiration Date
-													</Label>
-													<Validation
-														isValid={formik.isValid}
-														isTouched={formik.touched.expirationDate}
-														invalidFeedback={
-															formik.errors.expirationDate
-														}
-														validFeedback='Good'>
-														<Input
-															type='date'
-															id='expirationDate'
-															name='expirationDate'
-															onChange={formik.handleChange}
-															value={formik.values.expirationDate}
-															onBlur={formik.handleBlur}
-														/>
-													</Validation>
-												</div>
-												<div className='col-span-12 lg:col-span-6'>
-													<Label htmlFor='quantityRemaining'>
-													Quantity Remaining
-													</Label>
-													<Validation
-														isValid={formik.isValid}
-														isTouched={formik.touched.quantityRemaining}
-														invalidFeedback={
-															formik.errors.quantityRemaining
-														}
-														validFeedback='Good'>
-														<Input
-															type='text'
-															id='quantityRemaining'
-															name='quantityRemaining'
-															onChange={formik.handleChange}
-															value={formik.values.quantityRemaining}
-															onBlur={formik.handleBlur}
-														/>
-													</Validation>
-												</div>
-												<div className='col-span-12 lg:col-span-6'>
-													<Label htmlFor='tempRecorded'>
-													Temp Recorded
-													</Label>
-													<Validation
-														isValid={formik.isValid}
-														isTouched={formik.touched.tempRecorded}
-														invalidFeedback={
-															formik.errors.tempRecorded
-														}
-														validFeedback='Good'>
-														<Input
-															type='text'
-															id='tempRecorded'
-															name='tempRecorded'
-															onChange={formik.handleChange}
-															value={formik.values.tempRecorded}
-															onBlur={formik.handleBlur}
-														/>
-													</Validation>
-												</div>
-												<div className='col-span-12 lg:col-span-6'>
-													<Label htmlFor='unitOfTemp'>
-													Unit Of Temp
-													</Label>
-													<Validation
-														isValid={formik.isValid}
-														isTouched={formik.touched.unitOfTemp}
-														invalidFeedback={
-															formik.errors.unitOfTemp
-														}
-														validFeedback='Good'>
-														<Input
-															type='text'
-															id='unitOfTemp'
-															name='unitOfTemp'
-															onChange={formik.handleChange}
-															value={formik.values.unitOfTemp}
-															onBlur={formik.handleBlur}
-														/>
-													</Validation>
-												</div>
-
-											</div>
-										</CardBody>
-									</Card>
-								</div>
-							</div>
-						</div>
-					</ModalBody>
-					<ModalFooter>
+						</FieldWrap>
+					</SubheaderLeft>
+					<SubheaderRight>
+						{/* <Link to={`${appPages.PatientManagement.subPages.AddPatient.to}`}> */}
 						<Button
 							variant='solid'
+							icon='HeroPlus'
 							onClick={() => {
-								setNewInventoryModal(false);
+								openModal();
 								setEditTouched(false);
+								reset();
 							}}>
-							Cancel
+							New Inventory
 						</Button>
-						<Button variant='solid' onClick={() => formik.handleSubmit()}>
-							{!editTouched ? 'Save' : 'Update'}
-						</Button>
-					</ModalFooter>
-				</Modal>
-			</SubheaderRight>
-		</Subheader>
-		<Container>
-			<Card className='h-full'>
-				<CardBody className='overflow-auto'>
-					<DataGrid
-						className={classes.root}
-						rows={inventory}
-						columns={columns}
-						rowCount={rowCountState}
-						loading={loading}
-						pageSizeOptions={[5, 10, 25]}
-						paginationModel={paginationModel}
-						paginationMode='server'
-						onPaginationModelChange={handlePaginationModelChange}
-						checkboxSelection
-					   // onRowClick={handleRowClick}
-						getRowId={(row) => `${row.facilityName}-${row.inventoryId}`}
-						sx={{
-							'& .MuiDataGrid-columnHeaders': { backgroundColor: '#e5e7eb' },
-							'& .MuiDataGrid-columnHeaderTitle': {
-								fontWeight: 'bold', // Bolding the column headers
-							},
-						}}
-						slots={{
-							toolbar: CustomPagination, // 'toolbar' should be all lowercase
-						}}
-					/>
-				</CardBody>
-			</Card>
-		</Container>
-
-	</PageWrapper>
-			</div>
+						<Modal isOpen={newInventoryModal} setIsOpen={setNewInventoryModal}>
+							<ModalHeader>
+								{' '}
+								{!editTouched ? 'Add New Inventory' : 'Modification'}
+							</ModalHeader>
+							<ModalBody>
+								<div className='col-span-12 lg:col-span-9'>
+									<div className='grid grid-cols-12 gap-4'>
+										<div className='col-span-12'>
+											<Card>
+												<CardBody>
+													<div className='grid grid-cols-12 gap-4'>
+														<div className='col-span-12 lg:col-span-6'>
+															<Label htmlFor='facility'>
+																Facility Name{' '}
+															</Label>
+															<Validation
+																isValid={formik.isValid}
+																isTouched={formik.touched.facility}
+																invalidFeedback={
+																	formik.errors.facility
+																}
+																validFeedback='Good'>
+																<FieldWrap
+																	style={{ color: 'black' }}
+																	lastSuffix={
+																		<Icon
+																			icon='HeroChevronDown'
+																			className='mx-2'
+																		/>
+																	}>
+																	<Select
+																		id='facility'
+																		name='facility'
+																		style={{ color: 'black' }}
+																		value={
+																			formik.values.facility
+																		}
+																		onChange={(event) => {
+																			formik.handleChange(
+																				event,
+																			);
+																			// handleState(
+																			// 	event.target.value,
+																			// );
+																		}}
+																		onBlur={formik.handleBlur}
+																		placeholder='Select Facility'>
+																		{/* <option value={''}> Select</option> */}
+																		{facility?.map(
+																			(setfacility: any) => (
+																				<option
+																					style={{
+																						color: 'black',
+																					}}
+																					id={
+																						setfacility?.id
+																					}
+																					key={
+																						setfacility?.id
+																					}
+																					value={
+																						setfacility?.id
+																					}>
+																					{
+																						setfacility.facilityName
+																					}
+																				</option>
+																			),
+																		)}
+																	</Select>
+																</FieldWrap>
+															</Validation>
+														</div>
+														<div className='col-span-12 lg:col-span-6'>
+															<Label htmlFor='site'>Site Name</Label>
+															<Validation
+																isValid={formik.isValid}
+																isTouched={formik.touched.site}
+																invalidFeedback={formik.errors.site}
+																validFeedback='Good'>
+																<FieldWrap
+																	style={{ color: 'black' }}
+																	lastSuffix={
+																		<Icon
+																			icon='HeroChevronDown'
+																			className='mx-2'
+																		/>
+																	}>
+																	<Select
+																		id='site'
+																		name='site'
+																		style={{ color: 'black' }}
+																		value={formik.values.site}
+																		onChange={(event) => {
+																			formik.handleChange(
+																				event,
+																			);
+																			// handleState(
+																			// 	event.target.value,
+																			// );
+																		}}
+																		onBlur={formik.handleBlur}
+																		placeholder='Select site'>
+																		{/* <option value={''}> Select</option> */}
+																		{siteOptions?.map(
+																			(setsite: any) => (
+																				<option
+																					style={{
+																						color: 'black',
+																					}}
+																					id={setsite?.id}
+																					key={
+																						setsite?.id
+																					}
+																					value={
+																						setsite?.id
+																					}>
+																					{
+																						setsite?.siteName
+																					}
+																				</option>
+																			),
+																		)}
+																	</Select>
+																</FieldWrap>
+															</Validation>
+														</div>
+														<div className='col-span-12 lg:col-span-6'>
+															<Label htmlFor='product'>Product</Label>
+															<Validation
+																isValid={formik.isValid}
+																isTouched={formik.touched.product}
+																invalidFeedback={
+																	formik.errors.product
+																}
+																validFeedback='Good'>
+																<FieldWrap
+																	style={{ color: 'black' }}
+																	lastSuffix={
+																		<Icon
+																			icon='HeroChevronDown'
+																			className='mx-2'
+																		/>
+																	}>
+																	<Select
+																		id='product'
+																		name='product'
+																		style={{ color: 'black' }}
+																		value={
+																			formik.values.product
+																		}
+																		onChange={(event) => {
+																			formik.handleChange(
+																				event,
+																			);
+																			// handleState(
+																			// 	event.target.value,
+																			// );
+																		}}
+																		onBlur={formik.handleBlur}
+																		placeholder='Select Product'>
+																		{/* <option value={''}> Select</option> */}
+																		{product?.map(
+																			(setproduct: any) => (
+																				<option
+																					style={{
+																						color: 'black',
+																					}}
+																					id={
+																						setproduct?.id
+																					}
+																					key={
+																						setproduct?.id
+																					}
+																					value={
+																						setproduct?.id
+																					}>
+																					{
+																						setproduct.productName
+																					}
+																				</option>
+																			),
+																		)}
+																	</Select>
+																</FieldWrap>
+															</Validation>
+														</div>
+														<div className='col-span-12 lg:col-span-6'>
+															<Label htmlFor='lotnumber'>
+																Lot Number
+															</Label>
+															<Validation
+																isValid={formik.isValid}
+																isTouched={formik.touched.lotnumber}
+																invalidFeedback={
+																	formik.errors.lotnumber
+																}
+																validFeedback='Good'>
+																<Input
+																	type='text'
+																	id='lotnumber'
+																	name='lotnumber'
+																	onChange={formik.handleChange}
+																	value={formik.values.lotnumber}
+																	onBlur={formik.handleBlur}
+																/>
+															</Validation>
+														</div>
+														<div className='col-span-12 lg:col-span-6'>
+															<Label htmlFor='fundingsource'>
+																Funding Source
+															</Label>
+															<Validation
+																isValid={formik.isValid}
+																isTouched={
+																	formik.touched.fundingsource
+																}
+																invalidFeedback={
+																	formik.errors.fundingsource
+																}
+																validFeedback='Good'>
+																<FieldWrap
+																	style={{ color: 'black' }}
+																	lastSuffix={
+																		<Icon
+																			icon='HeroChevronDown'
+																			className='mx-2'
+																		/>
+																	}>
+																	<Select
+																		id='fundingsource'
+																		name='fundingsource'
+																		style={{ color: 'black' }}
+																		value={
+																			formik.values
+																				.fundingsource
+																		}
+																		onChange={(event) => {
+																			formik.handleChange(
+																				event,
+																			);
+																		}}
+																		onBlur={formik.handleBlur}
+																		placeholder='Select fundingsource'>
+																		{fundingsource.map(
+																			(
+																				option: Fundingsource,
+																			) => (
+																				<option
+																					style={{
+																						color: 'black',
+																					}}
+																					id={option.id}
+																					key={option.id}
+																					value={
+																						option.id
+																					}>
+																					{
+																						option.fundingsource
+																					}
+																				</option>
+																			),
+																		)}
+																	</Select>
+																</FieldWrap>
+															</Validation>
+														</div>
+														<div className='col-span-12 lg:col-span-6'>
+															<Label htmlFor='inventoryDate'>
+																Inventory Date
+															</Label>
+															<Validation
+																isValid={formik.isValid}
+																isTouched={
+																	formik.touched.inventoryDate
+																}
+																invalidFeedback={
+																	formik.errors.inventoryDate
+																}
+																validFeedback='Good'>
+																<Input
+																	type='date'
+																	id='inventoryDate'
+																	name='inventoryDate'
+																	onChange={formik.handleChange}
+																	value={
+																		formik.values.inventoryDate
+																	}
+																	onBlur={formik.handleBlur}
+																/>
+															</Validation>
+														</div>
+														<div className='col-span-12 lg:col-span-6'>
+															<Label htmlFor='expirationDate'>
+																Expiration Date
+															</Label>
+															<Validation
+																isValid={formik.isValid}
+																isTouched={
+																	formik.touched.expirationDate
+																}
+																invalidFeedback={
+																	formik.errors.expirationDate
+																}
+																validFeedback='Good'>
+																<Input
+																	type='date'
+																	id='expirationDate'
+																	name='expirationDate'
+																	onChange={formik.handleChange}
+																	value={
+																		formik.values.expirationDate
+																	}
+																	onBlur={formik.handleBlur}
+																/>
+															</Validation>
+														</div>
+														<div className='col-span-12 lg:col-span-6'>
+															<Label htmlFor='quantityRemaining'>
+																Quantity Remaining
+															</Label>
+															<Validation
+																isValid={formik.isValid}
+																isTouched={
+																	formik.touched.quantityRemaining
+																}
+																invalidFeedback={
+																	formik.errors.quantityRemaining
+																}
+																validFeedback='Good'>
+																<Input
+																	type='text'
+																	id='quantityRemaining'
+																	name='quantityRemaining'
+																	onChange={formik.handleChange}
+																	value={
+																		formik.values
+																			.quantityRemaining
+																	}
+																	onBlur={formik.handleBlur}
+																/>
+															</Validation>
+														</div>
+														<div className='col-span-12 lg:col-span-6'>
+															<Label htmlFor='tempRecorded'>
+																Temp Recorded
+															</Label>
+															<Validation
+																isValid={formik.isValid}
+																isTouched={
+																	formik.touched.tempRecorded
+																}
+																invalidFeedback={
+																	formik.errors.tempRecorded
+																}
+																validFeedback='Good'>
+																<Input
+																	type='text'
+																	id='tempRecorded'
+																	name='tempRecorded'
+																	onChange={formik.handleChange}
+																	value={
+																		formik.values.tempRecorded
+																	}
+																	onBlur={formik.handleBlur}
+																/>
+															</Validation>
+														</div>
+														<div className='col-span-12 lg:col-span-6'>
+															<Label htmlFor='unitOfTemp'>
+																Unit Of Temp
+															</Label>
+															<Validation
+																isValid={formik.isValid}
+																isTouched={
+																	formik.touched.unitOfTemp
+																}
+																invalidFeedback={
+																	formik.errors.unitOfTemp
+																}
+																validFeedback='Good'>
+																<Input
+																	type='text'
+																	id='unitOfTemp'
+																	name='unitOfTemp'
+																	onChange={formik.handleChange}
+																	value={formik.values.unitOfTemp}
+																	onBlur={formik.handleBlur}
+																/>
+															</Validation>
+														</div>
+													</div>
+												</CardBody>
+											</Card>
+										</div>
+									</div>
+								</div>
+							</ModalBody>
+							<ModalFooter>
+								<Button
+									variant='solid'
+									onClick={() => {
+										setNewInventoryModal(false);
+										setEditTouched(false);
+									}}>
+									Cancel
+								</Button>
+								<Button variant='solid' onClick={() => formik.handleSubmit()}>
+									{!editTouched ? 'Save' : 'Update'}
+								</Button>
+							</ModalFooter>
+						</Modal>
+					</SubheaderRight>
+				</Subheader>
+				<Container>
+					<Card className='h-full'>
+						<CardBody className='overflow-auto'>
+							<DataGrid
+								className={classes.root}
+								rows={inventory}
+								columns={columns}
+								rowCount={rowCountState}
+								loading={loading}
+								pageSizeOptions={[5, 10, 25]}
+								paginationModel={paginationModel}
+								paginationMode='server'
+								onPaginationModelChange={handlePaginationModelChange}
+								checkboxSelection
+								// onRowClick={handleRowClick}
+								getRowId={(row) => `${row.facilityName}-${row.inventoryId}`}
+								sx={{
+									'& .MuiDataGrid-columnHeaders': { backgroundColor: '#e5e7eb' },
+									'& .MuiDataGrid-columnHeaderTitle': {
+										fontWeight: 'bold', // Bolding the column headers
+									},
+								}}
+								slots={{
+									toolbar: CustomPagination, // 'toolbar' should be all lowercase
+								}}
+							/>
+						</CardBody>
+					</Card>
+				</Container>
+			</PageWrapper>
+		</div>
 	);
 };
 
 export default InventoryManagement;
-
