@@ -12,15 +12,15 @@ import Card, {
 } from '../../../components/ui/Card';
 import Button, { IButtonProps } from '../../../components/ui/Button';
 import Icon from '../../../components/icon/Icon';
-import Input from '../../../components/form/Input';
+// import Input from '../../../components/form/Input';
 import { GridCellParams, GridRowParams } from '@mui/x-data-grid';
 import { appPages } from '../../../config/pages.config';
-import Modal, {
-	ModalBody,
-	ModalHeader,
-	ModalFooter,
-	TModalSize,
-} from '../../../components/ui/Modal';
+// import Modal, {
+// 	ModalBody,
+// 	ModalHeader,
+// 	ModalFooter,
+// 	TModalSize,
+// } from '../../../components/ui/Modal';
 import { UUID } from 'crypto';
 import Validation from '../../../components/form/Validation';
 import { useFormik } from 'formik';
@@ -36,7 +36,14 @@ import { number } from 'prop-types';
 import { fontFamily, width } from '@mui/system';
 import CustomDatecomp from '../../Vaccine Management/CustomDatecomp';
 import ReactDOMServer from 'react-dom/server';
-import { HeroDocumentCheck } from '../../../components/icon/heroicons';
+import {
+	HeroCheck,
+	HeroCursorArrowRays,
+	HeroDocumentCheck,
+	HeroDocumentMinus,
+	HeroLockClosed,
+	HeroMinus,
+} from '../../../components/icon/heroicons';
 import { TUser } from '../../../mocks/db/users.db';
 import {
 	MoreVert as MoreVertIcon,
@@ -47,8 +54,9 @@ import {
 	ViewComfyOutlined,
 	ViewAgendaOutlined,
 	ViewKanban,
+	Close,
 } from '@mui/icons-material';
-import { Button as AntButton, Popconfirm, Space, Table } from 'antd';
+import { Button as AntButton, Popconfirm, Space, Table, Modal, Input } from 'antd';
 import {
 	EditOutlined,
 	DeleteOutlined,
@@ -119,6 +127,9 @@ const OrdersList: React.FC = () => {
 	const [loading, setLoading] = useState<boolean>(false); // Track loading state
 	const [rowCountState, setRowCountState] = useState<number>(0); // Total number of items
 	const classes = useStyles();
+	const [isModalVisible, setIsModalVisible] = useState(false);
+	const [comment, setComment] = useState('');
+	const [currentParams, setCurrentParams] = useState<GridCellParams | null>(null);
 	const apiUrl = apiconfig.apiHostUrl;
 	const [localData, setLocalData] = useState<TUser | null>(null);
 	const navigate = useNavigate();
@@ -135,6 +146,20 @@ const OrdersList: React.FC = () => {
 		);
 	}
 
+	const handleOk = async () => {
+		if (currentParams) {
+			//const orderid = currentParams.row.id;
+			// Add your rejection logic here, including handling the comment
+			setIsModalVisible(false);
+			toast.success(`Order rejected with comment: ${comment}`);
+		} else {
+			toast.error('Error: Unable to reject order. Please try again.');
+		}
+	};
+	const handleCancel = () => {
+		setIsModalVisible(false);
+	};
+
 	const handlePaginationModelChange = (newModel: GridPaginationModel) => {
 		setPaginationModel(newModel);
 	};
@@ -150,7 +175,7 @@ const OrdersList: React.FC = () => {
 		{ field: 'quantity', headerName: 'Quantity', width: 140 },
 		{ field: 'unitPrice', headerName: 'UnitPrice', width: 140 },
 		{ field: 'orderTotal', headerName: 'OrderTotal', width: 140 },
-		{ field: 'orderStatus', headerName: 'OrderStatus', width: 140 },
+		// { field: 'orderStatus', headerName: 'OrderStatus', width: 140 },
 		{
 			field: 'actions',
 			headerName: 'Actions',
@@ -166,11 +191,10 @@ const OrdersList: React.FC = () => {
                         transform flex-col items-center bg-white shadow-md group-hover:flex'>
 							<Space size='small'>
 								<AntButton
-									icon={
-										<HeroDocumentCheck
-											onClick={(event) => handleViewData(params, event)}
-										/>
-									}
+									icon={<HeroCheck onClick={(event) => Approve(params, event)} />}
+								/>
+								<AntButton
+									icon={<Close onClick={(event) => showModal(params, event)} />}
 								/>
 							</Space>
 						</div>
@@ -179,9 +203,21 @@ const OrdersList: React.FC = () => {
 			},
 		},
 	];
-	const handleViewData = async (params: any, event: any) => {
+	const Approve = async (params: any, event: any) => {
 		const orderid = params.row.id;
 		event.preventDefault();
+		toast.success(`Order approved successfully!`);
+	};
+	const showModal = async (params: any, event: any) => {
+		const orderid = params.row.id;
+		event.stopPropagation();
+		setCurrentParams(params);
+		setIsModalVisible(true);
+	};
+	const Reject = async (params: any, event: any) => {
+		const orderid = params.row.id;
+		event.preventDefault();
+		toast.success(`Order rejected!`);
 	};
 	const listOrders = () => {
 		setLoading(true);
@@ -191,7 +227,13 @@ const OrdersList: React.FC = () => {
 		};
 
 		axios
-			.post(apiUrl + 'api/Vaccination/getpendingorders', requestData)
+			.post(
+				apiUrl +
+					'api/Vaccination/getpendingorders?pagenumber=' +
+					(paginationModel.page + 1) +
+					'&pagesize=' +
+					paginationModel.pageSize,
+			)
 			.then((response) => {
 				setLoading(true);
 				const { items, totalCount } = response.data;
@@ -201,6 +243,7 @@ const OrdersList: React.FC = () => {
 				}
 
 				setOrders(items);
+				console.log('pending orders:', items);
 				const totalRowCount = response.data.totalCount; // Assuming API returns totalCount
 				setRowCountState((prevRowCountState) =>
 					totalRowCount !== undefined ? totalRowCount : prevRowCountState,
@@ -301,6 +344,31 @@ const OrdersList: React.FC = () => {
 								toolbar: CustomPagination, // 'toolbar' should be all lowercase
 							}}
 						/>
+						<Modal
+							title='Comments'
+							visible={isModalVisible}
+							onOk={handleOk}
+							onCancel={handleCancel}
+							okButtonProps={{
+								style: {
+									backgroundColor: 'green',
+									color: 'white',
+									borderColor: 'green',
+								},
+							}}
+							cancelButtonProps={{
+								style: {
+									backgroundColor: 'green',
+									color: 'white',
+									borderColor: 'green',
+								},
+							}}>
+							<Input.TextArea
+								placeholder='Please provide a reason for rejection'
+								value={comment}
+								onChange={(e) => setComment(e.target.value)}
+							/>
+						</Modal>
 					</CardBody>
 				</Card>
 			</Container>

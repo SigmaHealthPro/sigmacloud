@@ -327,7 +327,7 @@ const OrderManagement: React.FC = () => {
 		{ field: 'quantity', headerName: 'Quantity', width: 140 },
 		{ field: 'unitPrice', headerName: 'UnitPrice', width: 140 },
 		{ field: 'orderTotal', headerName: 'OrderTotal', width: 140 },
-		{ field: 'orderStatus', headerName: 'OrderStatus', width: 140 },
+		// { field: 'orderStatus', headerName: 'OrderStatus', width: 140 },
 		{
 			field: 'actions',
 			headerName: 'Actions',
