@@ -172,7 +172,7 @@ const contentRoutes: RouteProps[] = [
 	 * Admin::BEGIN
 	 */
 	{
-		path: appPages.adminAppPages.subPages.salesDashboardPage.to,
+		path: appPages.DashboardAppPages.subPages.salesDashboardPage.to,
 		element: <SalesDashboardPage />,
 	},
 
@@ -201,22 +201,7 @@ const contentRoutes: RouteProps[] = [
 	 * CRM::BEGIN
 	 */
 
-	{
-		path: appPages.crmAppPages.subPages.customerPage.subPages.listPage.to,
-		element: <CustomerListPage />,
-	},
-	{
-		path: `${appPages.crmAppPages.subPages.customerPage.subPages.editPageLink.to}/:id`,
-		element: <CustomerPage />,
-	},
-	{
-		path: appPages.crmAppPages.subPages.rolePage.subPages.listPage.to,
-		element: <RoleListPage />,
-	},
-	{
-		path: `${appPages.crmAppPages.subPages.rolePage.subPages.editPageLink.to}/:id`,
-		element: <RolePage />,
-	},
+	
 	/**
 	 * CRM::END
 	 */
@@ -230,30 +215,7 @@ const contentRoutes: RouteProps[] = [
 	 */
 
 	/**
-	 * AI::BEGIN
-	 */
-	{
-		path: appPages.aiAppPages.subPages.aiDashboardPage.to,
-		element: <AiDashboardPage />,
-	},
-	{
-		path: appPages.aiAppPages.subPages.chatPages.subPages.photoPage.to,
-		element: <ChatPhotoPage />,
-	},
-	{
-		path: appPages.aiAppPages.subPages.chatPages.subPages.videoPage.to,
-		element: <ChatVideoPage />,
-	},
-	{
-		path: appPages.aiAppPages.subPages.chatPages.subPages.audioPage.to,
-		element: <ChatAudioPage />,
-	},
-	{
-		path: appPages.aiAppPages.subPages.chatPages.subPages.codePage.to,
-		element: <ChatCodePage />,
-	},
-	/**
-	 * AI::END
+	
 	 */
 
 	/**
@@ -321,10 +283,7 @@ const contentRoutes: RouteProps[] = [
 	// 	path:appPages.facilityAppPages.subPages.eventCalendar.to,
 	// 	element:<EventCalendar/>
 	// },
-	{
-		path: appPages.crmAppPages.subPages.OrdersPage.to,
-		element: <OrderManagement />,
-	},
+	
 
 	/**
 	 * MAIL::END

@@ -5,6 +5,26 @@ import rolesDb from '../mocks/db/roles.db';
 import projectsDb from '../mocks/db/projects.db';
 import InventoryManagement from '../pages/Inventory/InventoryManagement';
 import InventoryProfile from '../pages/Inventory/InventoryProfile';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import apiconfig from '../config/apiconfig';
+
+const fetchUserRoleAccess = async () => {
+	try {
+	  const response = await axios.post(apiconfig.apiHostUrl + 'api/User/get-users-role-access', {
+		lovMasterRoleId: '951693f1-21ce-40b9-aa92-42dabe652c7e',
+	  });
+	  if (response.data.status === 'Success') {
+		return response.data.dataList;
+	  } else {
+		console.error('Failed to fetch user role access data:', response.data.message);
+		return [];
+	  }
+	} catch (error) {
+	  console.error('Error fetching user role access data:', error);
+	  return [];
+	}
+  };
 
 export const examplePages = {
 	examplesPage: {
@@ -22,53 +42,9 @@ export const examplePages = {
 };
 
 export const appPages = {
-	aiAppPages: {
-		id: 'aiApp',
-		to: '/ai',
-		text: 'Patient Management',
-		icon: 'HeroRocketLaunch',
-		subPages: {
-			aiDashboardPage: {
-				id: 'aiDashboardPage',
-				to: '/ai/dashboard',
-				text: 'Dashboard',
-				icon: 'dashboard',
-			},
-			chatPages: {
-				id: 'customerPage',
-				to: '/ai/chat',
-				text: 'Chat Pages',
-				icon: 'HeroChatBubbleLeft',
-				subPages: {
-					photoPage: {
-						id: 'photoPage',
-						to: '/ai/chat/photo',
-						text: 'Photo Editing',
-						icon: 'HeroPhoto',
-					},
-					videoPage: {
-						id: 'videoPage',
-						to: '/ai/chat/video',
-						text: 'Video Generation',
-						icon: 'HeroFilm',
-					},
-					audioPage: {
-						id: 'audioPage',
-						to: '/ai/chat/audio',
-						text: 'Audio Generation',
-						icon: 'HeroMusicalNote',
-					},
-					codePage: {
-						id: 'audioPage',
-						to: '/ai/chat/code',
-						text: 'Code Generation',
-						icon: 'HeroCommandLin',
-					},
-				},
-			},
-		},
-	},
-	adminAppPages: {
+	
+	
+	DashboardAppPages: {
 		id: 'Admin',
 		to: '/admin',
 		text: 'Admin',
@@ -80,6 +56,15 @@ export const appPages = {
 				text: 'Dashboard',
 				icon: 'HeroRectangleGroup',
 			},
+		},
+	},
+	adminAppPages: {
+		id: 'Admin',
+		to: '/admin',
+		text: 'Admin',
+		icon: 'HeroCommandLine',
+		subPages: {
+		
 			adminPage: {
 				id: 'deDuplication',
 				to: '/admin/deduplication',

@@ -23,7 +23,7 @@ const DefaultAsideTemplate = () => {
 			<AsideBody>
 				<Nav className='font-[SecondFamily]'>
 					{/* dashboard */}
-					<NavItem {...appPages.adminAppPages.subPages.salesDashboardPage} />
+					<NavItem {...appPages.DashboardAppPages.subPages.salesDashboardPage} />
 					{/* enrollment */}
 					<NavCollapse
 						text={appPages.adminAppPages.text}
