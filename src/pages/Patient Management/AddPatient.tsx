@@ -180,7 +180,7 @@ function AddPatient() {
 			<PageWrapper name=" Patients">
 				<Subheader>
 					<SubheaderLeft>
-						<Link to={`../${appPages.PatientManagement.to}`}>
+						<Link to={`#`}>
 							<Button icon='HeroArrowLeft' className='!px-0'>Back to List</Button>
 						</Link>
 						<SubheaderSeparator />

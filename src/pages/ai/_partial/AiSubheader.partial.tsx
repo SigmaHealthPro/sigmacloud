@@ -54,43 +54,43 @@ const aiHistory: TAiHistory[] = [
 		id: 1,
 		title: 'Can you make a logo with the letter "Z" and the daisy?',
 		type: aiType.image,
-		path: `../${appPages.aiAppPages.subPages.chatPages.subPages.photoPage.to}`,
+		path: `#`,
 	},
 	{
 		id: 2,
 		title: 'Can you write a simple React component with TypeScript?',
 		type: aiType.code,
-		path: `../${appPages.aiAppPages.subPages.chatPages.subPages.codePage.to}`,
+		path: `#`,
 	},
 	{
 		id: 3,
 		title: 'Can you make a piano music about spring?',
 		type: aiType.audio,
-		path: `../${appPages.aiAppPages.subPages.chatPages.subPages.audioPage.to}`,
+		path: `#`,
 	},
 	{
 		id: 4,
 		title: 'Can you create a landing video with water bubbles?',
 		type: aiType.video,
-		path: `../${appPages.aiAppPages.subPages.chatPages.subPages.videoPage.to}`,
+		path: `#`,
 	},
 	{
 		id: 5,
 		title: 'Can you write a simple React component with TypeScript?',
 		type: aiType.code,
-		path: `../${appPages.aiAppPages.subPages.chatPages.subPages.codePage.to}`,
+		path: `#`,
 	},
 	{
 		id: 6,
 		title: 'Can you write a simple React component with TypeScript?',
 		type: aiType.code,
-		path: `../${appPages.aiAppPages.subPages.chatPages.subPages.codePage.to}`,
+		path: `.#`,
 	},
 	{
 		id: 7,
 		title: 'Can you make a piano music about spring?',
 		type: aiType.audio,
-		path: `../${appPages.aiAppPages.subPages.chatPages.subPages.audioPage.to}`,
+		path: `#`,
 	},
 ];
 
@@ -162,7 +162,7 @@ const AiSubheaderPartial = () => {
 				</OffCanvas>
 			</SubheaderLeft>
 			<SubheaderRight>
-				<Link to={`../${appPages.aiAppPages.subPages.aiDashboardPage.to}`}>
+				<Link to={`#`}>
 					<Button variant='solid' icon='HeroPlus'>
 						New Chat
 					</Button>

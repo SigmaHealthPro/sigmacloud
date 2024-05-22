@@ -179,7 +179,7 @@ const PatientManagement = () => {
 									/>
 								</Popconfirm>
 								<div>
-						<Link to={`../${appPages.PatientManagement.subPages.PatientProfile.to}`}>
+						<Link to={`#`}>
 							<AntButton 	icon={
 						<VisibilityIcon  />	}  onClick={()=>{dispatch(setUserProfile((params.row)))}}
 							/>
@@ -224,9 +224,9 @@ const PatientManagement = () => {
 	const [searchTouched, setSearchTouched] = useState(false);
 	const [newPatientModal, setNewPatientModal] = useState(false);
 	const [searchData, setSearchData] = useState<Patients[]>([]);
-	const handleRowClick = (params: GridRowParams) => {
+	const handleRowClick = () => {
 		// Ensure to use backticks for template literals
-		navigate(`${appPages.PatientManagement.to}/${params.id}`);
+		navigate(`#`);
 	};
 
 	function removeDublicates(array: any[], key: any) {

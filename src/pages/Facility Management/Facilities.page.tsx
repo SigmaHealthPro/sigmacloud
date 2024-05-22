@@ -33,7 +33,7 @@ const useStyles = makeStyles({
     },
 });
 
-const editLinkPath = `../${appPages.facilityAppPages.subPages.newfacilityPage.to}`;
+const editLinkPath = `#`;
 //${appPages.facilityAppPages.subPages.newfacilityPage.to}`
 const FacilitiesPage = () => {
     
@@ -112,9 +112,9 @@ const FacilitiesPage = () => {
  
 
  
-    const handleRowClick = (params: GridRowParams) => {
+    const handleRowClick = () => {
       // Ensure to use backticks for template literals
-      navigate(`${appPages.facilityAppPages.subPages.facilityPage.to}/${params.id}`);
+      navigate(`#`);
   };
   
     

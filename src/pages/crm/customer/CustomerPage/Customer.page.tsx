@@ -81,7 +81,7 @@ const CustomerPage = () => {
 			<Subheader>
 				<SubheaderLeft>
 					<Link
-						to={`../${appPages.crmAppPages.subPages.customerPage.subPages.listPage.to}`}>
+						to={`#`}>
 						<Button icon='HeroArrowLeft' className='!px-0'>
 							Back to List
 						</Button>

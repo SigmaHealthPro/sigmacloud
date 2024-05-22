@@ -158,7 +158,7 @@ const InventoryManagement = () => {
 								</Popconfirm>
 								<div>
 									<Link
-										to={`../${appPages.InventoryManagement.subPages.InventoryProfile.to}`}>
+										to={`#`}>
 										<AntButton
 											icon={<VisibilityIcon />}
 											onClick={() => {
@@ -187,8 +187,8 @@ const InventoryManagement = () => {
 	const [searchTouched, setSearchTouched] = useState(false);
 	const [newInventoryModal, setNewInventoryModal] = useState(false);
 	const [searchData, setSearchData] = useState<Patients[]>([]);
-	const handleRowClick = (params: GridRowParams) => {
-		navigate(`${appPages.InventoryManagement.to}/${params.id}`);
+	const handleRowClick = () => {
+		navigate(`#`);
 	};
 	useEffect(() => {
 		setFundingsource(options);

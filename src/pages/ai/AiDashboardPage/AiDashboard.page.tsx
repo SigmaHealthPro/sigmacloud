@@ -46,7 +46,7 @@ const AiDashboardPage = () => {
 					</div>
 					<div className='col-span-12 md:col-span-6 xl:col-span-3'>
 						<Link
-							to={`../${appPages.aiAppPages.subPages.chatPages.subPages.photoPage.to}`}>
+							to={`#`}>
 							<Card>
 								<CardBody>
 									<div className='flex items-center gap-4'>
@@ -68,7 +68,7 @@ const AiDashboardPage = () => {
 					</div>
 					<div className='col-span-12 md:col-span-6 xl:col-span-3'>
 						<Link
-							to={`../${appPages.aiAppPages.subPages.chatPages.subPages.videoPage.to}`}>
+							to={`#`}>
 							<Card>
 								<CardBody>
 									<div className='flex items-center gap-4'>
@@ -90,7 +90,7 @@ const AiDashboardPage = () => {
 					</div>
 					<div className='col-span-12 md:col-span-6 xl:col-span-3'>
 						<Link
-							to={`../${appPages.aiAppPages.subPages.chatPages.subPages.audioPage.to}`}>
+							to={`#`}>
 							<Card>
 								<CardBody>
 									<div className='flex items-center gap-4'>
@@ -116,7 +116,7 @@ const AiDashboardPage = () => {
 					</div>
 					<div className='col-span-12 md:col-span-6 xl:col-span-3'>
 						<Link
-							to={`../${appPages.aiAppPages.subPages.chatPages.subPages.codePage.to}`}>
+							to={`#`}>
 							<Card>
 								<CardBody>
 									<div className='flex items-center gap-4'>

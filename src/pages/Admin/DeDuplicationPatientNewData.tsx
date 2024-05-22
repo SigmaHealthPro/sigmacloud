@@ -8,6 +8,29 @@ import apiconfig from '../../config/apiconfig'; // Make sure this import is corr
 import Button from '../../components/ui/Button';
 import toast, { Toaster } from 'react-hot-toast';
 
+interface SubFeature {
+    subFeatureId: string;
+    subFeatureName: string;
+    iconCode: string;
+    subFeatureLink: string;
+  }
+  
+  interface Feature {
+    featureId: string;
+    featureName: string;
+    featureLink: string;
+    iconCode: string | null;
+    hasSubFeature: boolean;
+    subFeatures: SubFeature[];
+  }
+  
+  interface Profile {
+    profileId: string;
+    profileName: string;
+    iconCode: string;
+    features: Feature[];
+  }
+
 const DeDuplicationPatientNewData = () => {
     const patientNewDataColumns = [
         { field: 'personType', headerName: 'Person Type', flex: 1 },
@@ -50,6 +73,29 @@ const DeDuplicationPatientNewData = () => {
     const handleSuccess = () => {
         toast.success('Record kept successfully!'); // Display for 3 seconds
       };
+      
+      const [userRoleAccess, setUserRoleAccess] = useState<Profile[]>([]);
+      useEffect(() => {
+        const fetchData = async () => {
+          try {
+            const formData = new FormData();
+            formData.append('lovMasterRoleId', '951693f1-21ce-40b9-aa92-42dabe652c7e');
+    
+            const response = await axios.post('https://localhost:7155/api/User/get-users-role-access', formData, {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            });
+    
+            setUserRoleAccess(response.data.dataList);
+          } catch (error) {
+            console.error('Error fetching user access data:', error);
+          }
+        };
+    
+        fetchData();
+      }, []);
+    
     return (
         <PageWrapper name='List'>
             		<Toaster />
@@ -82,6 +128,32 @@ const DeDuplicationPatientNewData = () => {
                                 }}
                             />
                         </div>
+
+                        <div>
+      {userRoleAccess.map(profile => (
+        <div key={profile.profileId}>
+          <h3>{profile.profileName}:</h3>
+          {profile.features && profile.features.length > 0 && (
+            <ul>
+              {profile.features.map(feature => (
+                <li key={feature.featureId}>
+                  {feature.featureName}
+                  {feature.subFeatures && feature.subFeatures.length > 0 && (
+                    <ul>
+                      {feature.subFeatures.map(subFeature => (
+                        <li key={subFeature.subFeatureId}>
+                          {subFeature.subFeatureName}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      ))}
+    </div>
                     </CardBody>
                 </Card>
             </Container>

@@ -401,9 +401,9 @@ const OrderManagement: React.FC = () => {
 		formik.setFieldValue('ShipmentDate', params.row.ShipmentDate);
 	};
 
-	const handleRowClick = (params: GridRowParams) => {
+	const handleRowClick = () => {
 		// Ensure to use backticks for template literals
-		navigate(`${appPages.crmAppPages.subPages.OrdersPage.to}/${params.id}`);
+		navigate(`#`);
 	};
 	const apiUrl = apiconfig.apiHostUrl;
 

@@ -28,7 +28,7 @@ import FieldWrap from '../../../../components/form/FieldWrap';
 
 const columnHelper = createColumnHelper<TUser>();
 
-const editLinkPath = `../${appPages.crmAppPages.subPages.customerPage.subPages.editPageLink.to}/`;
+const editLinkPath = `#`;
 
 const columns = [
 	columnHelper.accessor('image', {

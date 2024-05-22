@@ -27,7 +27,7 @@ import TableTemplate, {
 
 const columnHelper = createColumnHelper<TRole>();
 
-const editLinkPath = `../${appPages.crmAppPages.subPages.rolePage.subPages.editPageLink.to}/`;
+const editLinkPath = `#`;
 
 const columns = [
 	columnHelper.accessor('name', {
