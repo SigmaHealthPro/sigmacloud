@@ -1,6 +1,7 @@
-import React, { lazy } from 'react';
-import { RouteProps } from 'react-router-dom';
-import { appPages, authPages, componentsPages, examplePages } from '../config/pages.config';
+import React, { lazy, useEffect, useState } from 'react';
+// import { RouteProps } from 'react-router-dom';
+// import { Routes, Route, Outlet, Link } from "react-router-dom";
+import { appPages, authPages, componentsPages, examplePages, fetchUserRoleAccess } from '../config/pages.config';
 import NotFoundPage from '../pages/NotFound.page';
 import LoginPage from '../pages/Login.page';
 import VaccineForecasting from '../pages/Vaccine \u2028Forecasting/VaccineForecasting';
@@ -20,7 +21,6 @@ import DeDuplicationManagement from '../pages/Admin/DeDuplicationManagement';
 import DeDuplicationPatientNewData from '../pages/Admin/DeDuplicationPatientNewData';
 import UserList from '../pages/Admin/User/UserList';
 import OrdersList from '../pages/Admin/Orders/OrdersList';
-
 /**
  * UI
  */
@@ -167,32 +167,33 @@ const ChatPage = lazy(() => import('../pages/ChatPage/Chat.page'));
  */
 const UnderConstructionPage = lazy(() => import('../pages/UnderConstruction.page'));
 
-const contentRoutes: RouteProps[] = [
+
+let contentRoutes = [
 	/**
 	 * Admin::BEGIN
 	 */
-	{
-		path: appPages.DashboardAppPages.subPages.salesDashboardPage.to,
-		element: <SalesDashboardPage />,
-	},
+	// {
+	// 	path: appPages.DashboardAppPages.subPages.salesDashboardPage.to,
+	// 	element: <SalesDashboardPage />,
+	// },
 
-	{
-		path: appPages.adminAppPages.subPages.adminPage.subPages.duplicatePatientData.to,
-		element: <DeDuplicationManagement />,
-	},
-	{
-		path: appPages.adminAppPages.subPages.adminPage.subPages.newPatientData.to,
-		element: <DeDuplicationPatientNewData />,
-	},
+	// {
+	// 	path: appPages.adminAppPages.subPages.adminPage.subPages.duplicatePatientData.to,
+	// 	element: <DeDuplicationManagement />,
+	// },
+	// {
+	// 	path: appPages.adminAppPages.subPages.adminPage.subPages.newPatientData.to,
+	// 	element: <DeDuplicationPatientNewData />,
+	// },
 
-	{
-		path: appPages.adminAppPages.subPages.userManagementPage.subPages.userManagementListPage.to,
-		element: <UserList />,
-	},
-	{
-		path: appPages.adminAppPages.subPages.Revieworders.subPages.reviewOrdersData.to,
-		element: <OrdersList />,
-	},
+	// {
+	// 	path: appPages.adminAppPages.subPages.userManagementPage.subPages.userManagementListPage.to,
+	// 	element: <UserList />,
+	// },
+	// {
+	// 	path: appPages.adminAppPages.subPages.Revieworders.subPages.reviewOrdersData.to,
+	// 	element: <OrdersList />,
+	// },
 	
 	/**
 	 * CHAT::END
@@ -288,5 +289,15 @@ const contentRoutes: RouteProps[] = [
 
 	{ path: '*', element: <NotFoundPage /> },
 ];
+
+// useEffect(() => {
+// 	contentRoutes = [...contentRoutes, 
+// 		{
+// 			path: "/admin/deduplication/dummyurl2",
+// 			element: <DeDuplicationManagement />,
+// 		},
+// 	]
+//  }, []);
+
 
 export default contentRoutes;

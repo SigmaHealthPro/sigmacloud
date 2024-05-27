@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import contentRoutes from '../../routes/contentRoutes';
 import PageWrapper from '../layouts/PageWrapper/PageWrapper';
@@ -6,8 +6,53 @@ import Container from '../layouts/Container/Container';
 import Subheader, { SubheaderLeft, SubheaderRight } from '../layouts/Subheader/Subheader';
 import Header, { HeaderLeft, HeaderRight } from '../layouts/Header/Header';
 import Card from '../ui/Card';
+import axios from 'axios';
 
 const ContentRouter = () => {
+	const [menuData, setMenuData] = useState([]);
+
+	const loadMenu = async () => {
+		var finalUrl = [];
+		try {
+			const formData = new FormData();
+            formData.append('lovMasterRoleId', '951693f1-21ce-40b9-aa92-42dabe652c7e');    
+            const response = await axios.post('https://localhost:7155/api/User/get-users-role-access', formData, {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            });			
+			if (response.data.status === 'Success') {
+				console.log("-----------", response.data.dataList);
+				(response.data.dataList).map((list, index) => {
+					list.features && (list.features).map((list2, index2) => {
+						if(list2.hasSubFeature === true){
+							(list2.subFeatures).map((list3, index3) => {
+								finalUrl = [...finalUrl, {
+									path: list3.subFeatureLink,
+									component: list3.element
+								}]
+							})
+						}else{
+							finalUrl = [...finalUrl, {
+								path: list2.featureLink,
+								component: list2.element
+							}]
+						}
+					})
+				})
+				setMenuData(finalUrl);
+			} else {
+			//   console.error('Failed to fetch user role access data:', response.data.message);
+			  return [];
+			}
+		  } catch (error) {
+			// console.error('Error fetching user role access data:', error);
+			return [];
+		  }
+	}
+	useEffect(() => {
+		loadMenu();
+	 }, []);
 	return (
 		<Suspense
 			fallback={
@@ -77,7 +122,15 @@ const ContentRouter = () => {
 					</PageWrapper>
 				</>
 			}>
+			{/* <contentRoutes /> */}
 			<Routes>
+			    
+				{menuData.map((RouteProps) => {
+					const Component = React.lazy(() => import(`../${RouteProps.component}`));
+					return (
+						<Route key={RouteProps.path} path={RouteProps.path} element={<Component />} />
+					)
+				})}
 				{contentRoutes.map((routeProps) => (
 					<Route key={routeProps.path} {...routeProps} />
 				))}
