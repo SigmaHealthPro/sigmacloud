@@ -56,8 +56,9 @@ const DefaultAsideTemplate = () => {
 					{
 						menuData && 
 						(menuData).map((list, index) => {
-							// console.log("list", list)
+							// list.features.length > 1 ?
 							return (
+								list.features.length > 1 ?
 								<NavCollapse
 									text={list.profileName}
 									to="#"
@@ -82,7 +83,7 @@ const DefaultAsideTemplate = () => {
 																			<NavItem
 																				text={subFeaturesData.subFeatureName}
 																				to={subFeaturesData.subFeatureLink}
-																				// icon={subFeaturesData.iconCode}
+																				icon={subFeaturesData.iconCode}
 																				key={subFeaturesData.subFeatureId}
 																			/>
 																		)})
@@ -93,7 +94,7 @@ const DefaultAsideTemplate = () => {
 													<NavItem
 														text={features.featureName}
 														to={features.featureLink}
-														// icon={features.iconCode}
+														icon={features.iconCode}
 														key={features.featureId}
 													/>
 												)
@@ -101,6 +102,13 @@ const DefaultAsideTemplate = () => {
 											: null
 										}
 								</NavCollapse>
+								:
+								<NavItem
+									text={list.features[0].featureName}
+									to={list.features[0].featureLink}
+									icon={list.features[0].iconCode}
+									key={list.features[0].featureId}
+								/>						
 							)
 						})
 					}
