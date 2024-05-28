@@ -7,12 +7,17 @@ import Subheader, { SubheaderLeft, SubheaderRight } from '../layouts/Subheader/S
 import Header, { HeaderLeft, HeaderRight } from '../layouts/Header/Header';
 import Card from '../ui/Card';
 import axios from 'axios';
+// import PrivateRoute from './PrivateRoute';
+interface RouteProps {
+    path: any;
+    // Add other properties as needed
+}
 
 const ContentRouter = () => {
 	const [menuData, setMenuData] = useState([]);
 
 	const loadMenu = async () => {
-		var finalUrl = [];
+		var finalUrl:any = [];
 		try {
 			const formData = new FormData();
             formData.append('lovMasterRoleId', '951693f1-21ce-40b9-aa92-42dabe652c7e');    
@@ -22,11 +27,11 @@ const ContentRouter = () => {
               }
             });			
 			if (response.data.status === 'Success') {
-				console.log("-----------", response.data.dataList);
-				(response.data.dataList).map((list, index) => {
-					list.features && (list.features).map((list2, index2) => {
+				// console.log("-----------", response.data.dataList);
+				(response.data.dataList).map((list: any) => {
+					list.features && (list.features).map((list2: any) => {
 						if(list2.hasSubFeature === true){
-							(list2.subFeatures).map((list3, index3) => {
+							(list2.subFeatures).map((list3: any) => {
 								finalUrl = [...finalUrl, {
 									path: list3.subFeatureLink,
 									component: list3.element
@@ -125,7 +130,7 @@ const ContentRouter = () => {
 			{/* <contentRoutes /> */}
 			<Routes>
 			    
-				{menuData.map((RouteProps) => {
+				{menuData.map((RouteProps:any) => {
 					const Component = React.lazy(() => import(`../${RouteProps.component}`));
 					return (
 						<Route key={RouteProps.path} path={RouteProps.path} element={<Component />} />
