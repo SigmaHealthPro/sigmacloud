@@ -1,7 +1,7 @@
 import React, { lazy, useEffect, useState } from 'react';
 // import { RouteProps } from 'react-router-dom';
 // import { Routes, Route, Outlet, Link } from "react-router-dom";
-import { appPages, authPages, componentsPages, examplePages, fetchUserRoleAccess } from '../config/pages.config';
+import { appPages, authPages, componentsPages, examplePages } from '../config/pages.config';
 import NotFoundPage from '../pages/NotFound.page';
 import LoginPage from '../pages/Login.page';
 import VaccineForecasting from '../pages/Vaccine \u2028Forecasting/VaccineForecasting';

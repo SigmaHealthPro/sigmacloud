@@ -10,63 +10,6 @@ import axios from 'axios';
 import apiconfig from '../config/apiconfig';
 
 
-
-export const fetchUserRoleAccess = async () => {
-	var routePaths = [];
-	try {
-		const formData = new FormData();
-		formData.append('lovMasterRoleId', '951693f1-21ce-40b9-aa92-42dabe652c7e');    
-		const response = await axios.post('https://localhost:7155/api/User/get-users-role-access', formData, {
-		  headers: {
-			'Content-Type': 'multipart/form-data'
-		  }
-		});
-		// console.log("llresponsell", response);
-	  if (response.data.status === 'Success') {
-		(response.data.dataList).map((list, index) => {
-			routePaths = [...routePaths, 
-				{
-					[`${list.profileName.replaceAll(" ", "")}AppPages`]: {
-						id: list.profileId,
-						to: "#",
-						text: list.profileName,
-						icon: list.iconCode,
-						subPages: 
-							list.features && (list.features).map((list2, index2) => {
-								return{
-										[`${list2.featureName.replaceAll(" ", "")}Page`]: {
-											id: list2.featureId,
-											to: list2.featureLink,
-											text: list2.featureName,
-											icon: list2.iconCode,
-											subPages: list2.subFeatures && (list2.subFeatures).map((list3, index3) => {
-												return{
-														[`${list3.subFeatureName.replaceAll(" ", "")}`]: {
-															id: list3.subFeatureId,
-															to: list3.subFeatureLink,
-															text: list3.subFeatureName,
-															icon: list3.iconCode
-														}
-													}
-											})
-										}
-									}
-							})
-					}
-				}
-			]
-		})
-		return routePaths;
-	  } else {
-		// console.error('Failed to fetch user role access data:', response.data.message);
-		return [];
-	  }
-	} catch (error) {
-	//   console.error('Error fetching user role access data:', error);
-	  return [];
-	}
-  };
-
 // export const appNewPages = {...routePaths};
 
 export const examplePages = {

@@ -44,6 +44,24 @@ const DefaultAsideTemplate = () => {
 	useEffect(() => {
        loadMenu();
 	}, []);
+	const NavItemComponent: React.FC<{ list: any }> = ({ list }) => {
+		// Check if `list` is defined and has features
+		if (!list || !list.features || list.features.length === 0) {
+			return null; // Or handle the case where `list` or `list.features` is not valid
+		}
+	
+		// Access the properties of the first feature in the list
+		const firstFeature = list.features[0];
+	
+		return (
+			<NavItem
+				text={firstFeature.featureName}
+				to={firstFeature.featureLink}
+				icon={firstFeature.iconCode}
+				key={firstFeature.featureId}
+			/>
+		);
+	};
 	return (
 		<Aside>
 			<AsideHead>
@@ -55,7 +73,7 @@ const DefaultAsideTemplate = () => {
 					<NavItem {...appPages.DashboardAppPages.subPages.salesDashboardPage} />
 					{
 						menuData && 
-						(menuData).map((list, index) => {
+						(menuData).map((list:any) => {
 							// list.features.length > 1 ?
 							return (
 								list.features.length > 1 ?
@@ -67,7 +85,7 @@ const DefaultAsideTemplate = () => {
 									>
 										{
 											list.features ?
-											(list.features).map((features, index2) => {
+											(list.features).map((features:any) => {
 												// console.log("features", features)												
 												return (
 													features.hasSubFeature === true ?
@@ -78,7 +96,7 @@ const DefaultAsideTemplate = () => {
 															key={features.featureId}>
 																{
 																	features.subFeatures ?
-																	(features.subFeatures).map((subFeaturesData, index3) => {
+																	(features.subFeatures).map((subFeaturesData: any) => {
 																		return (
 																			<NavItem
 																				text={subFeaturesData.subFeatureName}
@@ -103,12 +121,7 @@ const DefaultAsideTemplate = () => {
 										}
 								</NavCollapse>
 								:
-								<NavItem
-									text={list.features[0].featureName}
-									to={list.features[0].featureLink}
-									icon={list.features[0].iconCode}
-									key={list.features[0].featureId}
-								/>						
+								<NavItemComponent list={list} />				
 							)
 						})
 					}
