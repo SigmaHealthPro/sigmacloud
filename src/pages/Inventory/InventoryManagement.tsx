@@ -395,7 +395,7 @@ const InventoryManagement = () => {
 			updatedBy: 'string',
 			inventoryId: 0,
 			inventoryDate: '',
-			productId: generatedGUID,
+			productId: '',
 			quantityRemaining: '',
 			expirationDate: '',
 			tempRecorded: '',
