@@ -304,6 +304,13 @@ function InventoryProfile() {
 								<Typography variant='caption' color={'gray'}>
 									{inventoryData?.unitOfTemp}
 								</Typography>
+								<Typography variant='subtitle2' fontWeight={600} color={'#597b9f'}>
+									SaleNDC Number
+								</Typography>
+								<Divider />
+								<Typography variant='caption' color={'gray'}>
+									{inventoryData?.unitOfTemp}
+								</Typography>
 							</Paper>
 						</Grid>
 					</Grid>
