@@ -18,10 +18,11 @@ const headerRoutes: RouteProps[] = [
 		path: `${componentsPages.integratedPages.to}/*`,
 		element: <ComponentAndTemplateHeaderTemplate />,
 	},
-	{
+	
+	/*{
 		path: appPages.DashboardAppPages.subPages.salesDashboardPage.to,
 		element: null,
-	},
+	},*/
 	{
 		path: '',
 		element: null,

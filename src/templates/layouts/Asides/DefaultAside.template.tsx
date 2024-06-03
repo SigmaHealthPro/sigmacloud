@@ -70,7 +70,7 @@ const DefaultAsideTemplate = () => {
 			<AsideBody>
 				<Nav className='font-[SecondFamily]'>
 					{/* dashboard */}
-					<NavItem {...appPages.DashboardAppPages.subPages.salesDashboardPage} />
+						{/* <NavItem {...appPages.DashboardAppPages.subPages.salesDashboardPage} />*/}
 					{
 						menuData && 
 						(menuData).map((list:any) => {

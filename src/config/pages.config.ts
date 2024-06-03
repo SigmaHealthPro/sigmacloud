@@ -29,7 +29,7 @@ export const examplePages = {
 
 export const appPages = {
 	
-	DashboardAppPages: {
+	/*DashboardAppPages: {
 		id: 'Admin',
 		to: '/admin',
 		text: 'Admin',
@@ -42,7 +42,7 @@ export const appPages = {
 				icon: 'HeroRectangleGroup',
 			},
 		},
-	},
+	},*/
 	adminAppPages: {
 		id: 'Admin',
 		to: '/admin',
