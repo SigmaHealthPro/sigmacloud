@@ -316,7 +316,7 @@ const OrdersList: React.FC = () => {
 		},
 	});
 	const Columns = [
-		{ field: 'id', headerName: 'Order ID', width: 250, hide: true }, // Hidden Order ID field
+		//{ field: 'id', headerName: 'Order ID', width: 250, hide: true }, // Hidden Order ID field
 		{ field: 'product', headerName: 'Product', width: 140 },
 		{ field: 'manufacturername', headerName: 'Manufacturer', width: 250, hide: true }, // Hidden Order ID field
 		//{ field: 'createdBy', headerName: 'CreatedBy', width: 250, hide: true },
@@ -413,6 +413,10 @@ const OrdersList: React.FC = () => {
 		event.preventDefault();
 		toast.success(`Order approved successfully!`);
 	};
+	const Reject = async () => {
+		setIsModalVisible(false);
+		toast.success(`Order rejected!`);
+	};
 	const Approveorder = () => {
 		async function callInitial() {
 			const ordid = formik.values.id;
@@ -424,12 +428,14 @@ const OrdersList: React.FC = () => {
 						params: {
 							status: 'Approved',
 							orderid: ordid,
-							comments: '',
+							comments: approvalcmt,
 						},
 					},
 				);
 				const success = response.data;
+				setViewOrderModal(false);
 				toast.success('Order approved successfully!');
+				listOrders();
 			} catch (err) {
 				console.log('Error has occurred', err);
 			}
@@ -442,11 +448,7 @@ const OrdersList: React.FC = () => {
 		setCurrentParams(params);
 		setIsModalVisible(true);
 	};
-	const Reject = async (params: any, event: any) => {
-		const orderid = params.row.id;
-		event.preventDefault();
-		toast.success(`Order rejected!`);
-	};
+
 	const listOrders = () => {
 		setLoading(true);
 		const requestData = {
@@ -927,7 +929,7 @@ const OrdersList: React.FC = () => {
 								</div>
 							</ModalBody>
 						</Modal>
-						<Modal isOpen={isModalVisible} size={'l'} setIsOpen={setIsModalVisible}>
+						<Modal isOpen={isModalVisible} size={'lg'} setIsOpen={setIsModalVisible}>
 							<ModalHeader style={{ fontWeight: 'bold', fontSize: '24px' }}>
 								{' '}
 								{'Reject Order'}
@@ -940,9 +942,27 @@ const OrdersList: React.FC = () => {
 												<div>
 													<textarea
 														placeholder='Please provide a reason for rejection'
+														style={{
+															width: '800px',
+															height: '130px',
+															textAlign: 'start',
+															border: 'solid',
+														}}
 														value={comment}
 														onChange={(e) => setComment(e.target.value)}
 													/>
+													<div style={{ height: '5px' }}></div>
+													<Button
+														variant='solid'
+														style={{
+															marginLeft: '650px',
+															width: '150px',
+														}}
+														onClick={() => {
+															Reject();
+														}}>
+														Reject Order
+													</Button>
 												</div>
 											</CardBody>
 										</Card>
