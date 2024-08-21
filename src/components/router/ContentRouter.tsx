@@ -7,6 +7,7 @@ import Subheader, { SubheaderLeft, SubheaderRight } from '../layouts/Subheader/S
 import Header, { HeaderLeft, HeaderRight } from '../layouts/Header/Header';
 import Card from '../ui/Card';
 import axios from 'axios';
+import apiconfig from '../../config/apiconfig'; // Make sure this import is correct
 // import PrivateRoute from './PrivateRoute';
 interface RouteProps {
     path: any;
@@ -21,7 +22,7 @@ const ContentRouter = () => {
 		try {
 			const formData = new FormData();
             formData.append('lovMasterRoleId', '951693f1-21ce-40b9-aa92-42dabe652c7e');    
-            const response = await axios.post('api/User/get-users-role-access', formData, {
+            const response = await axios.post(apiconfig.apiHostUrl +'api/User/get-users-role-access', formData, {
               headers: {
                 'Content-Type': 'multipart/form-data'
               }
