@@ -21,7 +21,7 @@ const ContentRouter = () => {
 		try {
 			const formData = new FormData();
             formData.append('lovMasterRoleId', '951693f1-21ce-40b9-aa92-42dabe652c7e');    
-            const response = await axios.post('https://localhost:7155/api/User/get-users-role-access', formData, {
+            const response = await axios.post('api/User/get-users-role-access', formData, {
               headers: {
                 'Content-Type': 'multipart/form-data'
               }
