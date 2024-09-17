@@ -169,6 +169,18 @@ const UnderConstructionPage = lazy(() => import('../pages/UnderConstruction.page
 
 
 let contentRoutes = [
+
+
+	  {
+		path: "/facility-management/facility-profile/:id", 
+		element: <FacilityProfile />,
+	  },
+
+	  {
+		path:"/facility-management/new-facilityAdd",
+		element: <FacilityPage/>
+	  },
+	
 	/**
 	 * Admin::BEGIN
 	 */
@@ -283,6 +295,9 @@ let contentRoutes = [
 	/**
 	 * ICONS::BEGIN
 	 */
+
+	{ path: `facilityProfile.to/:id`, element: <FacilityProfile /> },
+	
 
 	{ path: authPages.loginPage.to, element: <LoginPage /> },
 	{ path: authPages.profilePage.to, element: <ProfilePage /> },

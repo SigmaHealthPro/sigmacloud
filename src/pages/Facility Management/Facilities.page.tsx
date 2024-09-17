@@ -1,6 +1,6 @@
 import React, { useState, useEffect , useMemo} from 'react';
 import axios from 'axios';
-import { Link, useNavigate  } from 'react-router-dom';
+import { Link, Outlet, useNavigate  } from 'react-router-dom';
 import PageWrapper from '../../components/layouts/PageWrapper/PageWrapper';
 import Container from '../../components/layouts/Container/Container';
 import Card, { CardBody, CardHeader, CardHeaderChild, CardTitle } from '../../components/ui/Card';
@@ -18,6 +18,8 @@ import { Button as AntButton, Popconfirm, Space } from 'antd';
 import { EditOutlined, DeleteOutlined, MoreOutlined } from '@ant-design/icons';
 import { GridCellParams,GridRowParams } from '@mui/x-data-grid';
 import { appPages } from '../../config/pages.config';
+import FacilityPage from './Facilitypage.page';
+
 
 
 
@@ -33,8 +35,8 @@ const useStyles = makeStyles({
     },
 });
 
-const editLinkPath = `#`;
-//${appPages.facilityAppPages.subPages.newfacilityPage.to}`
+const editLinkPath = `/facility-management/new-facilityAdd`;
+
 const FacilitiesPage = () => {
     
     const navigate = useNavigate();
@@ -91,7 +93,7 @@ const FacilitiesPage = () => {
                 'https://dev-api-iis-sigmacloud.azurewebsites.net/api/Facility/delete', 
                 formData, // Send the form data
                 {
-                    headers: { 'Content-Type': 'multipart/form-data' }, // This matches the expected content type
+                    headers: { 'Content-Type': 'multipart/form-data' }, // This matches then expected content type
                 }
             );
             console.log(response.data); // Handle the response as needed
@@ -112,10 +114,11 @@ const FacilitiesPage = () => {
  
 
  
-    const handleRowClick = () => {
-      // Ensure to use backticks for template literals
-      navigate(`#`);
-  };
+    const handleRowClick = (params: GridRowParams) => {
+      const facilityId = params.id;
+      console.log(facilityId)
+      navigate(`facility-profile/:${facilityId}`);
+    };
   
     
 
@@ -261,7 +264,7 @@ const handlePaginationModelChange = (newModel: GridPaginationModel) => {
             toolbar: CustomPagination, // 'toolbar' should be all lowercase
           }}
       />
-
+      <Outlet/>
           </CardBody>
         </Card>
       </Container>

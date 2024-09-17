@@ -28,7 +28,24 @@ export const examplePages = {
 };
 
 export const appPages = {
+
 	
+	
+	// facilityManagementPage: {
+	// 	id: 'facilityManagementPage',
+	// 	to: '/facility-management',
+	// 	text: 'Facility Management',
+	// 	icon: 'HeroBuildingStorefront',
+	// 	subPages: {
+	// 	  facilityProfilePage: {
+	// 		id: 'facilityProfilePage',
+	// 		to: '/facility-management/:facilityId',
+	// 		text: 'Facility Profile',
+	// 		icon: 'HeroBuildingStorefront',
+	// 	  },
+	// 	},
+	//   },
+
 	/*DashboardAppPages: {
 		id: 'Admin',
 		to: '/admin',
@@ -102,6 +119,16 @@ export const appPages = {
 	},
 
 };
+
+// export const facilityProfile ={
+// 	id:"facility Profile",
+// 	to : "/facilityProfile"
+// }
+
+
+
+
+
 
 export const componentsPages = {
 	uiPages: {

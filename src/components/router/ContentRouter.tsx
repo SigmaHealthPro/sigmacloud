@@ -140,6 +140,7 @@ const ContentRouter = () => {
 				{contentRoutes.map((routeProps) => (
 					<Route key={routeProps.path} {...routeProps} />
 				))}
+				
 			</Routes>
 		</Suspense>
 	);

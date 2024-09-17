@@ -1,83 +1,90 @@
 import { useEffect, useState } from 'react';
-import { constant, method } from 'lodash';
+import axios from 'axios';
 import { TUser } from '../db/users.db';
 import apiconfig from '../../config/apiconfig';
 
-const useFakeUserAPI = (username: string) => {
-	// const allUserData = usersDb;
-	const [isLoading, setIsLoading] = useState<boolean>(true);
-	const [response, setResponse] = useState<TUser | undefined>();
-	const [data, setData] = useState(null);
-	const getCheckUser = (userNameOrMail: string, password: string) => {
-		username = userNameOrMail;
-		const apiUrl = apiconfig.apiHostUrl;
-		//console.log('apiurl=' + apiUrl);
-		return new Promise((resolve, reject) => {
-			fetch(
-				apiUrl +
-					'api/User/Authenticate?username=' +
-					username +
-					'&password=' +
-					password,
-				{
-					method: 'POST',
-					mode: 'cors',
-					headers: {
-						authorization: localStorage.token,
-						'Access-Control-Allow-Origin': '*',
-					},
-				},
-			)
-				.then((response) => {
-					if (!response.ok) {
-						throw new Error(`HTTP error! Status: ${response.status}`);
-					}
+const useFakeUserAPI = () => {
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [response, setResponse] = useState<TUser | undefined>();
+  const [error, setError] = useState<string>("");
 
-					return response.json();
-				})
-				.then((data) => {
-					resolve(data);
-					setResponse(data as TUser);
-					console.log('loggedindata:', data);
-					localStorage.setItem('apiData', JSON.stringify(data));
-					localStorage.setItem('birthdate', JSON.stringify(data.birthdate));
-					localStorage.setItem('userid', data.UserId);
-					localStorage.setItem('loggedinid', data.id);
-					localStorage.setItem('loggedinname', data.username);
-					localStorage.setItem('position', data.position);
-					localStorage.setItem('facilityname', data.facility);
-					localStorage.setItem('juridictionname', data.juridiction);
-					localStorage.setItem('juridictionidlogged', data.juridictionid);
-					localStorage.setItem('organizationidlogged', data.organizationid);
-				})
-				.catch((error) => {
-					reject(error.message);
-				});
-		});
-	};
-	// Function to retrieve data from localStorage
-	const getDataFromLocalStorage = () => {
-		return new Promise((resolve, reject) => {
-			const storedData = localStorage.getItem('apiData');
-			if (storedData) {
-				resolve(JSON.parse(storedData));
-			} else {
-				reject(new Error('No data found in localStorage'));
-			}
-		});
-	};
 
-	useEffect(() => {
-		setTimeout(() => {
-			setResponse(response);
-			setIsLoading(false);
-			getDataFromLocalStorage();
-		}, 500);
+  const apiconfigurl = `${apiconfig.apiHostUrl}/api/User/Authenticate`
 
-		// 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [username]);
+  const getCheckUser = async (username: string, password: string) => {
+    const apiUrl = apiconfigurl;
 
-	return { response, isLoading, getCheckUser, getDataFromLocalStorage };
+    try {
+      
+      const result = await axios.post(apiUrl, {}, {
+        params: {
+          username: username,
+          password: password,
+        },
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+    
+      console.log(result.data);
+      setResponse(result.data);
+
+      // Store user-related data in localStorage
+      localStorage.setItem('apiData', JSON.stringify(result.data));
+      localStorage.setItem('birthdate', JSON.stringify(result.data.birthdate));
+      localStorage.setItem('userid', result.data.UserId);
+      localStorage.setItem('loggedinid', result.data.id);
+      localStorage.setItem('loggedinname', result.data.username);
+      localStorage.setItem('position', result.data.position);
+      localStorage.setItem('facilityname', result.data.facility);
+      localStorage.setItem('juridictionname', result.data.juridiction);
+      localStorage.setItem('juridictionidlogged', result.data.juridictionid);
+      localStorage.setItem('organizationidlogged', result.data.organizationid);
+
+      return result.data;
+    } catch (error: any) {
+      setError(error.message);
+      console.error('Error during API call:', error);
+      throw new Error(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const getDataFromLocalStorage = async () => {
+    try {
+      const storedData = localStorage.getItem('apiData');
+      if (storedData) {
+        return JSON.parse(storedData);
+      } else {
+        return null; // No data found
+      }
+    } catch (error: any) {
+      setError('Error parsing data from localStorage');
+      throw new Error('Error parsing data from localStorage');
+    }
+  };
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getDataFromLocalStorage();
+        if (data) {
+          setResponse(data as TUser);
+        }
+      } catch (error: any) {
+        console.error('Error retrieving data from localStorage:', error.message);
+        setError(error.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []); 
+
+  return { response, isLoading, getCheckUser, getDataFromLocalStorage, error };
 };
 
 export default useFakeUserAPI;

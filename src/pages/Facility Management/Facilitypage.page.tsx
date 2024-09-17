@@ -79,7 +79,7 @@ const FacilityPage = () => {
 			<Subheader>
 				<SubheaderLeft>
 					<Link
-						to={`#`}>
+						to={`/facility-management`}>
 						<Button icon='HeroArrowLeft' className='!px-0'>
 							Back to List
 						</Button>

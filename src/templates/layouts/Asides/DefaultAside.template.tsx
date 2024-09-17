@@ -19,21 +19,23 @@ import apiconfig from '../../../config/apiconfig';
 const DefaultAsideTemplate = () => {
 	const [menuData, setMenuData] = useState([]);
 
+	const apiconfigurl = `${apiconfig.apiHostUrl}/api/User/get-users-role-access`
+
 	const loadMenu = async () => {
 		try {
 			const formData = new FormData();
             formData.append('lovMasterRoleId', '951693f1-21ce-40b9-aa92-42dabe652c7e');    
-            const response = await axios.post('https://localhost:7155/api/User/get-users-role-access', formData, {
+            const response = await axios.post(apiconfigurl, formData, {
               headers: {
                 'Content-Type': 'multipart/form-data'
               }
             });
 			
-			// console.log("response", response);
+			console.log("response", response);
 			if (response.data.status === 'Success') {
 				setMenuData(response.data.dataList);
 			} else {
-			//   console.error('Failed to fetch user role access data:', response.data.message);
+			  console.error('Failed to fetch user role access data:', response.data.message);
 			  return [];
 			}
 		  } catch (error) {
@@ -41,13 +43,16 @@ const DefaultAsideTemplate = () => {
 			return [];
 		  }
 	}
+
+
 	useEffect(() => {
        loadMenu();
 	}, []);
+
 	const NavItemComponent: React.FC<{ list: any }> = ({ list }) => {
 		// Check if `list` is defined and has features
 		if (!list || !list.features || list.features.length === 0) {
-			return null; // Or handle the case where `list` or `list.features` is not valid
+			return null; 
 		}
 	
 		// Access the properties of the first feature in the list

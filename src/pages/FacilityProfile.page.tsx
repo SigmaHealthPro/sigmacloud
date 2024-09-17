@@ -98,7 +98,7 @@ const FacilityProfile = () => {
       setFacilityId(id);
     } else {
       // If facilityId is null, redirect to the facilities page
-	  navigation('/facilities');
+	  navigation('/facility-management');
     }
   }, [facilityId, navigation]); // Run the effect whenever the facilityId or navigate changes
 
